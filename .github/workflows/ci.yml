@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main, development]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx expo lint
+      - run: npm run typecheck
+      - run: npm test
+      - name: Web export builds
+        run: npm run build:web
+        env:
+          EXPO_PUBLIC_API_URL: https://example.invalid
