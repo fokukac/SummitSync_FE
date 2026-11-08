@@ -111,4 +111,7 @@ export default {
     'settings.email.pending':
         'Se așteaptă confirmarea pentru {email}. Verificați acea căsuță pentru link.',
     'settings.email.cancel': 'Anulează schimbarea',
+    'settings.blocked.title': 'Persoane blocate',
+    'settings.blocked.none': 'Nu ai blocat pe nimeni.',
+    'settings.blocked.unblock': 'Deblochează',
 };

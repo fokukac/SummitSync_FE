@@ -61,6 +61,10 @@ export default function SettingsScreen() {
         <ThemedText type="smallBold">{t('nav.security')}</ThemedText>
       </Card>
 
+      <Card onPress={() => router.push('/settings/blocked')}>
+        <ThemedText type="smallBold">{t('settings.blocked.title')}</ThemedText>
+      </Card>
+
       <ThemedText type="smallBold">{t('nav.language')}</ThemedText>
       <View style={{ flexDirection: 'row', gap: 16 }}>
         {Object.entries(supportedLocales).map(([code, name]) => (

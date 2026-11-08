@@ -157,4 +157,22 @@ export default {
     'chat.messageCount': { one: '{count} üzenet', other: '{count} üzenet' },
     'chat.previousFrom': '{name} előző üzenete',
     'chat.nextFrom': '{name} következő üzenete',
+    'chat.actions': 'Üzenet műveletei',
+    'chat.report': 'Üzenet jelentése',
+    'chat.report.title': 'Üzenet jelentése',
+    'chat.report.description':
+        'A moderátorok átnézik. A szerző nem tudja meg, ki jelentette.',
+    'chat.report.reason.spam': 'Spam',
+    'chat.report.reason.harassment': 'Zaklatás vagy gyűlöletkeltés',
+    'chat.report.reason.inappropriate': 'Nem megfelelő tartalom',
+    'chat.report.reason.other': 'Más ok',
+    'chat.report.details': 'Részletek (nem kötelező)',
+    'chat.report.submit': 'Jelentés elküldése',
+    'chat.report.sent': 'Köszönjük, átnézzük az üzenetet.',
+    'chat.report.failed': 'A jelentést nem sikerült elküldeni.',
+    'chat.block': '{name} letiltása',
+    'chat.block.title': 'Letiltja ezt a személyt?',
+    'chat.block.description':
+        'Többé nem látja az üzeneteit a chatben. A letiltást a beállításokban feloldhatja.',
+    'chat.block.failed': 'A személyt nem sikerült letiltani.',
 };

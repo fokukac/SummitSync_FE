@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 
 import { api, ApiError, unwrap } from '@/api/client';
+import { useAuth } from '@/auth/auth-context';
 import { Button, ErrorText } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar, Card, QueryState } from '@/components/ui';
+import { MessageActions } from '@/features/event/message-actions';
 import { appendMessage, type Message, type MessagesPage } from '@/features/event/messages-cache';
 import { useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
@@ -16,7 +18,8 @@ type Outgoing = { clientId: string; body: string; failed: boolean };
 
 const MAX_LENGTH = 2000;
 
-export function ChatTab({ eventId, canPost }: { eventId: number; canPost: boolean }) {
+export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; canPost: boolean; canModerate: boolean }) {
+  const { user } = useAuth();
   const { t, intlLocale } = useI18n();
   const theme = useTheme();
   const queryClient = useQueryClient();
@@ -85,6 +88,7 @@ export function ChatTab({ eventId, canPost }: { eventId: number; canPost: boolea
                   </ThemedText>
                   <ThemedText>{message.body}</ThemedText>
                 </View>
+                <MessageActions eventId={eventId} message={message} own={message.user.id === user?.id} canModerate={canModerate} />
               </View>
             </Card>
           ))}

@@ -114,4 +114,7 @@ export default {
     'settings.email.pending':
         'Waiting for confirmation of {email}. Check that inbox for the link.',
     'settings.email.cancel': 'Cancel change',
+    'settings.blocked.title': 'Blocked people',
+    'settings.blocked.none': 'You have not blocked anyone.',
+    'settings.blocked.unblock': 'Unblock',
 } satisfies Record<string, Message>;

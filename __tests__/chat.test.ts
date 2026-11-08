@@ -1,6 +1,6 @@
 import type { InfiniteData } from '@tanstack/react-query';
 
-import { appendMessage } from '@/features/event/messages-cache';
+import { appendMessage, removeMessage } from '@/features/event/messages-cache';
 
 type Page = Parameters<typeof appendMessage>[0] extends InfiniteData<infer P, unknown> | undefined ? P : never;
 
@@ -31,5 +31,20 @@ describe('appendMessage', () => {
 
   it('leaves an empty cache alone', () => {
     expect(appendMessage(undefined, message(1))).toBeUndefined();
+  });
+});
+
+describe('removeMessage', () => {
+  it('drops the message from whichever page holds it', () => {
+    const data = cache([{ data: [message(2), message(3)], has_more: true }, { data: [message(1)], has_more: false }]);
+
+    const result = removeMessage(data, 1);
+
+    expect(result?.pages[0].data.map((m) => m.id)).toEqual([2, 3]);
+    expect(result?.pages[1].data).toEqual([]);
+  });
+
+  it('leaves an empty cache alone', () => {
+    expect(removeMessage(undefined, 1)).toBeUndefined();
   });
 });
