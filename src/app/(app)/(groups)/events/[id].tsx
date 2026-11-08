@@ -73,7 +73,7 @@ export default function EventScreen() {
                 {!canSeeInside ? <ThemedText themeColor="textSecondary">{t('events.joinToSee')}</ThemedText> : null}
               </View>
             ) : null}
-            {tab === 'chat' && canSeeInside ? <ChatTab eventId={eventId} canPost={data.can.postMessage} /> : null}
+            {tab === 'chat' && canSeeInside ? <ChatTab eventId={eventId} canPost={data.can.postMessage} canModerate={data.can.moderateChat} /> : null}
             {tab === 'checklist' && canSeeInside ? <ChecklistTab eventId={eventId} canToggle={data.can.toggleOwnChecklist} /> : null}
             {tab === 'polls' && canSeeInside ? <PollsTab eventId={eventId} /> : null}
             {tab === 'members' && canSeeInside ? <ParticipantsTab eventId={eventId} /> : null}

@@ -163,4 +163,22 @@ export default {
     'chat.messageCount': { one: '{count} mesaj', other: '{count} mesaje' },
     'chat.previousFrom': 'Mesajul anterior de la {name}',
     'chat.nextFrom': 'Mesajul următor de la {name}',
+    'chat.actions': 'Acțiuni pentru mesaj',
+    'chat.report': 'Raportează mesajul',
+    'chat.report.title': 'Raportează acest mesaj',
+    'chat.report.description':
+        'Moderatorii îl vor analiza. Autorul nu află cine l-a raportat.',
+    'chat.report.reason.spam': 'Spam',
+    'chat.report.reason.harassment': 'Hărțuire sau ură',
+    'chat.report.reason.inappropriate': 'Conținut necorespunzător',
+    'chat.report.reason.other': 'Altceva',
+    'chat.report.details': 'Detalii (opțional)',
+    'chat.report.submit': 'Trimite raportul',
+    'chat.report.sent': 'Mulțumim, vom analiza mesajul.',
+    'chat.report.failed': 'Raportul nu a putut fi trimis.',
+    'chat.block': 'Blochează {name}',
+    'chat.block.title': 'Blochezi această persoană?',
+    'chat.block.description':
+        'Nu îi vei mai vedea mesajele din chat. O poți debloca din setări.',
+    'chat.block.failed': 'Persoana nu a putut fi blocată.',
 };

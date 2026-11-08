@@ -43,7 +43,7 @@ Always add packages with `npx expo install <pkg>` (it picks the SDK-compatible v
 ## Roadmap
 
 1. Foundation: auth, i18n, API client, CI. 2. Read paths (done): my groups and discover, group page (events, members),
-   event page (overview, chat history, checklist, polls, participants). 3. Write paths (in progress): done - join/leave group and event, chat sending (retry-safe `client_id`, failed messages can be retried), optimistic checklist toggle, poll voting; settings (profile, photo, email change, password, two-factor with QR and recovery codes, language, account deletion); to do - create/edit forms (group, event, poll, checklist items), invitations, report/block. 4. Chat realtime (Reverb) and offline queue. 5. Native polish, Play Store release. 6. Web parity and cutover.
+   event page (overview, chat history, checklist, polls, participants). 3. Write paths (in progress): done - join/leave group and event, chat sending (retry-safe `client_id`, failed messages can be retried), optimistic checklist toggle, poll voting; settings (profile, photo, email change, password, two-factor with QR and recovery codes, language, account deletion); chat report, block and unblock ("..." menu on messages, Settings > Blocked people), moderator delete; to do - create/edit forms (group, event, poll, checklist items), invitations. 4. Chat realtime (Reverb) and offline queue. 5. Native polish, Play Store release. 6. Web parity and cutover.
 
 ## Dev notes
 

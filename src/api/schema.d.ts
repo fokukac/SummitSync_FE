@@ -1954,7 +1954,7 @@ export interface operations {
                             id: number;
                             name: string;
                             username: string;
-                            avatar: null;
+                            avatar: string | null;
                         }[];
                     };
                 };

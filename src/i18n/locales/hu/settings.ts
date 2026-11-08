@@ -112,4 +112,7 @@ export default {
     'settings.email.pending':
         'Megerősítésre vár: {email}. A hivatkozást abban a postafiókban találja.',
     'settings.email.cancel': 'Módosítás megszakítása',
+    'settings.blocked.title': 'Letiltott személyek',
+    'settings.blocked.none': 'Még nem tiltott le senkit.',
+    'settings.blocked.unblock': 'Feloldás',
 };

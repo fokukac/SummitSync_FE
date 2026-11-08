@@ -152,4 +152,22 @@ export default {
     'chat.messageCount': { one: '{count} message', other: '{count} messages' },
     'chat.previousFrom': 'Previous message from {name}',
     'chat.nextFrom': 'Next message from {name}',
+    'chat.actions': 'Message actions',
+    'chat.report': 'Report message',
+    'chat.report.title': 'Report this message',
+    'chat.report.description':
+        'Moderators will review it. The author is not told who reported it.',
+    'chat.report.reason.spam': 'Spam',
+    'chat.report.reason.harassment': 'Harassment or hate',
+    'chat.report.reason.inappropriate': 'Inappropriate content',
+    'chat.report.reason.other': 'Something else',
+    'chat.report.details': 'Details (optional)',
+    'chat.report.submit': 'Send report',
+    'chat.report.sent': 'Thanks, we will review this message.',
+    'chat.report.failed': 'The report could not be sent.',
+    'chat.block': 'Block {name}',
+    'chat.block.title': 'Block this person?',
+    'chat.block.description':
+        'You will no longer see their chat messages. You can unblock them in your settings.',
+    'chat.block.failed': 'The person could not be blocked.',
 } satisfies Record<string, Message>;
