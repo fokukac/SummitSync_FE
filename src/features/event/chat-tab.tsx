@@ -9,7 +9,8 @@ import { Button, ErrorText } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar, Card, QueryState } from '@/components/ui';
 import { MessageActions } from '@/features/event/message-actions';
-import { appendMessage, type Message, type MessagesPage } from '@/features/event/messages-cache';
+import { useLiveChat } from '@/features/event/use-live-chat';
+import { appendMessage, pendingOutgoing, type Message, type MessagesPage } from '@/features/event/messages-cache';
 import { useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 import { formatShortDateTime } from '@/lib/format';
@@ -44,7 +45,12 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
   });
 
   // Oldest at the top: older pages go in front of newer ones.
+  useLiveChat(eventId, true);
+
   const history = [...(messages.data?.pages ?? [])].reverse().flatMap((page) => page.data);
+
+  // A message can come back over the live channel before its send request returns: show it once.
+  const pending = pendingOutgoing(outgoing, history);
 
   async function deliver(item: Outgoing) {
     setError(undefined);
@@ -82,7 +88,7 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
 
   return (
     <View style={{ gap: 8 }}>
-      <QueryState query={messages} empty={history.length === 0 && outgoing.length === 0} emptyText={t('chat.none')}>
+      <QueryState query={messages} empty={history.length === 0 && pending.length === 0} emptyText={t('chat.none')}>
         <View style={{ gap: 8 }}>
           {messages.hasNextPage ? (
             <Button variant="plain" title={t('chat.loadOlder')} loading={messages.isFetchingNextPage} onPress={() => void messages.fetchNextPage()} />
@@ -110,7 +116,7 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
               </View>
             </Card>
           ))}
-          {outgoing.map((item) => (
+          {pending.map((item) => (
             <Card key={item.clientId}>
               <ThemedText themeColor="textSecondary">{item.body}</ThemedText>
               {item.failed ? (
