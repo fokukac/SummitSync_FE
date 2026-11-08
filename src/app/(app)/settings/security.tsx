@@ -47,13 +47,38 @@ function PasswordSection() {
     <View style={{ gap: 12 }}>
       <ThemedText type="smallBold">{t(user?.has_password ? 'settings.security.password.title' : 'settings.security.password.setTitle')}</ThemedText>
       {user?.has_password ? (
-        <TextField label={t('settings.security.currentPassword')} value={current} onChangeText={setCurrent} error={form.errors.current_password} secureTextEntry autoComplete="current-password" />
+        <TextField
+          label={t('settings.security.currentPassword')}
+          value={current}
+          onChangeText={setCurrent}
+          error={form.errors.current_password}
+          secureTextEntry
+          autoComplete="current-password"
+        />
       ) : null}
-      <TextField label={t('settings.security.newPassword')} value={next} onChangeText={setNext} error={form.errors.password} secureTextEntry autoComplete="new-password" />
-      <TextField label={t('auth.confirmPassword')} value={confirmation} onChangeText={setConfirmation} error={form.errors.password_confirmation} secureTextEntry autoComplete="new-password" />
+      <TextField
+        label={t('settings.security.newPassword')}
+        value={next}
+        onChangeText={setNext}
+        error={form.errors.password}
+        secureTextEntry
+        autoComplete="new-password"
+      />
+      <TextField
+        label={t('auth.confirmPassword')}
+        value={confirmation}
+        onChangeText={setConfirmation}
+        error={form.errors.password_confirmation}
+        secureTextEntry
+        autoComplete="new-password"
+      />
       {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
       <Button title={t('settings.security.save')} onPress={() => void save()} loading={form.busy} />
-      {saved ? <ThemedText type="small" themeColor="textSecondary">{t('common.saveChanges')} ✓</ThemedText> : null}
+      {saved ? (
+        <ThemedText type="small" themeColor="textSecondary">
+          {t('common.saveChanges')} ✓
+        </ThemedText>
+      ) : null}
     </View>
   );
 }
@@ -143,7 +168,14 @@ function TwoFactorSection() {
             </ThemedText>
           </Card>
           <RecoveryCodes codes={setup.recoveryCodes} />
-          <TextField label={t('twofa.verify.title')} value={code} onChangeText={setCode} keyboardType="number-pad" autoComplete="one-time-code" placeholder="123456" />
+          <TextField
+            label={t('twofa.verify.title')}
+            value={code}
+            onChangeText={setCode}
+            keyboardType="number-pad"
+            autoComplete="one-time-code"
+            placeholder="123456"
+          />
           {failure ? <ErrorText>{failure}</ErrorText> : null}
           <Button title={t('common.confirm')} onPress={() => void confirm()} loading={form.busy} />
           <Button variant="plain" title={t('common.cancel')} onPress={() => void cancelSetup()} />
@@ -154,7 +186,13 @@ function TwoFactorSection() {
             {t('settings.security.twofa.on')}
           </ThemedText>
           {codes ? <RecoveryCodes codes={codes} /> : null}
-          <TextField label={t('settings.security.currentPassword')} value={password} onChangeText={setPassword} secureTextEntry autoComplete="current-password" />
+          <TextField
+            label={t('settings.security.currentPassword')}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            autoComplete="current-password"
+          />
           {failure ? <ErrorText>{failure}</ErrorText> : null}
           <Button variant="plain" title={t('twofa.recovery.regenerate')} onPress={() => void regenerate()} loading={form.busy} />
           <Button variant="plain" title={t('settings.security.twofa.disable')} onPress={() => void disable()} />
@@ -168,7 +206,13 @@ function TwoFactorSection() {
           <ThemedText type="small" themeColor="textSecondary">
             {t('settings.security.twofa.off')}
           </ThemedText>
-          <TextField label={t('settings.security.currentPassword')} value={password} onChangeText={setPassword} secureTextEntry autoComplete="current-password" />
+          <TextField
+            label={t('settings.security.currentPassword')}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            autoComplete="current-password"
+          />
           {failure ? <ErrorText>{failure}</ErrorText> : null}
           <Button title={t('settings.security.twofa.enable')} onPress={() => void start()} loading={form.busy} />
         </>

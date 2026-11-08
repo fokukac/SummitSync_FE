@@ -90,9 +90,17 @@ export default function SettingsScreen() {
           setPassword('');
           form.reset();
         }}
-        onConfirm={() => void deleteAccount()}>
+        onConfirm={() => void deleteAccount()}
+      >
         {user?.has_password ? (
-          <TextField label={t('settings.security.currentPassword')} value={password} onChangeText={setPassword} error={form.errors.password} secureTextEntry autoComplete="current-password" />
+          <TextField
+            label={t('settings.security.currentPassword')}
+            value={password}
+            onChangeText={setPassword}
+            error={form.errors.password}
+            secureTextEntry
+            autoComplete="current-password"
+          />
         ) : null}
         {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
       </ConfirmDialog>

@@ -31,11 +31,7 @@ export function TextField({ label, error, style, ...props }: FieldProps) {
       <TextInput
         accessibilityLabel={label}
         placeholderTextColor={theme.textSecondary}
-        style={[
-          styles.input,
-          { color: theme.text, borderColor: error ? theme.danger : theme.border, backgroundColor: theme.backgroundElement },
-          style,
-        ]}
+        style={[styles.input, { color: theme.text, borderColor: error ? theme.danger : theme.border, backgroundColor: theme.backgroundElement }, style]}
         {...props}
       />
       {error ? <ErrorText>{error}</ErrorText> : null}
@@ -64,10 +60,8 @@ export function Button({ title, onPress, loading = false, variant = 'primary' }:
       accessibilityRole="button"
       disabled={loading}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        { backgroundColor: primary ? theme.primary : 'transparent', opacity: pressed || loading ? 0.7 : 1 },
-      ]}>
+      style={({ pressed }) => [styles.button, { backgroundColor: primary ? theme.primary : 'transparent', opacity: pressed || loading ? 0.7 : 1 }]}
+    >
       {loading ? (
         <ActivityIndicator color={primary ? theme.onPrimary : theme.text} />
       ) : (

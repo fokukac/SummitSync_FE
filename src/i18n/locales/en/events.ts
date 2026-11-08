@@ -170,4 +170,6 @@ export default {
     'chat.block.description':
         'You will no longer see their chat messages. You can unblock them in your settings.',
     'chat.block.failed': 'The person could not be blocked.',
+    'events.form.dateHint': 'Format: 2026-11-08 07:00',
+    'events.form.searchPlace': 'Search for a place',
 } satisfies Record<string, Message>;

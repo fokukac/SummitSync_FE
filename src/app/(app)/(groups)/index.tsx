@@ -38,6 +38,7 @@ export default function GroupsScreen() {
   return (
     <Page refreshControl={<RefreshControl refreshing={active.isRefetching && !active.isPending} onRefresh={() => void active.refetch()} />}>
       <ThemedText type="subtitle">{t('nav.groups')}</ThemedText>
+      <Button variant="plain" title={t('groups.create')} onPress={() => router.push('/groups/new')} />
       <Segmented
         value={mode}
         onChange={setMode}

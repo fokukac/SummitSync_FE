@@ -175,4 +175,6 @@ export default {
     'chat.block.description':
         'Többé nem látja az üzeneteit a chatben. A letiltást a beállításokban feloldhatja.',
     'chat.block.failed': 'A személyt nem sikerült letiltani.',
+    'events.form.dateHint': 'Formátum: 2026-11-08 07:00',
+    'events.form.searchPlace': 'Hely keresése',
 };

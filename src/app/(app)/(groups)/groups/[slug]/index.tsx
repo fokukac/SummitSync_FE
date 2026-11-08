@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { RefreshControl, View } from 'react-native';
 
 import { api, unwrap } from '@/api/client';
+import { Button } from '@/components/form';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar, Card, Chip, QueryState, Segmented } from '@/components/ui';
@@ -16,7 +17,10 @@ export default function GroupScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const [tab, setTab] = useState<'events' | 'members'>('events');
 
-  const group = useQuery({ queryKey: ['group', slug], queryFn: async () => (await unwrap(api.GET('/v1/groups/{group}', { params: { path: { group: slug } } }))).data });
+  const group = useQuery({
+    queryKey: ['group', slug],
+    queryFn: async () => (await unwrap(api.GET('/v1/groups/{group}', { params: { path: { group: slug } } }))).data,
+  });
   const canSeeInside = group.data?.can.viewMembers === true;
 
   const events = useQuery({
@@ -31,7 +35,8 @@ export default function GroupScreen() {
   });
 
   const refreshing = group.isRefetching || events.isRefetching || members.isRefetching;
-  const refresh = () => void Promise.all([group.refetch(), canSeeInside ? events.refetch() : null, tab === 'members' && canSeeInside ? members.refetch() : null]);
+  const refresh = () =>
+    void Promise.all([group.refetch(), canSeeInside ? events.refetch() : null, tab === 'members' && canSeeInside ? members.refetch() : null]);
   const data = group.data;
 
   return (
@@ -62,6 +67,19 @@ export default function GroupScreen() {
             ) : null}
 
             <GroupMembershipActions slug={slug} can={data.can} />
+            {data.can.createEvent ? (
+              <Button title={t('events.create')} onPress={() => router.push({ pathname: '/groups/[slug]/events/new', params: { slug } })} />
+            ) : null}
+            {data.can.manageInvitations ? (
+              <Button
+                variant="plain"
+                title={t('invitations.section.title')}
+                onPress={() => router.push({ pathname: '/groups/[slug]/invitations', params: { slug } })}
+              />
+            ) : null}
+            {data.can.update ? (
+              <Button variant="plain" title={t('groups.edit')} onPress={() => router.push({ pathname: '/groups/[slug]/edit', params: { slug } })} />
+            ) : null}
 
             {canSeeInside ? (
               <>

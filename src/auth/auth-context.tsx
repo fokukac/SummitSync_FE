@@ -10,9 +10,7 @@ import { tokenStorage } from '@/lib/token-storage';
 export type User = components['schemas']['UserResource'];
 
 export type AuthResult =
-  | { status: 'ok' }
-  | { status: 'two_factor'; challengeToken: string }
-  | { status: 'error'; message?: string; errors: Record<string, string> };
+  { status: 'ok' } | { status: 'two_factor'; challengeToken: string } | { status: 'error'; message?: string; errors: Record<string, string> };
 
 type Auth = {
   /** False until the stored token has been checked against the server. */

@@ -68,7 +68,8 @@ export function Segmented<T extends string>({ options, value, onChange }: { opti
             accessibilityRole="tab"
             accessibilityState={{ selected }}
             onPress={() => onChange(option.value)}
-            style={[styles.segment, { backgroundColor: selected ? theme.backgroundSelected : theme.backgroundElement }]}>
+            style={[styles.segment, { backgroundColor: selected ? theme.backgroundSelected : theme.backgroundElement }]}
+          >
             <ThemedText type={selected ? 'smallBold' : 'small'} themeColor={selected ? 'text' : 'textSecondary'}>
               {option.label}
             </ThemedText>

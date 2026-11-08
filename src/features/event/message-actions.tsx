@@ -17,7 +17,12 @@ import { useI18n } from '@/i18n';
 type Reason = components['schemas']['MessageReportReason'];
 const REASONS: Reason[] = ['spam', 'harassment', 'inappropriate', 'other'];
 
-type Props = { eventId: number; message: Message; own: boolean; canModerate: boolean };
+type Props = {
+  eventId: number;
+  message: Message;
+  own: boolean;
+  canModerate: boolean;
+};
 
 /**
  * The "..." menu of a chat message: report and block (anyone, on other people's messages - an app store
@@ -32,7 +37,12 @@ export function MessageActions({ eventId, message, own, canModerate }: Props) {
   const [deleting, setDeleting] = useState(false);
 
   const block = useMutation({
-    mutationFn: () => unwrapVoid(api.POST('/v1/users/{user}/block', { params: { path: { user: message.user.id } } })),
+    mutationFn: () =>
+      unwrapVoid(
+        api.POST('/v1/users/{user}/block', {
+          params: { path: { user: message.user.id } },
+        }),
+      ),
     onSuccess: () => {
       // The server now leaves this person's messages out of history; refetch so they disappear.
       void queryClient.invalidateQueries({ queryKey: ['event'] });
@@ -42,14 +52,36 @@ export function MessageActions({ eventId, message, own, canModerate }: Props) {
   });
 
   const remove = useMutation({
-    mutationFn: () => unwrapVoid(api.DELETE('/v1/events/{event}/messages/{message}', { params: { path: { event: eventId, message: message.id } } })),
+    mutationFn: () =>
+      unwrapVoid(
+        api.DELETE('/v1/events/{event}/messages/{message}', {
+          params: { path: { event: eventId, message: message.id } },
+        }),
+      ),
     onSuccess: () => queryClient.setQueryData(['event', eventId, 'messages'], (data: Parameters<typeof removeMessage>[0]) => removeMessage(data, message.id)),
     onSettled: () => setDeleting(false),
   });
 
   const actions: MenuAction[] = [
-    ...(own ? [] : [{ label: t('chat.report'), onPress: () => setReporting(true) }, { label: t('chat.block', { name: message.user.name }), onPress: () => setBlocking(true), destructive: true }]),
-    ...(canModerate ? [{ label: t('chat.deleteMessage'), onPress: () => setDeleting(true), destructive: true }] : []),
+    ...(own
+      ? []
+      : [
+          { label: t('chat.report'), onPress: () => setReporting(true) },
+          {
+            label: t('chat.block', { name: message.user.name }),
+            onPress: () => setBlocking(true),
+            destructive: true,
+          },
+        ]),
+    ...(canModerate
+      ? [
+          {
+            label: t('chat.deleteMessage'),
+            onPress: () => setDeleting(true),
+            destructive: true,
+          },
+        ]
+      : []),
   ];
 
   if (actions.length === 0) {
@@ -70,7 +102,8 @@ export function MessageActions({ eventId, message, own, canModerate }: Props) {
         confirmLabel={t('chat.block', { name: message.user.name })}
         loading={block.isPending}
         onCancel={() => setBlocking(false)}
-        onConfirm={() => block.mutate()}>
+        onConfirm={() => block.mutate()}
+      >
         {block.isError ? <ErrorText>{t('chat.block.failed')}</ErrorText> : null}
       </ConfirmDialog>
       <ConfirmDialog
@@ -80,7 +113,8 @@ export function MessageActions({ eventId, message, own, canModerate }: Props) {
         confirmLabel={t('chat.deleteMessage')}
         loading={remove.isPending}
         onCancel={() => setDeleting(false)}
-        onConfirm={() => remove.mutate()}>
+        onConfirm={() => remove.mutate()}
+      >
         {remove.isError ? <ErrorText>{t('chat.deleteFailed')}</ErrorText> : null}
       </ConfirmDialog>
     </>
@@ -95,7 +129,12 @@ function ReportDialog({ visible, eventId, messageId, onClose }: { visible: boole
 
   const report = useMutation({
     mutationFn: () =>
-      unwrapVoid(api.POST('/v1/events/{event}/messages/{message}/report', { params: { path: { event: eventId, message: messageId } }, body: { reason, details: details.trim() || null } })),
+      unwrapVoid(
+        api.POST('/v1/events/{event}/messages/{message}/report', {
+          params: { path: { event: eventId, message: messageId } },
+          body: { reason, details: details.trim() || null },
+        }),
+      ),
   });
 
   function close() {
@@ -137,7 +176,16 @@ function ReportDialog({ visible, eventId, messageId, onClose }: { visible: boole
                   accessibilityLabel={t('chat.report.details')}
                   maxLength={500}
                   multiline
-                  style={{ color: theme.text, borderColor: theme.border, backgroundColor: theme.backgroundElement, borderWidth: 1, borderRadius: 8, padding: 12, minHeight: 64, fontSize: 16 }}
+                  style={{
+                    color: theme.text,
+                    borderColor: theme.border,
+                    backgroundColor: theme.backgroundElement,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    padding: 12,
+                    minHeight: 64,
+                    fontSize: 16,
+                  }}
                 />
                 {report.isError ? <ErrorText>{t('chat.report.failed')}</ErrorText> : null}
                 <View style={styles.actions}>
@@ -154,7 +202,23 @@ function ReportDialog({ visible, eventId, messageId, onClose }: { visible: boole
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', padding: Spacing.four },
-  dialog: { width: '100%', maxWidth: 420, padding: Spacing.four, borderRadius: Spacing.three, gap: Spacing.three },
-  actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: Spacing.two },
+  backdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.four,
+  },
+  dialog: {
+    width: '100%',
+    maxWidth: 420,
+    padding: Spacing.four,
+    borderRadius: Spacing.three,
+    gap: Spacing.three,
+  },
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: Spacing.two,
+  },
 });

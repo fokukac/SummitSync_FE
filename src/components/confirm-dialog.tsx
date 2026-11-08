@@ -7,7 +7,16 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useI18n } from '@/i18n';
 
-type Props = { visible: boolean; title: string; description?: string; confirmLabel: string; onConfirm: () => void; onCancel: () => void; loading?: boolean; children?: ReactNode };
+type Props = {
+  visible: boolean;
+  title: string;
+  description?: string;
+  confirmLabel: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  loading?: boolean;
+  children?: ReactNode;
+};
 
 /** One confirmation dialog for every destructive action, on all platforms (never `window.confirm`). */
 export function ConfirmDialog({ visible, title, description, confirmLabel, onConfirm, onCancel, loading, children }: Props) {
@@ -19,7 +28,11 @@ export function ConfirmDialog({ visible, title, description, confirmLabel, onCon
         <Pressable accessibilityRole="alert">
           <ThemedView style={styles.dialog}>
             <ThemedText type="smallBold">{title}</ThemedText>
-            {description ? <ThemedText type="small" themeColor="textSecondary">{description}</ThemedText> : null}
+            {description ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                {description}
+              </ThemedText>
+            ) : null}
             {children}
             <View style={styles.actions}>
               <Button variant="plain" title={t('common.cancel')} onPress={onCancel} />

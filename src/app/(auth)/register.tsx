@@ -23,7 +23,7 @@ export default function RegisterScreen() {
 
     if (result.status === 'error') {
       setErrors(result.errors);
-      setMessage(Object.keys(result.errors).length === 0 ? result.message ?? t('common.somethingWrong') : undefined);
+      setMessage(Object.keys(result.errors).length === 0 ? (result.message ?? t('common.somethingWrong')) : undefined);
     }
   }
 
@@ -31,7 +31,14 @@ export default function RegisterScreen() {
     <Screen>
       <ThemedText type="subtitle">{t('auth.register.title')}</ThemedText>
       <ThemedText themeColor="textSecondary">{t('auth.register.description')}</ThemedText>
-      <TextField label={t('auth.name')} value={form.name} onChangeText={set('name')} error={errors.name} autoComplete="name" placeholder={t('auth.namePlaceholder')} />
+      <TextField
+        label={t('auth.name')}
+        value={form.name}
+        onChangeText={set('name')}
+        error={errors.name}
+        autoComplete="name"
+        placeholder={t('auth.namePlaceholder')}
+      />
       <TextField
         label={t('auth.username')}
         value={form.username}
@@ -51,7 +58,14 @@ export default function RegisterScreen() {
         autoComplete="email"
         placeholder={t('auth.emailPlaceholder')}
       />
-      <TextField label={t('auth.password')} value={form.password} onChangeText={set('password')} error={errors.password} secureTextEntry autoComplete="new-password" />
+      <TextField
+        label={t('auth.password')}
+        value={form.password}
+        onChangeText={set('password')}
+        error={errors.password}
+        secureTextEntry
+        autoComplete="new-password"
+      />
       <TextField
         label={t('auth.confirmPassword')}
         value={form.passwordConfirmation}

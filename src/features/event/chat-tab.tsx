@@ -33,7 +33,12 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
   const messages = useInfiniteQuery({
     queryKey,
     initialPageParam: undefined as number | undefined,
-    queryFn: ({ pageParam }) => unwrap(api.GET('/v1/events/{event}/messages', { params: { path: { event: eventId }, query: { before: pageParam } } })),
+    queryFn: ({ pageParam }) =>
+      unwrap(
+        api.GET('/v1/events/{event}/messages', {
+          params: { path: { event: eventId }, query: { before: pageParam } },
+        }),
+      ),
     // Pages arrive newest first and are chronological inside; the oldest message of a page is the cursor for the next.
     getNextPageParam: (last) => (last.has_more ? last.data[0]?.id : undefined),
   });
@@ -47,7 +52,12 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
 
     try {
       // The same client id on every attempt: the server stores the message once however often this is retried.
-      const message = await unwrap(api.POST('/v1/events/{event}/messages', { params: { path: { event: eventId } }, body: { body: item.body, client_id: item.clientId } }));
+      const message = await unwrap(
+        api.POST('/v1/events/{event}/messages', {
+          params: { path: { event: eventId } },
+          body: { body: item.body, client_id: item.clientId },
+        }),
+      );
 
       queryClient.setQueryData<InfiniteData<MessagesPage, number | undefined>>(queryKey, (data) => appendMessage(data, message as Message));
       setOutgoing((current) => current.filter((entry) => entry.clientId !== item.clientId));
@@ -74,10 +84,18 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
     <View style={{ gap: 8 }}>
       <QueryState query={messages} empty={history.length === 0 && outgoing.length === 0} emptyText={t('chat.none')}>
         <View style={{ gap: 8 }}>
-          {messages.hasNextPage ? <Button variant="plain" title={t('chat.loadOlder')} loading={messages.isFetchingNextPage} onPress={() => void messages.fetchNextPage()} /> : null}
+          {messages.hasNextPage ? (
+            <Button variant="plain" title={t('chat.loadOlder')} loading={messages.isFetchingNextPage} onPress={() => void messages.fetchNextPage()} />
+          ) : null}
           {history.map((message) => (
             <Card key={message.id}>
-              <View style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: 10,
+                  alignItems: 'flex-start',
+                }}
+              >
                 <Avatar name={message.user.name} uri={message.user.avatar} size={32} />
                 <View style={{ flex: 1 }}>
                   <ThemedText type="smallBold">
@@ -117,7 +135,16 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
             accessibilityLabel={t('chat.placeholder')}
             multiline
             maxLength={MAX_LENGTH}
-            style={{ color: theme.text, borderColor: theme.border, backgroundColor: theme.backgroundElement, borderWidth: 1, borderRadius: 8, padding: 12, minHeight: 48, fontSize: 16 }}
+            style={{
+              color: theme.text,
+              borderColor: theme.border,
+              backgroundColor: theme.backgroundElement,
+              borderWidth: 1,
+              borderRadius: 8,
+              padding: 12,
+              minHeight: 48,
+              fontSize: 16,
+            }}
           />
           {error ? <ErrorText>{error}</ErrorText> : null}
           <Button title={t('chat.send')} onPress={send} />
@@ -130,4 +157,3 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
     </View>
   );
 }
-

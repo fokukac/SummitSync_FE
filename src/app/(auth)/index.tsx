@@ -24,7 +24,7 @@ export default function LoginScreen() {
       router.push({ pathname: '/two-factor', params: { challenge: result.challengeToken } });
     } else if (result.status === 'error') {
       setErrors(result.errors);
-      setMessage(Object.keys(result.errors).length === 0 ? result.message ?? t('common.somethingWrong') : undefined);
+      setMessage(Object.keys(result.errors).length === 0 ? (result.message ?? t('common.somethingWrong')) : undefined);
     }
   }
 

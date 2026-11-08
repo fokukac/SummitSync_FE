@@ -35,7 +35,12 @@ export default function BlockedScreen() {
                   @{person.username}
                 </ThemedText>
               </View>
-              <Button variant="plain" title={t('settings.blocked.unblock')} loading={unblock.isPending && unblock.variables === person.id} onPress={() => unblock.mutate(person.id)} />
+              <Button
+                variant="plain"
+                title={t('settings.blocked.unblock')}
+                loading={unblock.isPending && unblock.variables === person.id}
+                onPress={() => unblock.mutate(person.id)}
+              />
             </View>
           </Card>
         ))}
