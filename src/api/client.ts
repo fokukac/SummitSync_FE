@@ -56,3 +56,25 @@ export function validationErrors(error: unknown): Record<string, string> {
 export function errorMessage(error: unknown): string | undefined {
   return (error as { message?: string } | undefined)?.message;
 }
+
+export class ApiError extends Error {
+  constructor(
+    readonly status: number,
+    readonly body: unknown,
+  ) {
+    super(errorMessage(body) ?? `Request failed (${status})`);
+  }
+}
+
+type Result<T> = { data?: T; error?: unknown; response: Response };
+
+/** Turns an openapi-fetch result into its data, or throws `ApiError`: what TanStack Query expects of a `queryFn`. */
+export async function unwrap<T>(request: PromiseLike<Result<T>>): Promise<T> {
+  const { data, error, response } = await request;
+
+  if (data === undefined) {
+    throw new ApiError(response.status, error);
+  }
+
+  return data;
+}
