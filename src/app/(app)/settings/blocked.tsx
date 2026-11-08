@@ -1,10 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { View } from 'react-native';
 
-import { api, unwrap, unwrapVoid } from '@/api/client';
+import { api, unwrapVoid } from '@/api/client';
 import { Button, Screen } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar, Card, QueryState } from '@/components/ui';
+import { useBlocked } from '@/features/blocks';
 import { useI18n } from '@/i18n';
 
 /** People you blocked. Their chat messages are left out of history by the server. */
@@ -12,7 +13,7 @@ export default function BlockedScreen() {
   const { t } = useI18n();
   const queryClient = useQueryClient();
 
-  const blocked = useQuery({ queryKey: ['me', 'blocks'], queryFn: async () => (await unwrap(api.GET('/v1/me/blocks'))).data });
+  const blocked = useBlocked();
 
   const unblock = useMutation({
     mutationFn: (userId: number) => unwrapVoid(api.DELETE('/v1/users/{user}/block', { params: { path: { user: userId } } })),

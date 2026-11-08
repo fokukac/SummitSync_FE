@@ -44,10 +44,18 @@ Always add packages with `npx expo install <pkg>` (it picks the SDK-compatible v
 ## Roadmap
 
 1. Foundation: auth, i18n, API client, CI. 2. Read paths (done): my groups and discover, group page (events, members),
-   event page (overview, chat history, checklist, polls, participants). 3. Write paths (in progress): done - join/leave group and event, chat sending (retry-safe `client_id`, failed messages can be retried), optimistic checklist toggle, poll voting; settings (profile, photo, email change, password, two-factor with QR and recovery codes, language, account deletion); chat report, block and unblock ("..." menu on messages, Settings > Blocked people), moderator delete; forms (create/edit group with logo, create/edit event with place search, new poll and close poll, checklist add/delete, invite links, assistants). Date fields are plain text (`YYYY-MM-DD HH:mm`) for now; native date pickers are a polish item. 4. Chat realtime (Reverb) and offline queue. 5. Native polish, Play Store release. 6. Web parity and cutover.
+   event page (overview, chat history, checklist, polls, participants). 3. Write paths (in progress): done - join/leave group and event, chat sending (retry-safe `client_id`, failed messages can be retried), optimistic checklist toggle, poll voting; settings (profile, photo, email change, password, two-factor with QR and recovery codes, language, account deletion); chat report, block and unblock ("..." menu on messages, Settings > Blocked people), moderator delete; forms (create/edit group with logo, create/edit event with place search, new poll and close poll, checklist add/delete, invite links, assistants). Date fields are plain text (`YYYY-MM-DD HH:mm`) for now; native date pickers are a polish item. 4. Chat realtime (done: live messages over Reverb, blocked people hidden live, catch-up after reconnect or returning to the app) and offline queue (nice to have, not started). 5. Native polish, Play Store release. 6. Web parity and cutover.
 
 ## Dev notes
 
 - Metro does not always notice file changes in this setup: if the browser shows stale UI, restart `npm run web`.
 - Web uses the standard bottom tabs (`app-tabs.web.tsx`), native uses `NativeTabs` (`app-tabs.tsx`).
 - The dev database needs the backend's migrations (`php artisan migrate`) before new API features work.
+
+## Realtime chat
+
+`src/lib/realtime.ts` keeps one `pusher-js` connection to Laravel Reverb; private channels (`private-event.{id}`) are authorized by
+`POST /api/v1/broadcasting/auth` with the bearer token. Configure with `EXPO_PUBLIC_REVERB_KEY` (public), optional `EXPO_PUBLIC_REVERB_HOST`
+and `EXPO_PUBLIC_REVERB_PORT` (see `.env.example`). `useLiveChat` adds incoming messages to the cached history (skipping blocked authors) and
+refetches after a reconnect or when the app returns to the foreground. If live messages stop arriving in development, restart the backend's
+`worker` container: it broadcasts through the queue and does not notice newly installed packages.

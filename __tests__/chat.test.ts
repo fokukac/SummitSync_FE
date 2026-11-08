@@ -1,6 +1,6 @@
 import type { InfiniteData } from '@tanstack/react-query';
 
-import { appendMessage, removeMessage } from '@/features/event/messages-cache';
+import { appendMessage, pendingOutgoing, removeMessage } from '@/features/event/messages-cache';
 
 type Page = Parameters<typeof appendMessage>[0] extends InfiniteData<infer P, unknown> | undefined ? P : never;
 
@@ -58,5 +58,22 @@ describe('removeMessage', () => {
 
   it('leaves an empty cache alone', () => {
     expect(removeMessage(undefined, 1)).toBeUndefined();
+  });
+});
+
+describe('pendingOutgoing', () => {
+  const outgoing = [
+    { clientId: 'a', body: 'one' },
+    { clientId: 'b', body: 'two' },
+  ];
+
+  it('drops a message that already arrived (live channel beat the send request)', () => {
+    const result = pendingOutgoing(outgoing, [{ client_id: 'a' }, { client_id: null }]);
+
+    expect(result.map((item) => item.clientId)).toEqual(['b']);
+  });
+
+  it('keeps everything when nothing matches', () => {
+    expect(pendingOutgoing(outgoing, [{ client_id: null }])).toHaveLength(2);
   });
 });

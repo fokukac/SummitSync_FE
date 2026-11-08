@@ -5,6 +5,7 @@ import { Platform } from 'react-native';
 import { api, errorMessage, session, validationErrors } from '@/api/client';
 import type { components } from '@/api/schema';
 import { useI18n } from '@/i18n';
+import { disconnectRealtime } from '@/lib/realtime';
 import { tokenStorage } from '@/lib/token-storage';
 
 export type User = components['schemas']['UserResource'];
@@ -37,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const clear = useCallback(async () => {
     session.token = null;
+    disconnectRealtime();
     setUser(null);
     await tokenStorage.clear();
   }, []);

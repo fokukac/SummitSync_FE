@@ -28,3 +28,13 @@ export function removeMessage(data: InfiniteData<MessagesPage, number | undefine
 
   return { ...data, pages: data.pages.map((page) => ({ ...page, data: page.data.filter((message) => message.id !== messageId) })) };
 }
+
+/**
+ * Messages being sent that are not yet in the history. A message can arrive over the live channel before its
+ * send request returns; the client id (echoed in the broadcast) tells us it is already shown.
+ */
+export function pendingOutgoing<T extends { clientId: string }>(outgoing: T[], history: Pick<Message, 'client_id'>[]): T[] {
+  const delivered = new Set(history.map((message) => message.client_id).filter((id): id is string => id !== null));
+
+  return outgoing.filter((item) => !delivered.has(item.clientId));
+}
