@@ -524,22 +524,26 @@
                                             "type": [
                                                 "string",
                                                 "null"
-                                            ],
-                                            "format": "date-time"
+                                            ]
                                         },
                                         "is_closed": {
                                             "type": "boolean"
                                         },
-                                        "my_vote": {},
+                                        "my_vote": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
                                         "can_vote": {
                                             "type": "boolean"
                                         },
                                         "results_visible": {
-                                            "type": "string"
+                                            "type": "boolean"
                                         },
                                         "total_votes": {
                                             "type": [
-                                                "string",
+                                                "integer",
                                                 "null"
                                             ]
                                         },
@@ -549,36 +553,52 @@
                                                 "type": "object",
                                                 "properties": {
                                                     "id": {
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "integer"
-                                                            },
-                                                            {}
-                                                        ]
+                                                        "type": "integer"
                                                     },
                                                     "label": {
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "string"
-                                                            },
-                                                            {}
-                                                        ]
+                                                        "type": "string"
                                                     },
                                                     "sort_order": {
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "integer"
+                                                        "type": "integer"
+                                                    },
+                                                    "votes_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "voters": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "username": {
+                                                                    "type": "string"
+                                                                },
+                                                                "avatar": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                }
                                                             },
-                                                            {}
-                                                        ]
+                                                            "required": [
+                                                                "id",
+                                                                "name",
+                                                                "username",
+                                                                "avatar"
+                                                            ]
+                                                        }
                                                     }
                                                 },
                                                 "required": [
                                                     "id",
                                                     "label",
                                                     "sort_order"
-                                                ],
-                                                "additionalProperties": {}
+                                                ]
                                             }
                                         }
                                     },
@@ -1348,29 +1368,22 @@
                                                 "type": "object",
                                                 "properties": {
                                                     "id": {
-                                                        "type": [
-                                                            "integer",
-                                                            "string"
-                                                        ]
+                                                        "type": "integer"
                                                     },
                                                     "label": {
                                                         "type": "string"
                                                     },
                                                     "sort_order": {
-                                                        "type": [
-                                                            "integer",
-                                                            "string"
-                                                        ]
+                                                        "type": "integer"
                                                     },
                                                     "my_checked": {
                                                         "type": "boolean"
                                                     },
                                                     "checked_count": {
-                                                        "type": "string"
+                                                        "type": "integer"
                                                     },
                                                     "total_participants": {
-                                                        "type": "integer",
-                                                        "minimum": 0
+                                                        "type": "integer"
                                                     }
                                                 },
                                                 "required": [
@@ -1634,8 +1647,63 @@
                                     "properties": {
                                         "data": {
                                             "type": "array",
-                                            "description": "Chronological order for display.",
-                                            "items": {}
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "event_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "client_id": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "body": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "user": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            },
+                                                            "username": {
+                                                                "type": "string"
+                                                            },
+                                                            "avatar": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
+                                                            }
+                                                        },
+                                                        "required": [
+                                                            "id",
+                                                            "name",
+                                                            "username",
+                                                            "avatar"
+                                                        ]
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "event_id",
+                                                    "client_id",
+                                                    "body",
+                                                    "created_at",
+                                                    "user"
+                                                ]
+                                            }
                                         },
                                         "has_more": {
                                             "type": "boolean"
@@ -1696,7 +1764,61 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "string"
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "event_id": {
+                                            "type": "integer"
+                                        },
+                                        "client_id": {
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ]
+                                        },
+                                        "body": {
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "type": "string"
+                                        },
+                                        "user": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                },
+                                                "avatar": {
+                                                    "type": [
+                                                        "string",
+                                                        "null"
+                                                    ]
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "name",
+                                                "username",
+                                                "avatar"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "id",
+                                        "event_id",
+                                        "client_id",
+                                        "body",
+                                        "created_at",
+                                        "user"
+                                    ]
                                 }
                             }
                         }
@@ -1757,7 +1879,10 @@
                                                         "type": "string"
                                                     },
                                                     "avatar": {
-                                                        "type": "null"
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
                                                     },
                                                     "role": {
                                                         "anyOf": [
@@ -1868,8 +1993,7 @@
                                                         "type": "string"
                                                     },
                                                     "starts_at": {
-                                                        "type": "string",
-                                                        "format": "date-time"
+                                                        "type": "string"
                                                     },
                                                     "timezone": {
                                                         "type": "string"
@@ -1884,11 +2008,33 @@
                                                         ]
                                                     },
                                                     "participants_count": {
-                                                        "type": "string"
+                                                        "type": "integer"
                                                     },
                                                     "activities": {
                                                         "type": "array",
-                                                        "items": {}
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "key": {
+                                                                    "type": "string"
+                                                                },
+                                                                "icon": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "id",
+                                                                "key",
+                                                                "icon",
+                                                                "name"
+                                                            ]
+                                                        }
                                                     }
                                                 },
                                                 "required": [
@@ -2221,7 +2367,10 @@
                                                         "type": "string"
                                                     },
                                                     "avatar": {
-                                                        "type": "null"
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
                                                     },
                                                     "role": {
                                                         "$ref": "#/components/schemas/GroupRole"
@@ -2230,8 +2379,7 @@
                                                         "type": [
                                                             "string",
                                                             "null"
-                                                        ],
-                                                        "format": "date-time"
+                                                        ]
                                                     }
                                                 },
                                                 "required": [
@@ -2281,6 +2429,18 @@
                                 "null"
                             ],
                             "maxLength": 100
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Paginated listings read the page number themselves; declared so the API spec documents it.",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1
                         }
                     },
                     {
@@ -2582,22 +2742,26 @@
                                                         "type": [
                                                             "string",
                                                             "null"
-                                                        ],
-                                                        "format": "date-time"
+                                                        ]
                                                     },
                                                     "is_closed": {
                                                         "type": "boolean"
                                                     },
-                                                    "my_vote": {},
+                                                    "my_vote": {
+                                                        "type": [
+                                                            "integer",
+                                                            "null"
+                                                        ]
+                                                    },
                                                     "can_vote": {
                                                         "type": "boolean"
                                                     },
                                                     "results_visible": {
-                                                        "type": "string"
+                                                        "type": "boolean"
                                                     },
                                                     "total_votes": {
                                                         "type": [
-                                                            "string",
+                                                            "integer",
                                                             "null"
                                                         ]
                                                     },
@@ -2607,36 +2771,52 @@
                                                             "type": "object",
                                                             "properties": {
                                                                 "id": {
-                                                                    "anyOf": [
-                                                                        {
-                                                                            "type": "integer"
-                                                                        },
-                                                                        {}
-                                                                    ]
+                                                                    "type": "integer"
                                                                 },
                                                                 "label": {
-                                                                    "anyOf": [
-                                                                        {
-                                                                            "type": "string"
-                                                                        },
-                                                                        {}
-                                                                    ]
+                                                                    "type": "string"
                                                                 },
                                                                 "sort_order": {
-                                                                    "anyOf": [
-                                                                        {
-                                                                            "type": "integer"
+                                                                    "type": "integer"
+                                                                },
+                                                                "votes_count": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "voters": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "object",
+                                                                        "properties": {
+                                                                            "id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "username": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "avatar": {
+                                                                                "type": [
+                                                                                    "string",
+                                                                                    "null"
+                                                                                ]
+                                                                            }
                                                                         },
-                                                                        {}
-                                                                    ]
+                                                                        "required": [
+                                                                            "id",
+                                                                            "name",
+                                                                            "username",
+                                                                            "avatar"
+                                                                        ]
+                                                                    }
                                                                 }
                                                             },
                                                             "required": [
                                                                 "id",
                                                                 "label",
                                                                 "sort_order"
-                                                            ],
-                                                            "additionalProperties": {}
+                                                            ]
                                                         }
                                                     }
                                                 },
@@ -2703,7 +2883,7 @@
                     }
                 },
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -2732,22 +2912,26 @@
                                             "type": [
                                                 "string",
                                                 "null"
-                                            ],
-                                            "format": "date-time"
+                                            ]
                                         },
                                         "is_closed": {
                                             "type": "boolean"
                                         },
-                                        "my_vote": {},
+                                        "my_vote": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
                                         "can_vote": {
                                             "type": "boolean"
                                         },
                                         "results_visible": {
-                                            "type": "string"
+                                            "type": "boolean"
                                         },
                                         "total_votes": {
                                             "type": [
-                                                "string",
+                                                "integer",
                                                 "null"
                                             ]
                                         },
@@ -2757,36 +2941,52 @@
                                                 "type": "object",
                                                 "properties": {
                                                     "id": {
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "integer"
-                                                            },
-                                                            {}
-                                                        ]
+                                                        "type": "integer"
                                                     },
                                                     "label": {
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "string"
-                                                            },
-                                                            {}
-                                                        ]
+                                                        "type": "string"
                                                     },
                                                     "sort_order": {
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "integer"
+                                                        "type": "integer"
+                                                    },
+                                                    "votes_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "voters": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "username": {
+                                                                    "type": "string"
+                                                                },
+                                                                "avatar": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                }
                                                             },
-                                                            {}
-                                                        ]
+                                                            "required": [
+                                                                "id",
+                                                                "name",
+                                                                "username",
+                                                                "avatar"
+                                                            ]
+                                                        }
                                                     }
                                                 },
                                                 "required": [
                                                     "id",
                                                     "label",
                                                     "sort_order"
-                                                ],
-                                                "additionalProperties": {}
+                                                ]
                                             }
                                         }
                                     },
@@ -2840,6 +3040,18 @@
                                 "null"
                             ],
                             "maxLength": 100
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Paginated listings read the page number themselves; declared so the API spec documents it.",
+                        "schema": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "minimum": 1
                         }
                     },
                     {
@@ -4533,9 +4745,62 @@
                     },
                     "can": {
                         "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
+                        "properties": {
+                            "view": {
+                                "type": "boolean"
+                            },
+                            "update": {
+                                "type": "boolean"
+                            },
+                            "join": {
+                                "type": "boolean"
+                            },
+                            "leave": {
+                                "type": "boolean"
+                            },
+                            "assignAssistants": {
+                                "type": "boolean"
+                            },
+                            "removeParticipants": {
+                                "type": "boolean"
+                            },
+                            "postMessage": {
+                                "type": "boolean"
+                            },
+                            "vote": {
+                                "type": "boolean"
+                            },
+                            "toggleOwnChecklist": {
+                                "type": "boolean"
+                            },
+                            "manageChecklist": {
+                                "type": "boolean"
+                            },
+                            "managePolls": {
+                                "type": "boolean"
+                            },
+                            "viewFullChecklistBreakdown": {
+                                "type": "boolean"
+                            },
+                            "moderateChat": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "view",
+                            "update",
+                            "join",
+                            "leave",
+                            "assignAssistants",
+                            "removeParticipants",
+                            "postMessage",
+                            "vote",
+                            "toggleOwnChecklist",
+                            "manageChecklist",
+                            "managePolls",
+                            "viewFullChecklistBreakdown",
+                            "moderateChat"
+                        ]
                     }
                 },
                 "required": [
@@ -4669,9 +4934,42 @@
                     },
                     "can": {
                         "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
+                        "properties": {
+                            "view": {
+                                "type": "boolean"
+                            },
+                            "viewMembers": {
+                                "type": "boolean"
+                            },
+                            "update": {
+                                "type": "boolean"
+                            },
+                            "manageMembers": {
+                                "type": "boolean"
+                            },
+                            "manageInvitations": {
+                                "type": "boolean"
+                            },
+                            "createEvent": {
+                                "type": "boolean"
+                            },
+                            "join": {
+                                "type": "boolean"
+                            },
+                            "leave": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "view",
+                            "viewMembers",
+                            "update",
+                            "manageMembers",
+                            "manageInvitations",
+                            "createEvent",
+                            "join",
+                            "leave"
+                        ]
                     }
                 },
                 "required": [

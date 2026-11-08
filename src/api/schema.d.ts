@@ -942,7 +942,19 @@ export interface components {
                 status: components["schemas"]["EventMemberStatus"];
             } | null;
             can: {
-                [key: string]: string;
+                view: boolean;
+                update: boolean;
+                join: boolean;
+                leave: boolean;
+                assignAssistants: boolean;
+                removeParticipants: boolean;
+                postMessage: boolean;
+                vote: boolean;
+                toggleOwnChecklist: boolean;
+                manageChecklist: boolean;
+                managePolls: boolean;
+                viewFullChecklistBreakdown: boolean;
+                moderateChat: boolean;
             };
         };
         /**
@@ -984,7 +996,14 @@ export interface components {
                 status: components["schemas"]["GroupMemberStatus"];
             } | null;
             can: {
-                [key: string]: string;
+                view: boolean;
+                viewMembers: boolean;
+                update: boolean;
+                manageMembers: boolean;
+                manageInvitations: boolean;
+                createEvent: boolean;
+                join: boolean;
+                leave: boolean;
             };
         };
         /**
@@ -1526,20 +1545,24 @@ export interface operations {
                         description: string | null;
                         visibility: components["schemas"]["PollVisibility"];
                         is_anonymous: boolean;
-                        /** Format: date-time */
                         closes_at: string | null;
                         is_closed: boolean;
-                        my_vote: unknown;
+                        my_vote: number | null;
                         can_vote: boolean;
-                        results_visible: string;
-                        total_votes: string | null;
-                        options: ({
-                            id: number | unknown;
-                            label: string | unknown;
-                            sort_order: number | unknown;
-                        } & {
-                            [key: string]: unknown;
-                        })[];
+                        results_visible: boolean;
+                        total_votes: number | null;
+                        options: {
+                            id: number;
+                            label: string;
+                            sort_order: number;
+                            votes_count?: number;
+                            voters?: {
+                                id: number;
+                                name: string;
+                                username: string;
+                                avatar: string | null;
+                            }[];
+                        }[];
                     };
                 };
             };
@@ -1958,11 +1981,11 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: {
-                            id: number | string;
+                            id: number;
                             label: string;
-                            sort_order: number | string;
+                            sort_order: number;
                             my_checked: boolean;
-                            checked_count: string;
+                            checked_count: number;
                             total_participants: number;
                         }[];
                     };
@@ -2070,8 +2093,19 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        /** @description Chronological order for display. */
-                        data: unknown[];
+                        data: {
+                            id: number;
+                            event_id: number;
+                            client_id: string | null;
+                            body: string;
+                            created_at: string;
+                            user: {
+                                id: number;
+                                name: string;
+                                username: string;
+                                avatar: string | null;
+                            };
+                        }[];
                         has_more: boolean;
                     };
                 };
@@ -2103,7 +2137,19 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": string;
+                    "application/json": {
+                        id: number;
+                        event_id: number;
+                        client_id: string | null;
+                        body: string;
+                        created_at: string;
+                        user: {
+                            id: number;
+                            name: string;
+                            username: string;
+                            avatar: string | null;
+                        };
+                    };
                 };
             };
             401: components["responses"]["AuthenticationException"];
@@ -2134,7 +2180,7 @@ export interface operations {
                             id: number;
                             name: string;
                             username: string;
-                            avatar: null;
+                            avatar: string | null;
                             role: components["schemas"]["EventRole"] | null;
                             status: components["schemas"]["EventMemberStatus"];
                         }[];
@@ -2170,13 +2216,17 @@ export interface operations {
                         data: {
                             id: number;
                             title: string;
-                            /** Format: date-time */
                             starts_at: string;
                             timezone: string;
                             status: components["schemas"]["EventStatus"];
                             location_name: string | null;
-                            participants_count: string;
-                            activities: unknown[];
+                            participants_count: number;
+                            activities: {
+                                id: number;
+                                key: string;
+                                icon: string;
+                                name: string;
+                            }[];
                         }[];
                         has_more: boolean;
                     };
@@ -2316,9 +2366,8 @@ export interface operations {
                             id: number;
                             name: string;
                             username: string;
-                            avatar: null;
+                            avatar: string | null;
                             role: components["schemas"]["GroupRole"];
-                            /** Format: date-time */
                             joined_at: string | null;
                         }[];
                     };
@@ -2333,6 +2382,8 @@ export interface operations {
         parameters: {
             query?: {
                 q?: string | null;
+                /** @description Paginated listings read the page number themselves; declared so the API spec documents it. */
+                page?: number | null;
                 "activities[]"?: string[] | null;
             };
             header?: never;
@@ -2457,20 +2508,24 @@ export interface operations {
                             description: string | null;
                             visibility: components["schemas"]["PollVisibility"];
                             is_anonymous: boolean;
-                            /** Format: date-time */
                             closes_at: string | null;
                             is_closed: boolean;
-                            my_vote: unknown;
+                            my_vote: number | null;
                             can_vote: boolean;
-                            results_visible: string;
-                            total_votes: string | null;
-                            options: ({
-                                id: number | unknown;
-                                label: string | unknown;
-                                sort_order: number | unknown;
-                            } & {
-                                [key: string]: unknown;
-                            })[];
+                            results_visible: boolean;
+                            total_votes: number | null;
+                            options: {
+                                id: number;
+                                label: string;
+                                sort_order: number;
+                                votes_count?: number;
+                                voters?: {
+                                    id: number;
+                                    name: string;
+                                    username: string;
+                                    avatar: string | null;
+                                }[];
+                            }[];
                         }[];
                     };
                 };
@@ -2496,7 +2551,7 @@ export interface operations {
             };
         };
         responses: {
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2507,20 +2562,24 @@ export interface operations {
                         description: string | null;
                         visibility: components["schemas"]["PollVisibility"];
                         is_anonymous: boolean;
-                        /** Format: date-time */
                         closes_at: string | null;
                         is_closed: boolean;
-                        my_vote: unknown;
+                        my_vote: number | null;
                         can_vote: boolean;
-                        results_visible: string;
-                        total_votes: string | null;
-                        options: ({
-                            id: number | unknown;
-                            label: string | unknown;
-                            sort_order: number | unknown;
-                        } & {
-                            [key: string]: unknown;
-                        })[];
+                        results_visible: boolean;
+                        total_votes: number | null;
+                        options: {
+                            id: number;
+                            label: string;
+                            sort_order: number;
+                            votes_count?: number;
+                            voters?: {
+                                id: number;
+                                name: string;
+                                username: string;
+                                avatar: string | null;
+                            }[];
+                        }[];
                     };
                 };
             };
@@ -2534,6 +2593,8 @@ export interface operations {
         parameters: {
             query?: {
                 q?: string | null;
+                /** @description Paginated listings read the page number themselves; declared so the API spec documents it. */
+                page?: number | null;
                 "activities[]"?: string[] | null;
             };
             header?: never;

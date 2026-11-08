@@ -1,49 +1,25 @@
-import { TabList, TabSlot, Tabs, TabTrigger, type TabTriggerSlotProps } from 'expo-router/ui';
-import { Pressable, StyleSheet, View, type PressableProps } from 'react-native';
+import { Tabs } from 'expo-router';
+import { useColorScheme } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
 import { useI18n } from '@/i18n';
 
-/** Web tab bar: the native tabs component has no working web implementation. */
+/** Web tab bar: the native tabs component has no working web implementation, so the standard bottom tabs are used. */
 export default function AppTabs() {
   const { t } = useI18n();
+  const scheme = useColorScheme();
+  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
 
   return (
-    <Tabs>
-      <TabSlot style={{ height: '100%' }} />
-      <TabList asChild>
-        <View style={styles.bar}>
-          <ThemedView type="backgroundElement" style={styles.inner}>
-            <TabTrigger name="index" href="/" asChild>
-              <TabButton>{t('nav.groups')}</TabButton>
-            </TabTrigger>
-            <TabTrigger name="settings" href="/settings" asChild>
-              <TabButton>{t('nav.settings')}</TabButton>
-            </TabTrigger>
-          </ThemedView>
-        </View>
-      </TabList>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarStyle: { backgroundColor: colors.background, borderTopColor: colors.border },
+      }}>
+      <Tabs.Screen name="(groups)" options={{ title: t('nav.groups'), tabBarIcon: () => null }} />
+      <Tabs.Screen name="settings" options={{ title: t('nav.settings'), tabBarIcon: () => null }} />
     </Tabs>
   );
 }
-
-function TabButton({ children, isFocused, ...props }: TabTriggerSlotProps) {
-  return (
-    <Pressable {...(props as unknown as PressableProps)} accessibilityRole="tab" accessibilityState={{ selected: isFocused }} style={({ pressed }) => pressed && styles.pressed}>
-      <ThemedView type={isFocused ? 'backgroundSelected' : 'backgroundElement'} style={styles.button}>
-        <ThemedText type="small" themeColor={isFocused ? 'text' : 'textSecondary'}>
-          {children}
-        </ThemedText>
-      </ThemedView>
-    </Pressable>
-  );
-}
-
-const styles = StyleSheet.create({
-  bar: { position: 'absolute', width: '100%', padding: Spacing.three, alignItems: 'center' },
-  inner: { flexDirection: 'row', gap: Spacing.two, padding: Spacing.two, borderRadius: Spacing.five, maxWidth: MaxContentWidth },
-  button: { paddingVertical: Spacing.one, paddingHorizontal: Spacing.three, borderRadius: Spacing.three },
-  pressed: { opacity: 0.7 },
-});
