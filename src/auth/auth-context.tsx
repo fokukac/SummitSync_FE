@@ -24,6 +24,8 @@ type Auth = {
   signOut: () => Promise<void>;
   /** Re-reads the account, e.g. after the user verified their email in the browser. */
   refresh: () => Promise<void>;
+  /** Replaces the cached account with a fresher copy the server just returned (profile, avatar, two-factor...). */
+  setUser: (user: User) => void;
 };
 
 const AuthContext = createContext<Auth | null>(null);
@@ -31,7 +33,7 @@ const AuthContext = createContext<Auth | null>(null);
 const deviceName = () => `${Device.deviceName ?? Device.modelName ?? Platform.OS} (${Platform.OS})`;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { locale } = useI18n();
+  const { locale, setLocale } = useI18n();
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
@@ -46,8 +48,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (data) {
       setUser(data.data);
+      // The account's language is authoritative (the server localizes emails and error messages with it).
+      setLocale(data.data.locale);
     }
-  }, []);
+  }, [setLocale]);
 
   // Declared first so the language is set before the bootstrap request below goes out.
   useEffect(() => {
@@ -130,8 +134,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
 
       refresh: loadUser,
+      setUser,
     }),
-    [ready, user, accept, clear, loadUser],
+    [ready, user, accept, clear, loadUser, setUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

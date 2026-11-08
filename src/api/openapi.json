@@ -1249,13 +1249,17 @@
                                         "data": {
                                             "type": "object",
                                             "properties": {
-                                                "secret": {},
+                                                "secret": {
+                                                    "type": "string"
+                                                },
                                                 "otpauth_url": {
                                                     "type": "string"
                                                 },
                                                 "recovery_codes": {
                                                     "type": "array",
-                                                    "items": {}
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
                                                 }
                                             },
                                             "required": [
@@ -3619,7 +3623,9 @@
                                             "properties": {
                                                 "recovery_codes": {
                                                     "type": "array",
-                                                    "items": {}
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
                                                 }
                                             },
                                             "required": [
