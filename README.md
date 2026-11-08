@@ -19,6 +19,7 @@ Demo login (backend `DemoSeeder`): `alice@example.test` / `password`.
 | Command | What it does |
 | --- | --- |
 | `npm run check` | lint + type check + tests (what CI runs) |
+| `npm run format` | Prettier (CI checks it; generated files are ignored) |
 | `npm run sync:backend` | re-export the OpenAPI spec, regenerate `src/api/schema.d.ts`, copy the website's translation catalogs |
 | `npm run build:web` | static web build into `dist/` |
 
@@ -43,7 +44,7 @@ Always add packages with `npx expo install <pkg>` (it picks the SDK-compatible v
 ## Roadmap
 
 1. Foundation: auth, i18n, API client, CI. 2. Read paths (done): my groups and discover, group page (events, members),
-   event page (overview, chat history, checklist, polls, participants). 3. Write paths (in progress): done - join/leave group and event, chat sending (retry-safe `client_id`, failed messages can be retried), optimistic checklist toggle, poll voting; settings (profile, photo, email change, password, two-factor with QR and recovery codes, language, account deletion); chat report, block and unblock ("..." menu on messages, Settings > Blocked people), moderator delete; to do - create/edit forms (group, event, poll, checklist items), invitations. 4. Chat realtime (Reverb) and offline queue. 5. Native polish, Play Store release. 6. Web parity and cutover.
+   event page (overview, chat history, checklist, polls, participants). 3. Write paths (in progress): done - join/leave group and event, chat sending (retry-safe `client_id`, failed messages can be retried), optimistic checklist toggle, poll voting; settings (profile, photo, email change, password, two-factor with QR and recovery codes, language, account deletion); chat report, block and unblock ("..." menu on messages, Settings > Blocked people), moderator delete; forms (create/edit group with logo, create/edit event with place search, new poll and close poll, checklist add/delete, invite links, assistants). Date fields are plain text (`YYYY-MM-DD HH:mm`) for now; native date pickers are a polish item. 4. Chat realtime (Reverb) and offline queue. 5. Native polish, Play Store release. 6. Web parity and cutover.
 
 ## Dev notes
 

@@ -100,7 +100,11 @@ function DetailsSection() {
       <TextField label={t('auth.username')} value={username} onChangeText={setUsername} error={form.errors.username} autoCapitalize="none" />
       {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
       <Button title={t('common.save')} onPress={() => void save()} loading={form.busy} />
-      {saved ? <ThemedText type="small" themeColor="textSecondary">{t('common.saveChanges')} ✓</ThemedText> : null}
+      {saved ? (
+        <ThemedText type="small" themeColor="textSecondary">
+          {t('common.saveChanges')} ✓
+        </ThemedText>
+      ) : null}
     </View>
   );
 }
@@ -147,8 +151,22 @@ function EmailSection() {
         </>
       ) : (
         <>
-          <TextField label={t('settings.email.new')} value={email} onChangeText={setEmail} error={form.errors.email} keyboardType="email-address" autoCapitalize="none" />
-          <TextField label={t('settings.email.password')} value={password} onChangeText={setPassword} error={form.errors.current_password} secureTextEntry autoComplete="current-password" />
+          <TextField
+            label={t('settings.email.new')}
+            value={email}
+            onChangeText={setEmail}
+            error={form.errors.email}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextField
+            label={t('settings.email.password')}
+            value={password}
+            onChangeText={setPassword}
+            error={form.errors.current_password}
+            secureTextEntry
+            autoComplete="current-password"
+          />
           {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
           <Button title={t('settings.email.send')} onPress={() => void request()} loading={form.busy} />
         </>

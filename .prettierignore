@@ -1,0 +1,4 @@
+src/api/schema.d.ts
+src/api/openapi.json
+src/i18n/locales
+dist

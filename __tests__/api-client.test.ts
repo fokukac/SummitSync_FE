@@ -31,8 +31,7 @@ describe('api middleware', () => {
     globalThis.fetch = originalFetch;
   });
 
-  const jsonResponse = (status: number, body: unknown) =>
-    new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
+  const jsonResponse = (status: number, body: unknown) => new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 
   it('sends the bearer token, language and JSON accept header', async () => {
     session.token = 'secret';

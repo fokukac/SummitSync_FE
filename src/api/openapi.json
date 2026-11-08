@@ -692,22 +692,26 @@
                                             "type": [
                                                 "string",
                                                 "null"
-                                            ],
-                                            "format": "date-time"
+                                            ]
                                         },
                                         "is_closed": {
                                             "type": "boolean"
                                         },
-                                        "my_vote": {},
+                                        "my_vote": {
+                                            "type": [
+                                                "integer",
+                                                "null"
+                                            ]
+                                        },
                                         "can_vote": {
                                             "type": "boolean"
                                         },
                                         "results_visible": {
-                                            "type": "string"
+                                            "type": "boolean"
                                         },
                                         "total_votes": {
                                             "type": [
-                                                "string",
+                                                "integer",
                                                 "null"
                                             ]
                                         },
@@ -717,36 +721,52 @@
                                                 "type": "object",
                                                 "properties": {
                                                     "id": {
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "integer"
-                                                            },
-                                                            {}
-                                                        ]
+                                                        "type": "integer"
                                                     },
                                                     "label": {
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "string"
-                                                            },
-                                                            {}
-                                                        ]
+                                                        "type": "string"
                                                     },
                                                     "sort_order": {
-                                                        "anyOf": [
-                                                            {
-                                                                "type": "integer"
+                                                        "type": "integer"
+                                                    },
+                                                    "votes_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "voters": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "username": {
+                                                                    "type": "string"
+                                                                },
+                                                                "avatar": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                }
                                                             },
-                                                            {}
-                                                        ]
+                                                            "required": [
+                                                                "id",
+                                                                "name",
+                                                                "username",
+                                                                "avatar"
+                                                            ]
+                                                        }
                                                     }
                                                 },
                                                 "required": [
                                                     "id",
                                                     "label",
                                                     "sort_order"
-                                                ],
-                                                "additionalProperties": {}
+                                                ]
                                             }
                                         }
                                     },
@@ -4197,7 +4217,29 @@
                                     "properties": {
                                         "activities": {
                                             "type": "array",
-                                            "items": {}
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "key": {
+                                                        "type": "string"
+                                                    },
+                                                    "icon": {
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "key",
+                                                    "icon",
+                                                    "name"
+                                                ]
+                                            }
                                         },
                                         "locales": {
                                             "type": "array",
@@ -4218,8 +4260,10 @@
                                             }
                                         },
                                         "features": {
-                                            "type": "array",
-                                            "items": {}
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "boolean"
+                                            }
                                         }
                                     },
                                     "required": [
@@ -4716,6 +4760,13 @@
                             "logo"
                         ]
                     },
+                    "status_options": {
+                        "type": "array",
+                        "description": "The statuses this event may be set to: its current one plus the allowed transitions.",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
                     "participants_count": {
                         "type": "integer",
                         "minimum": 0
@@ -4811,6 +4862,7 @@
                     "latitude",
                     "longitude",
                     "status",
+                    "status_options",
                     "participants_count",
                     "membership",
                     "can"

@@ -7,8 +7,7 @@ import type { paths } from '@/api/schema';
  * The Android emulator reaches the host machine as 10.0.2.2; everything else uses localhost.
  * Set `EXPO_PUBLIC_API_URL` (e.g. https://summitsync.example) for real builds.
  */
-export const API_URL =
-  process.env.EXPO_PUBLIC_API_URL ?? (Platform.OS === 'android' ? 'http://10.0.2.2' : 'http://localhost');
+export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? (Platform.OS === 'android' ? 'http://10.0.2.2' : 'http://localhost');
 
 type Session = {
   token: string | null;

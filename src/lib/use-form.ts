@@ -22,7 +22,7 @@ export function useFormState() {
       if (!result.response.ok) {
         const fields = validationErrors(result.error);
         setErrors(fields);
-        setMessage(Object.keys(fields).length === 0 ? errorMessage(result.error) ?? '' : undefined);
+        setMessage(Object.keys(fields).length === 0 ? (errorMessage(result.error) ?? '') : undefined);
 
         return undefined;
       }

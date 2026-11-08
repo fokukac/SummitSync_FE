@@ -17,7 +17,8 @@ export default function AppTabs() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: { backgroundColor: colors.background, borderTopColor: colors.border },
-      }}>
+      }}
+    >
       <Tabs.Screen name="(groups)" options={{ title: t('nav.groups'), tabBarIcon: () => null }} />
       <Tabs.Screen name="settings" options={{ title: t('nav.settings'), tabBarIcon: () => null }} />
     </Tabs>

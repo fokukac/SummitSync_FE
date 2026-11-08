@@ -181,4 +181,6 @@ export default {
     'chat.block.description':
         'Nu îi vei mai vedea mesajele din chat. O poți debloca din setări.',
     'chat.block.failed': 'Persoana nu a putut fi blocată.',
+    'events.form.dateHint': 'Format: 2026-11-08 07:00',
+    'events.form.searchPlace': 'Caută un loc',
 };

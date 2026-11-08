@@ -25,7 +25,8 @@ export function ActionMenu({ visible, actions, onClose }: { visible: boolean; ac
                 onClose();
                 action.onPress();
               }}
-              style={({ pressed }) => [styles.item, { opacity: pressed ? 0.6 : 1 }]}>
+              style={({ pressed }) => [styles.item, { opacity: pressed ? 0.6 : 1 }]}
+            >
               <ThemedText type="smallBold" style={action.destructive ? { color: theme.danger } : undefined}>
                 {action.label}
               </ThemedText>

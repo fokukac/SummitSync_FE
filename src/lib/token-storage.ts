@@ -9,7 +9,7 @@ const KEY = 'summitsync.token';
  */
 export const tokenStorage = {
   async get(): Promise<string | null> {
-    return Platform.OS === 'web' ? globalThis.localStorage?.getItem(KEY) ?? null : SecureStore.getItemAsync(KEY);
+    return Platform.OS === 'web' ? (globalThis.localStorage?.getItem(KEY) ?? null) : SecureStore.getItemAsync(KEY);
   },
 
   async set(token: string): Promise<void> {

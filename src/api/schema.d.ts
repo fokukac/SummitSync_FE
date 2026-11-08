@@ -936,6 +936,8 @@ export interface components {
                 slug: string;
                 logo: string | null;
             };
+            /** @description The statuses this event may be set to: its current one plus the allowed transitions. */
+            status_options: string[];
             participants_count: number;
             membership: {
                 role: components["schemas"]["EventRole"];
@@ -1597,20 +1599,24 @@ export interface operations {
                         description: string | null;
                         visibility: components["schemas"]["PollVisibility"];
                         is_anonymous: boolean;
-                        /** Format: date-time */
                         closes_at: string | null;
                         is_closed: boolean;
-                        my_vote: unknown;
+                        my_vote: number | null;
                         can_vote: boolean;
-                        results_visible: string;
-                        total_votes: string | null;
-                        options: ({
-                            id: number | unknown;
-                            label: string | unknown;
-                            sort_order: number | unknown;
-                        } & {
-                            [key: string]: unknown;
-                        })[];
+                        results_visible: boolean;
+                        total_votes: number | null;
+                        options: {
+                            id: number;
+                            label: string;
+                            sort_order: number;
+                            votes_count?: number;
+                            voters?: {
+                                id: number;
+                                name: string;
+                                username: string;
+                                avatar: string | null;
+                            }[];
+                        }[];
                     };
                 };
             };
@@ -3143,12 +3149,19 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        activities: unknown[];
+                        activities: {
+                            id: number;
+                            key: string;
+                            icon: string;
+                            name: string;
+                        }[];
                         locales: {
                             value: string;
                             label: string;
                         }[];
-                        features: unknown[];
+                        features: {
+                            [key: string]: boolean;
+                        };
                     };
                 };
             };

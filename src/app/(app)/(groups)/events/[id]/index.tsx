@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { Stack, useLocalSearchParams } from 'expo-router';
+import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { RefreshControl, View } from 'react-native';
 
 import { api, unwrap } from '@/api/client';
+import { Button } from '@/components/form';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
 import { Chip, QueryState, Segmented } from '@/components/ui';
@@ -70,13 +71,22 @@ export default function EventScreen() {
                 </ThemedText>
                 {data.description ? <ThemedText>{data.description}</ThemedText> : null}
                 <EventMembershipActions eventId={eventId} can={data.can} />
+                {data.can.update ? (
+                  <Button
+                    variant="plain"
+                    title={t('events.edit')}
+                    onPress={() => router.push({ pathname: '/events/[id]/edit', params: { id: String(eventId) } })}
+                  />
+                ) : null}
                 {!canSeeInside ? <ThemedText themeColor="textSecondary">{t('events.joinToSee')}</ThemedText> : null}
               </View>
             ) : null}
             {tab === 'chat' && canSeeInside ? <ChatTab eventId={eventId} canPost={data.can.postMessage} canModerate={data.can.moderateChat} /> : null}
-            {tab === 'checklist' && canSeeInside ? <ChecklistTab eventId={eventId} canToggle={data.can.toggleOwnChecklist} /> : null}
-            {tab === 'polls' && canSeeInside ? <PollsTab eventId={eventId} /> : null}
-            {tab === 'members' && canSeeInside ? <ParticipantsTab eventId={eventId} /> : null}
+            {tab === 'checklist' && canSeeInside ? (
+              <ChecklistTab eventId={eventId} canToggle={data.can.toggleOwnChecklist} canManage={data.can.manageChecklist} />
+            ) : null}
+            {tab === 'polls' && canSeeInside ? <PollsTab eventId={eventId} canManage={data.can.managePolls} /> : null}
+            {tab === 'members' && canSeeInside ? <ParticipantsTab eventId={eventId} canAssign={data.can.assignAssistants} /> : null}
           </>
         ) : null}
       </QueryState>
