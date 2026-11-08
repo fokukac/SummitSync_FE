@@ -2012,17 +2012,17 @@ export interface operations {
             };
         };
         responses: {
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": {
-                        id: number | string;
+                        id: number;
                         label: string;
-                        sort_order: number | string;
+                        sort_order: number;
                         my_checked: boolean;
-                        checked_count: string;
+                        checked_count: number;
                         total_participants: number;
                     };
                 };
@@ -3234,11 +3234,11 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        id: number | string;
+                        id: number;
                         label: string;
-                        sort_order: number | string;
+                        sort_order: number;
                         my_checked: boolean;
-                        checked_count: string;
+                        checked_count: number;
                         total_participants: number;
                     };
                 };
