@@ -1443,7 +1443,7 @@
                     }
                 },
                 "responses": {
-                    "201": {
+                    "200": {
                         "description": "",
                         "content": {
                             "application/json": {
@@ -1451,29 +1451,22 @@
                                     "type": "object",
                                     "properties": {
                                         "id": {
-                                            "type": [
-                                                "integer",
-                                                "string"
-                                            ]
+                                            "type": "integer"
                                         },
                                         "label": {
                                             "type": "string"
                                         },
                                         "sort_order": {
-                                            "type": [
-                                                "integer",
-                                                "string"
-                                            ]
+                                            "type": "integer"
                                         },
                                         "my_checked": {
                                             "type": "boolean"
                                         },
                                         "checked_count": {
-                                            "type": "string"
+                                            "type": "integer"
                                         },
                                         "total_participants": {
-                                            "type": "integer",
-                                            "minimum": 0
+                                            "type": "integer"
                                         }
                                     },
                                     "required": [
@@ -4391,29 +4384,22 @@
                                     "type": "object",
                                     "properties": {
                                         "id": {
-                                            "type": [
-                                                "integer",
-                                                "string"
-                                            ]
+                                            "type": "integer"
                                         },
                                         "label": {
                                             "type": "string"
                                         },
                                         "sort_order": {
-                                            "type": [
-                                                "integer",
-                                                "string"
-                                            ]
+                                            "type": "integer"
                                         },
                                         "my_checked": {
                                             "type": "boolean"
                                         },
                                         "checked_count": {
-                                            "type": "string"
+                                            "type": "integer"
                                         },
                                         "total_participants": {
-                                            "type": "integer",
-                                            "minimum": 0
+                                            "type": "integer"
                                         }
                                     },
                                     "required": [

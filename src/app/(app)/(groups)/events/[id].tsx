@@ -9,6 +9,7 @@ import { ThemedText } from '@/components/themed-text';
 import { Chip, QueryState, Segmented } from '@/components/ui';
 import { ChatTab } from '@/features/event/chat-tab';
 import { ChecklistTab } from '@/features/event/checklist-tab';
+import { EventMembershipActions } from '@/features/membership-actions';
 import { ParticipantsTab } from '@/features/event/participants-tab';
 import { PollsTab } from '@/features/event/polls-tab';
 import { useI18n } from '@/i18n';
@@ -68,11 +69,12 @@ export default function EventScreen() {
                   {data.group?.name}
                 </ThemedText>
                 {data.description ? <ThemedText>{data.description}</ThemedText> : null}
+                <EventMembershipActions eventId={eventId} can={data.can} />
                 {!canSeeInside ? <ThemedText themeColor="textSecondary">{t('events.joinToSee')}</ThemedText> : null}
               </View>
             ) : null}
-            {tab === 'chat' && canSeeInside ? <ChatTab eventId={eventId} /> : null}
-            {tab === 'checklist' && canSeeInside ? <ChecklistTab eventId={eventId} /> : null}
+            {tab === 'chat' && canSeeInside ? <ChatTab eventId={eventId} canPost={data.can.postMessage} /> : null}
+            {tab === 'checklist' && canSeeInside ? <ChecklistTab eventId={eventId} canToggle={data.can.toggleOwnChecklist} /> : null}
             {tab === 'polls' && canSeeInside ? <PollsTab eventId={eventId} /> : null}
             {tab === 'members' && canSeeInside ? <ParticipantsTab eventId={eventId} /> : null}
           </>

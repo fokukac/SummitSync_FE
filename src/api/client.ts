@@ -78,3 +78,12 @@ export async function unwrap<T>(request: PromiseLike<Result<T>>): Promise<T> {
 
   return data;
 }
+
+/** For endpoints that answer 204 No Content: success means "no error", there is no body to return. */
+export async function unwrapVoid(request: PromiseLike<{ error?: unknown; response: Response }>): Promise<void> {
+  const { error, response } = await request;
+
+  if (!response.ok) {
+    throw new ApiError(response.status, error);
+  }
+}

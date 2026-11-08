@@ -7,6 +7,7 @@ import { api, unwrap } from '@/api/client';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar, Card, Chip, QueryState, Segmented } from '@/components/ui';
+import { GroupMembershipActions } from '@/features/membership-actions';
 import { useI18n } from '@/i18n';
 import { formatShortDateTime } from '@/lib/format';
 
@@ -59,6 +60,8 @@ export default function GroupScreen() {
                 ))}
               </View>
             ) : null}
+
+            <GroupMembershipActions slug={slug} can={data.can} />
 
             {canSeeInside ? (
               <>
