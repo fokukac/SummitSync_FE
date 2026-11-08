@@ -87,3 +87,12 @@ export async function unwrapVoid(request: PromiseLike<{ error?: unknown; respons
     throw new ApiError(response.status, error);
   }
 }
+
+/**
+ * Options for a DELETE that carries a JSON body (account deletion, turning two-factor off). Scramble documents
+ * no request body for DELETE operations (it lists the fields as query parameters instead), so the generated types
+ * forbid a body; the server reads it from the JSON body, which keeps passwords out of URLs.
+ */
+export function deleteBody(body: Record<string, string>): never {
+  return { body, bodySerializer: (value: unknown) => JSON.stringify(value) } as never;
+}

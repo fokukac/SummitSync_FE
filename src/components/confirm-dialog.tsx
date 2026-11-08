@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/form';
@@ -6,10 +7,10 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useI18n } from '@/i18n';
 
-type Props = { visible: boolean; title: string; description?: string; confirmLabel: string; onConfirm: () => void; onCancel: () => void };
+type Props = { visible: boolean; title: string; description?: string; confirmLabel: string; onConfirm: () => void; onCancel: () => void; loading?: boolean; children?: ReactNode };
 
 /** One confirmation dialog for every destructive action, on all platforms (never `window.confirm`). */
-export function ConfirmDialog({ visible, title, description, confirmLabel, onConfirm, onCancel }: Props) {
+export function ConfirmDialog({ visible, title, description, confirmLabel, onConfirm, onCancel, loading, children }: Props) {
   const { t } = useI18n();
 
   return (
@@ -19,9 +20,10 @@ export function ConfirmDialog({ visible, title, description, confirmLabel, onCon
           <ThemedView style={styles.dialog}>
             <ThemedText type="smallBold">{title}</ThemedText>
             {description ? <ThemedText type="small" themeColor="textSecondary">{description}</ThemedText> : null}
+            {children}
             <View style={styles.actions}>
               <Button variant="plain" title={t('common.cancel')} onPress={onCancel} />
-              <Button title={confirmLabel} onPress={onConfirm} />
+              <Button title={confirmLabel} onPress={onConfirm} loading={loading} />
             </View>
           </ThemedView>
         </Pressable>

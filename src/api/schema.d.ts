@@ -1902,9 +1902,9 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: {
-                            secret: unknown;
+                            secret: string;
                             otpauth_url: string;
-                            recovery_codes: unknown[];
+                            recovery_codes: string[];
                         };
                     };
                 };
@@ -2838,7 +2838,7 @@ export interface operations {
                 content: {
                     "application/json": {
                         data: {
-                            recovery_codes: unknown[];
+                            recovery_codes: string[];
                         };
                     };
                 };
