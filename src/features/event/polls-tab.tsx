@@ -132,7 +132,7 @@ function PollCard({ eventId, poll, canManage }: { eventId: number; poll: Poll; c
               <View
                 style={{
                   height: 6,
-                  borderRadius: 3,
+                  borderRadius: 2,
                   backgroundColor: theme.backgroundSelected,
                 }}
               >
@@ -140,7 +140,7 @@ function PollCard({ eventId, poll, canManage }: { eventId: number; poll: Poll; c
                   style={{
                     width: `${Math.round(share * 100)}%`,
                     height: 6,
-                    borderRadius: 3,
+                    borderRadius: 2,
                     backgroundColor: theme.primary,
                   }}
                 />

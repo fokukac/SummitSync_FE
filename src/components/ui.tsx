@@ -1,9 +1,11 @@
 import { Image } from 'expo-image';
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import Svg, { Ellipse, G } from 'react-native-svg';
 
 import { API_URL } from '@/api/client';
 import { Button } from '@/components/form';
+import { Icon, type IconName } from '@/components/icon';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useShape, useTheme } from '@/hooks/use-theme';
@@ -52,6 +54,127 @@ export function TagLine({ tags }: { tags: string[] }) {
     >
       {tags.join(' · ')}
     </ThemedText>
+  );
+}
+
+/** A label sitting on the hero image (status, activity). */
+export function Pill({ label, accent = false }: { label: string; accent?: boolean }) {
+  const { colors, shape, definition } = useAppTheme();
+  // On the orange hero of Social Sport an orange pill would vanish, so the accent pill is ink there.
+  const accentBg = definition.id === 'social' ? colors.text : colors.primary;
+  const accentFg = definition.id === 'social' ? colors.background : colors.onPrimary;
+
+  return (
+    <View
+      style={{
+        backgroundColor: accent ? accentBg : colors.backgroundElement,
+        borderRadius: shape.radiusSmall,
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+      }}
+    >
+      <ThemedText type="smallBold" style={{ fontSize: 12.5, lineHeight: 18, color: accent ? accentFg : colors.text }}>
+        {label}
+      </ThemedText>
+    </View>
+  );
+}
+
+/** Contour-line banner (the app's one illustration); `children` are pills laid along the bottom edge. */
+export function Hero({ children }: { children?: ReactNode }) {
+  const { colors, shape, definition } = useAppTheme();
+  const lines = definition.id === 'social' ? '#FFFFFF' : colors.primary;
+  const fill = definition.id === 'social' ? colors.primary : colors.backgroundSelected;
+
+  return (
+    <View style={{ height: 150, borderRadius: shape.radius, overflow: 'hidden', backgroundColor: fill, justifyContent: 'flex-end' }}>
+      <Svg
+        style={StyleSheet.absoluteFill}
+        viewBox="0 0 346 150"
+        preserveAspectRatio="xMidYMid slice"
+        fill="none"
+        stroke={lines}
+        strokeOpacity={0.35}
+        strokeWidth={1.3}
+      >
+        <G transform="rotate(-16 230 60)">
+          {[
+            [40, 22],
+            [72, 40],
+            [106, 58],
+            [142, 78],
+            [180, 98],
+            [222, 120],
+          ].map(([rx, ry]) => (
+            <Ellipse key={rx} cx={230} cy={60} rx={rx} ry={ry} />
+          ))}
+        </G>
+      </Svg>
+      <View style={{ flexDirection: 'row', gap: 8, padding: 14 }}>{children}</View>
+    </View>
+  );
+}
+
+/** One fact with its icon (when, where, who). */
+export function Fact({ icon, children, secondary = false }: { icon: IconName; children: ReactNode; secondary?: boolean }) {
+  const theme = useTheme();
+
+  return (
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+      <Icon name={icon} size={22} color={theme.primary} />
+      <ThemedText style={{ flex: 1 }} themeColor={secondary ? 'textSecondary' : 'text'}>
+        {children}
+      </ThemedText>
+    </View>
+  );
+}
+
+/** Quoted text with a rule on the left instead of a box around it. */
+export function Note({ title, children }: { title?: string; children: ReactNode }) {
+  const theme = useTheme();
+
+  return (
+    <View style={{ borderLeftWidth: 3, borderLeftColor: theme.primary, paddingLeft: 14, gap: 4 }}>
+      {title ? (
+        <ThemedText type="small" themeColor="textSecondary">
+          {title}
+        </ThemedText>
+      ) : null}
+      {children}
+    </View>
+  );
+}
+
+/** Thin progress bar, `value` between 0 and 1. */
+export function ProgressBar({ value }: { value: number }) {
+  const theme = useTheme();
+
+  return (
+    <View style={{ height: 6, borderRadius: 3, backgroundColor: theme.border, overflow: 'hidden' }}>
+      <View style={{ width: `${Math.round(Math.min(1, Math.max(0, value)) * 100)}%`, height: 6, backgroundColor: theme.primary }} />
+    </View>
+  );
+}
+
+/** A square checkbox in the theme's small radius. */
+export function Checkbox({ checked }: { checked: boolean }) {
+  const { colors, shape } = useAppTheme();
+
+  return (
+    <View
+      style={{
+        width: 26,
+        height: 26,
+        borderRadius: shape.radiusSmall + 1,
+        borderWidth: 2,
+        borderColor: checked ? colors.primary : colors.textSecondary,
+        backgroundColor: checked ? colors.primary : 'transparent',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {checked ? <Icon name="check" size={18} color={colors.onPrimary} /> : null}
+    </View>
   );
 }
 

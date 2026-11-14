@@ -11,7 +11,9 @@ import { Avatar, Card, QueryState } from '@/components/ui';
 import { MessageActions } from '@/features/event/message-actions';
 import { useLiveChat } from '@/features/event/use-live-chat';
 import { appendMessage, pendingOutgoing, type Message, type MessagesPage } from '@/features/event/messages-cache';
-import { useTheme } from '@/hooks/use-theme';
+import { useShape, useTheme } from '@/hooks/use-theme';
+import { useAppTheme } from '@/theme/theme-provider';
+import { familyFor } from '@/constants/themes';
 import { useI18n } from '@/i18n';
 import { formatShortDateTime } from '@/lib/format';
 
@@ -23,6 +25,8 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
   const { user } = useAuth();
   const { t, intlLocale } = useI18n();
   const theme = useTheme();
+  const shape = useShape();
+  const { body: bodyFont } = useAppTheme();
   const queryClient = useQueryClient();
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const queryKey = ['event', eventId, 'messages'];
@@ -146,7 +150,8 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
               borderColor: theme.border,
               backgroundColor: theme.backgroundElement,
               borderWidth: 1,
-              borderRadius: 8,
+              borderRadius: shape.radius,
+              fontFamily: familyFor(bodyFont, 500),
               padding: 12,
               minHeight: 48,
               fontSize: 16,

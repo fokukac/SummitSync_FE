@@ -11,7 +11,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { removeMessage, type Message } from '@/features/event/messages-cache';
-import { useTheme } from '@/hooks/use-theme';
+import { useShape, useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 
 type Reason = components['schemas']['MessageReportReason'];
@@ -124,6 +124,7 @@ export function MessageActions({ eventId, message, own, canModerate }: Props) {
 function ReportDialog({ visible, eventId, messageId, onClose }: { visible: boolean; eventId: number; messageId: number; onClose: () => void }) {
   const { t } = useI18n();
   const theme = useTheme();
+  const shape = useShape();
   const [reason, setReason] = useState<Reason>('spam');
   const [details, setDetails] = useState('');
 
@@ -148,7 +149,7 @@ function ReportDialog({ visible, eventId, messageId, onClose }: { visible: boole
     <Modal transparent visible={visible} animationType="fade" onRequestClose={close}>
       <Pressable style={styles.backdrop} onPress={close} accessibilityLabel={t('common.cancel')}>
         <Pressable accessibilityRole="alert">
-          <ThemedView style={styles.dialog}>
+          <ThemedView type="backgroundElement" style={[styles.dialog, { borderRadius: shape.radius }]}>
             <ThemedText type="smallBold">{t('chat.report.title')}</ThemedText>
             {report.isSuccess ? (
               <>
@@ -181,7 +182,7 @@ function ReportDialog({ visible, eventId, messageId, onClose }: { visible: boole
                     borderColor: theme.border,
                     backgroundColor: theme.backgroundElement,
                     borderWidth: 1,
-                    borderRadius: 8,
+                    borderRadius: shape.radius,
                     padding: 12,
                     minHeight: 64,
                     fontSize: 16,
@@ -213,7 +214,6 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 420,
     padding: Spacing.four,
-    borderRadius: Spacing.three,
     gap: Spacing.three,
   },
   actions: {
