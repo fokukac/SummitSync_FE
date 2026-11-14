@@ -14,6 +14,7 @@ export default {
     'common.loading': 'Betöltés…',
     'common.somethingWrong': 'Valami hiba történt.',
     'common.notFound': 'Ezt nem találjuk. Lehet, hogy törölték.',
+    'common.forbidden': 'Ehhez nincs hozzáférésed.',
     'common.showPassword': 'Jelszó megjelenítése',
     'common.hidePassword': 'Jelszó elrejtése',
     'common.orContinueWith': 'Vagy folytassa ezzel:',

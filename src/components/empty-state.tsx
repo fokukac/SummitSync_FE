@@ -41,7 +41,12 @@ export function EmptyState({ icon, text, action, compact = false, tone = 'neutra
       <ThemedText themeColor="textSecondary" style={{ textAlign: 'center', maxWidth: 320 }}>
         {text}
       </ThemedText>
-      {action ? <Button compact title={action.title} onPress={action.onPress} loading={action.loading} /> : null}
+      {action ? (
+        // The compact button aligns itself to the start of its container, so it gets a container that is only as wide as it is.
+        <View style={{ alignItems: 'center' }}>
+          <Button compact title={action.title} onPress={action.onPress} loading={action.loading} />
+        </View>
+      ) : null}
     </View>
   );
 }
