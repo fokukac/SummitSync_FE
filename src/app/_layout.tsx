@@ -1,15 +1,14 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, type ReactNode } from 'react';
 
 import { AuthProvider, useAuth } from '@/auth/auth-context';
 import { I18nProvider } from '@/i18n';
+import { persistOptions, queryClient } from '@/lib/query-client';
 import { AppThemeProvider, useAppTheme } from '@/theme/theme-provider';
 
 SplashScreen.preventAutoHideAsync();
-
-const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 1, staleTime: 30_000 } } });
 
 export default function RootLayout() {
   return (
@@ -17,9 +16,9 @@ export default function RootLayout() {
       <NavigationTheme>
         <I18nProvider>
           <AuthProvider>
-            <QueryClientProvider client={queryClient}>
+            <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions} onSuccess={() => void queryClient.resumePausedMutations()}>
               <Routes />
-            </QueryClientProvider>
+            </PersistQueryClientProvider>
           </AuthProvider>
         </I18nProvider>
       </NavigationTheme>

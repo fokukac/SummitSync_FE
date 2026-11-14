@@ -44,4 +44,13 @@ export default {
     'common.view.label': 'Afișare',
     'common.view.tiles': 'Vedere în plăci',
     'common.view.list': 'Vedere listă',
+    'offline.banner': 'Ești offline. Vezi datele salvate.',
+    'offline.pending': {
+        one: '{count} modificare se va sincroniza când revii online',
+        few: '{count} modificări se vor sincroniza când revii online',
+        other: '{count} de modificări se vor sincroniza când revii online',
+    },
+    'offline.queued': 'Așteaptă să fie trimis',
+    'offline.noData':
+        'Nu există încă date salvate. Conectează-te la internet pentru a încărca.',
 };

@@ -18,16 +18,10 @@ import { familyFor } from '@/constants/themes';
 import { useShape, useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 import { useAppTheme } from '@/theme/theme-provider';
+import { CHECKLIST_TOGGLE, checklistKey, type ChecklistItem, type ChecklistToggleVars } from '@/features/event/offline-mutations';
 import { moveItem } from '@/lib/reorder';
 
-type Item = {
-  id: number;
-  label: string;
-  sort_order: number;
-  my_checked: boolean;
-  checked_count: number;
-  total_participants: number;
-};
+type Item = ChecklistItem;
 
 /** The server only ever sends the viewer's own state plus anonymous counts (privacy invariant), so that is all there is to show. */
 export function ChecklistTab({
@@ -46,7 +40,7 @@ export function ChecklistTab({
   const shape = useShape();
   const { body } = useAppTheme();
   const queryClient = useQueryClient();
-  const queryKey = ['event', eventId, 'checklist'];
+  const queryKey = checklistKey(eventId);
   const [error, setError] = useState(false);
   const [label, setLabel] = useState('');
   const [deleting, setDeleting] = useState<Item>();
@@ -75,41 +69,9 @@ export function ChecklistTab({
     queryFn: async () => (await unwrap(api.GET('/v1/events/{event}/checklist/suggestions', { params: { path: { event: eventId } } }))).data,
   });
 
-  const toggle = useMutation({
-    mutationFn: ({ item, checked }: { item: Item; checked: boolean }) =>
-      unwrap(
-        api.PUT('/v1/events/{event}/checklist/{checklistItem}/state', {
-          params: { path: { event: eventId, checklistItem: item.id } },
-          body: { is_checked: checked },
-        }),
-      ),
-
-    // Optimistic: the box flips and the count follows at once; the server's answer replaces it, a failure rolls it back.
-    onMutate: async ({ item, checked }) => {
-      setError(false);
-      await queryClient.cancelQueries({ queryKey });
-      const before = queryClient.getQueryData<Item[]>(queryKey);
-
-      queryClient.setQueryData<Item[]>(queryKey, (items) =>
-        items?.map((existing) =>
-          existing.id === item.id
-            ? {
-                ...existing,
-                my_checked: checked,
-                checked_count: existing.checked_count + (checked ? 1 : -1),
-              }
-            : existing,
-        ),
-      );
-
-      return { before };
-    },
-    onError: (_error, _vars, context) => {
-      setError(true);
-      queryClient.setQueryData(queryKey, context?.before);
-    },
-    onSuccess: (saved) => queryClient.setQueryData<Item[]>(queryKey, (items) => items?.map((existing) => (existing.id === saved.id ? saved : existing))),
-  });
+  // Ticks go through the keyed mutation (offline-mutations.ts): the box flips at once and, offline, the tick waits for a
+  // connection. One scope per event keeps a tick followed by an untick in order.
+  const toggle = useMutation<unknown, Error, ChecklistToggleVars>({ mutationKey: CHECKLIST_TOGGLE, scope: { id: `checklist-${eventId}` } });
 
   const add = useMutation({
     mutationFn: () =>
@@ -187,7 +149,10 @@ export function ChecklistTab({
                 disabled: !canToggle,
               }}
               disabled={!canToggle}
-              onPress={() => toggle.mutate({ item, checked: !item.my_checked })}
+              onPress={() => {
+                setError(false);
+                toggle.mutate({ eventId, itemId: item.id, checked: !item.my_checked }, { onError: () => setError(true) });
+              }}
             >
               <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
                 <Checkbox checked={item.my_checked} />

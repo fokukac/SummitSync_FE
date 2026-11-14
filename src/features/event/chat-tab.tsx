@@ -1,25 +1,24 @@
-import { type InfiniteData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { type Mutation, useInfiniteQuery, useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
 import { randomUUID } from 'expo-crypto';
 import { useState } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 
 import { api, ApiError, unwrap } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
-import { Button, ErrorText } from '@/components/form';
+import { Button } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar } from '@/components/avatar';
 import { Card } from '@/components/card';
 import { QueryState } from '@/components/query-state';
 import { MessageActions } from '@/features/event/message-actions';
 import { useLiveChat } from '@/features/event/use-live-chat';
-import { appendMessage, pendingOutgoing, type Message, type MessagesPage } from '@/features/event/messages-cache';
+import { pendingOutgoing } from '@/features/event/messages-cache';
+import { CHAT_SEND, messagesKey, type ChatSendVars } from '@/features/event/offline-mutations';
 import { useShape, useTheme } from '@/hooks/use-theme';
 import { useAppTheme } from '@/theme/theme-provider';
 import { familyFor } from '@/constants/themes';
 import { useI18n } from '@/i18n';
 import { formatShortDateTime } from '@/lib/format';
-
-type Outgoing = { clientId: string; body: string; failed: boolean };
 
 const MAX_LENGTH = 2000;
 
@@ -31,11 +30,9 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
   const { body: bodyFont } = useAppTheme();
   const queryClient = useQueryClient();
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const queryKey = ['event', eventId, 'messages'];
+  const queryKey = messagesKey(eventId);
 
   const [draft, setDraft] = useState('');
-  const [outgoing, setOutgoing] = useState<Outgoing[]>([]);
-  const [error, setError] = useState<string>();
 
   const messages = useInfiniteQuery({
     queryKey,
@@ -55,28 +52,31 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
 
   const history = [...(messages.data?.pages ?? [])].reverse().flatMap((page) => page.data);
 
+  // Sent through the keyed mutation (offline-mutations.ts): with no connection it waits, survives a restart and is sent
+  // when the app is back online. The same client id on every attempt means the server stores it once however often.
+  const sender = useMutation<unknown, Error, ChatSendVars>({ mutationKey: CHAT_SEND, scope: { id: `chat-${eventId}` } });
+  const queued = useMutationState({
+    filters: {
+      mutationKey: CHAT_SEND,
+      predicate: (mutation) => (mutation.state.variables as ChatSendVars).eventId === eventId && mutation.state.status !== 'success',
+    },
+    select: (mutation) => mutation as Mutation<unknown, Error, ChatSendVars>,
+  });
+  const outgoing = queued.map((mutation) => ({
+    clientId: mutation.state.variables!.clientId,
+    body: mutation.state.variables!.body,
+    failed: mutation.state.status === 'error',
+    waiting: mutation.state.isPaused,
+    tooFast: mutation.state.error instanceof ApiError && mutation.state.error.status === 429,
+    mutation,
+  }));
+
   // A message can come back over the live channel before its send request returns: show it once.
   const pending = pendingOutgoing(outgoing, history);
 
-  async function deliver(item: Outgoing) {
-    setError(undefined);
-    setOutgoing((current) => current.map((entry) => (entry.clientId === item.clientId ? { ...entry, failed: false } : entry)));
-
-    try {
-      // The same client id on every attempt: the server stores the message once however often this is retried.
-      const message = await unwrap(
-        api.POST('/v1/events/{event}/messages', {
-          params: { path: { event: eventId } },
-          body: { body: item.body, client_id: item.clientId },
-        }),
-      );
-
-      queryClient.setQueryData<InfiniteData<MessagesPage, number | undefined>>(queryKey, (data) => appendMessage(data, message as Message));
-      setOutgoing((current) => current.filter((entry) => entry.clientId !== item.clientId));
-    } catch (caught) {
-      setOutgoing((current) => current.map((entry) => (entry.clientId === item.clientId ? { ...entry, failed: true } : entry)));
-      setError(t(caught instanceof ApiError && caught.status === 429 ? 'chat.tooFast' : 'chat.sendFailed'));
-    }
+  function retry(item: (typeof outgoing)[number]) {
+    queryClient.getMutationCache().remove(item.mutation);
+    sender.mutate(item.mutation.state.variables!);
   }
 
   function send() {
@@ -87,9 +87,7 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
     }
 
     setDraft('');
-    const item = { clientId: randomUUID(), body, failed: false };
-    setOutgoing((current) => [...current, item]);
-    void deliver(item);
+    sender.mutate({ eventId, clientId: randomUUID(), body });
   }
 
   return (
@@ -126,11 +124,15 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
             <Card key={item.clientId}>
               <ThemedText themeColor="textSecondary">{item.body}</ThemedText>
               {item.failed ? (
-                <Pressable accessibilityRole="button" onPress={() => void deliver(item)}>
+                <Pressable accessibilityRole="button" onPress={() => retry(item)}>
                   <ThemedText type="smallBold" style={{ color: theme.danger }}>
-                    {t('chat.sendFailed')} {t('common.tryAgain')}
+                    {t(item.tooFast ? 'chat.tooFast' : 'chat.sendFailed')} {t('common.tryAgain')}
                   </ThemedText>
                 </Pressable>
+              ) : item.waiting ? (
+                <ThemedText type="small" themeColor="textSecondary">
+                  {t('offline.queued')}
+                </ThemedText>
               ) : null}
             </Card>
           ))}
@@ -159,7 +161,6 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
               fontSize: 16,
             }}
           />
-          {error ? <ErrorText>{error}</ErrorText> : null}
           <Button title={t('chat.send')} onPress={send} />
         </View>
       ) : (
