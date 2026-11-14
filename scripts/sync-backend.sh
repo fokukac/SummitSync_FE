@@ -3,6 +3,7 @@
 #   1. the OpenAPI document (Scramble export) -> src/api/openapi.json, then generated types -> src/api/schema.d.ts
 #   2. the website's translation catalogs     -> src/i18n/locales
 #   3. the website's activity icons           -> src/constants/activity-icons.ts
+#   4. the website's chat emoji set           -> src/constants/emojis.ts
 # Usage: npm run sync:backend   (BACKEND_DIR defaults to ../be, the Sail checkout; SAIL_CONTAINER to its container)
 set -euo pipefail
 
@@ -19,5 +20,8 @@ cp -r "$BACKEND_DIR/resources/js/i18n/locales" src/i18n/locales
 
 node scripts/generate-activity-icons.mjs "$BACKEND_DIR"
 npx prettier --write src/constants/activity-icons.ts > /dev/null
+
+node scripts/generate-emojis.mjs "$BACKEND_DIR"
+npx prettier --write src/constants/emojis.ts > /dev/null
 
 echo "Synced. Review the diff, then run: npm run typecheck"

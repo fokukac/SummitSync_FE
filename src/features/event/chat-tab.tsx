@@ -1,17 +1,7 @@
 import { type Mutation, useInfiniteQuery, useMutation, useMutationState, useQueryClient } from '@tanstack/react-query';
 import { randomUUID } from 'expo-crypto';
 import { useRef, useState } from 'react';
-import {
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-  Platform,
-  Pressable,
-  ScrollView,
-  type ScrollViewInstance,
-  TextInput,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { type NativeScrollEvent, type NativeSyntheticEvent, Pressable, ScrollView, type ScrollViewInstance, useWindowDimensions, View } from 'react-native';
 
 import { api, ApiError, unwrap } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
@@ -19,18 +9,18 @@ import { Button } from '@/components/form';
 import { Icon } from '@/components/icon';
 import { QueryState } from '@/components/query-state';
 import { ThemedText } from '@/components/themed-text';
-import { familyFor } from '@/constants/themes';
 import { ChatMessage } from '@/features/event/chat-message';
+import { ChatComposer } from '@/features/event/chat-composer';
 import { ChatPeople } from '@/features/event/chat-people';
 import { MessageActions } from '@/features/event/message-actions';
+import { isEmojiOnly } from '@/lib/emojis';
 import { jumpTarget, type Message, type MessagesPage, pendingOutgoing, peopleOf, startsBlock } from '@/features/event/messages-cache';
 import { CHAT_SEND, messagesKey, type ChatSendVars } from '@/features/event/offline-mutations';
 import { useLiveChat } from '@/features/event/use-live-chat';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { useShape, useTheme } from '@/hooks/use-theme';
+import { useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 import { formatShortDateTime } from '@/lib/format';
-import { useAppTheme } from '@/theme/theme-provider';
 
 const MAX_LENGTH = 2000;
 const PEOPLE_WIDTH = 240;
@@ -44,8 +34,6 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
   const { user } = useAuth();
   const { t, intlLocale } = useI18n();
   const theme = useTheme();
-  const shape = useShape();
-  const { body: bodyFont } = useAppTheme();
   const queryClient = useQueryClient();
   const wide = useBreakpoint() !== 'compact';
   const { height: windowHeight } = useWindowDimensions();
@@ -54,7 +42,6 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
 
   const [draft, setDraft] = useState('');
   const [peopleOpen, setPeopleOpen] = useState(false);
-  const [composerFocused, setComposerFocused] = useState(false);
   const [cursors, setCursors] = useState<Record<number, number>>({});
   const [highlightId, setHighlightId] = useState<number>();
   const highlightTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -212,6 +199,7 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
               header={startsBlock(message, history[index - 1])}
               own={message.user.id === user?.id}
               highlighted={highlightId === message.id}
+              big={isEmojiOnly(message.body)}
               actions={<MessageActions eventId={eventId} message={message} own={message.user.id === user?.id} canModerate={canModerate} />}
             />
           </View>
@@ -245,54 +233,7 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
   );
 
   const composer = canPost ? (
-    // One control: the field and the send button share a single outline, with the button as the field's own right end.
-    <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        marginTop: 12,
-        borderWidth: 1,
-        borderColor: composerFocused ? theme.primary : theme.border,
-        borderRadius: shape.radius,
-        backgroundColor: theme.backgroundElement,
-        overflow: 'hidden',
-      }}
-    >
-      <TextInput
-        value={draft}
-        onChangeText={setDraft}
-        onFocus={() => setComposerFocused(true)}
-        onBlur={() => setComposerFocused(false)}
-        placeholder={t('chat.placeholder')}
-        placeholderTextColor={theme.textSecondary}
-        accessibilityLabel={t('chat.placeholder')}
-        multiline
-        maxLength={MAX_LENGTH}
-        style={[
-          {
-            flex: 1,
-            color: theme.text,
-            fontFamily: familyFor(bodyFont, 500),
-            paddingHorizontal: 14,
-            paddingVertical: 12,
-            minHeight: 46,
-            maxHeight: 140,
-            fontSize: 16,
-          },
-          // The outline is drawn by the container (it also shows focus); the browser's own would double it.
-          Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : null,
-        ]}
-      />
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={t('chat.send')}
-        accessibilityState={{ disabled: draft.trim() === '' }}
-        onPress={send}
-        style={{ width: 46, height: 46, alignItems: 'center', justifyContent: 'center', backgroundColor: draft.trim() === '' ? 'transparent' : theme.primary }}
-      >
-        <Icon name="send" size={20} color={draft.trim() === '' ? theme.textSecondary : theme.onPrimary} />
-      </Pressable>
-    </View>
+    <ChatComposer draft={draft} onChange={setDraft} onSend={send} maxLength={MAX_LENGTH} />
   ) : (
     <ThemedText type="small" themeColor="textSecondary" style={{ marginTop: 12 }}>
       {t('chat.onlyParticipants')}
