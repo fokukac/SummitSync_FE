@@ -1,6 +1,7 @@
 import { Pressable, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
+import { Segmented } from '@/components/ui';
 import { THEME_IDS, THEMES } from '@/constants/themes';
 import { useI18n } from '@/i18n';
 import { useAppTheme, type Appearance } from '@/theme/theme-provider';
@@ -56,20 +57,8 @@ export function ThemePicker() {
       </View>
 
       <ThemedText type="smallBold">{t('nav.appearance')}</ThemedText>
-      <View style={{ flexDirection: 'row', gap: 16, opacity: definition.darkOnly ? 0.4 : 1 }}>
-        {APPEARANCES.map((value) => (
-          <Pressable
-            key={value}
-            accessibilityRole="button"
-            disabled={definition.darkOnly}
-            accessibilityState={{ selected: appearance === value }}
-            onPress={() => setAppearance(value)}
-          >
-            <ThemedText type={appearance === value ? 'smallBold' : 'small'} themeColor={appearance === value ? 'primary' : 'textSecondary'}>
-              {t(`appearance.${value}`)}
-            </ThemedText>
-          </Pressable>
-        ))}
+      <View style={{ opacity: definition.darkOnly ? 0.4 : 1 }} pointerEvents={definition.darkOnly ? 'none' : 'auto'}>
+        <Segmented value={appearance} onChange={setAppearance} options={APPEARANCES.map((value) => ({ value, label: t(`appearance.${value}`) }))} />
       </View>
     </View>
   );
