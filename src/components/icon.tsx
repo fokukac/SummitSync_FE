@@ -27,6 +27,8 @@ export type IconName =
   | 'alert'
   | 'lock'
   | 'smile'
+  | 'eye'
+  | 'eyeOff'
   | 'ban'
   | 'offline';
 
@@ -101,6 +103,15 @@ export function Icon({ name, size = 24, color }: { name: IconName; size?: number
           <Circle cx={12} cy={12} r={10} />
           <Path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" />
         </>
+      ) : null}
+      {name === 'eye' ? (
+        <>
+          <Path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z" />
+          <Circle cx={12} cy={12} r={3} />
+        </>
+      ) : null}
+      {name === 'eyeOff' ? (
+        <Path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-10-8-10-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 8 10 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22" />
       ) : null}
       {name === 'lock' ? <Path d="M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4" /> : null}
       {name === 'alert' ? (
