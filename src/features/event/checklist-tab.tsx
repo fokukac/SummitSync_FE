@@ -9,6 +9,7 @@ import { ThemedText } from '@/components/themed-text';
 import { Card, QueryState } from '@/components/ui';
 import { ChecklistBreakdown } from '@/features/event/checklist-breakdown';
 import { useI18n } from '@/i18n';
+import { moveItem } from '@/lib/reorder';
 
 type Item = {
   id: number;
@@ -112,6 +113,28 @@ export function ChecklistTab({
     onSettled: () => setDeleting(undefined),
   });
 
+  /** The whole new order goes to the server (it must list every item); the list moves at once and rolls back on a failure. */
+  const reorder = useMutation({
+    mutationFn: (ordered: Item[]) =>
+      unwrapVoid(api.PUT('/v1/events/{event}/checklist/order', { params: { path: { event: eventId } }, body: { ids: ordered.map((item) => item.id) } })),
+    onMutate: async (ordered) => {
+      await queryClient.cancelQueries({ queryKey });
+      const before = queryClient.getQueryData<Item[]>(queryKey);
+      queryClient.setQueryData<Item[]>(queryKey, ordered);
+
+      return { before };
+    },
+    onError: (_error, _ordered, context) => queryClient.setQueryData(queryKey, context?.before),
+  });
+
+  const move = (index: number, offset: -1 | 1) => {
+    const items = checklist.data;
+
+    if (items && !reorder.isPending) {
+      reorder.mutate(moveItem(items, index, offset));
+    }
+  };
+
   return (
     <View style={{ gap: 12 }}>
       {canManage ? (
@@ -130,7 +153,8 @@ export function ChecklistTab({
       ) : null}
       <QueryState query={checklist} empty={checklist.data?.length === 0} emptyText={t('events.tabs.checklist')}>
         {error ? <ErrorText>{t('checklist.saveFailed')}</ErrorText> : null}
-        {checklist.data?.map((item) => (
+        {reorder.isError ? <ErrorText>{t('checklist.reorderFailed')}</ErrorText> : null}
+        {checklist.data?.map((item, index) => (
           <Card key={item.id}>
             <Pressable
               accessibilityRole="checkbox"
@@ -159,7 +183,29 @@ export function ChecklistTab({
                 </ThemedText>
               </View>
             </Pressable>
-            {canManage ? <Button variant="plain" title={t('checklist.deleteItem')} onPress={() => setDeleting(item)} /> : null}
+            {canManage ? (
+              <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('checklist.moveUp')}
+                  disabled={index === 0}
+                  onPress={() => move(index, -1)}
+                  style={{ padding: 8, opacity: index === 0 ? 0.3 : 1 }}
+                >
+                  <ThemedText>↑</ThemedText>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel={t('checklist.moveDown')}
+                  disabled={index === (checklist.data?.length ?? 0) - 1}
+                  onPress={() => move(index, 1)}
+                  style={{ padding: 8, opacity: index === (checklist.data?.length ?? 0) - 1 ? 0.3 : 1 }}
+                >
+                  <ThemedText>↓</ThemedText>
+                </Pressable>
+                <Button variant="plain" title={t('checklist.deleteItem')} onPress={() => setDeleting(item)} />
+              </View>
+            ) : null}
           </Card>
         ))}
       </QueryState>
