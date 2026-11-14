@@ -57,7 +57,7 @@ export default function EventScreen() {
                 <Hero>
                   <Pill label={t(`events.status.${data.status}`)} />
                   {(data.activities ?? []).slice(0, 2).map((activity) => (
-                    <Pill key={activity.id} label={activity.name} accent />
+                    <Pill key={activity.id} label={activity.name} icon={activity.icon} accent />
                   ))}
                 </Hero>
                 <ThemedText type="subtitle" style={{ fontSize: 28, lineHeight: 34 }}>

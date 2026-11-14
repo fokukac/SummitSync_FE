@@ -1,5 +1,6 @@
 import { Pressable, View } from 'react-native';
 
+import { ActivityIcon } from '@/components/activity-icon';
 import { ThemedText } from '@/components/themed-text';
 import { useShape, useTheme } from '@/hooks/use-theme';
 import { useMeta } from '@/features/forms/use-meta';
@@ -36,8 +37,12 @@ export function ActivityPicker({ value, onChange, error }: { value: number[]; on
                 paddingVertical: 6,
                 borderRadius: shape.radiusSmall,
                 backgroundColor: selected ? theme.primary : theme.backgroundSelected,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
               }}
             >
+              <ActivityIcon icon={activity.icon} size={16} color={selected ? theme.onPrimary : theme.text} />
               <ThemedText type="small" style={{ color: selected ? theme.onPrimary : theme.text }}>
                 {activity.name}
               </ThemedText>
