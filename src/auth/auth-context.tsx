@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Device from 'expo-device';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Platform } from 'react-native';
@@ -5,8 +6,11 @@ import { Platform } from 'react-native';
 import { api, errorMessage, session, validationErrors } from '@/api/client';
 import type { components } from '@/api/schema';
 import { useI18n } from '@/i18n';
+import { clearOfflineData } from '@/lib/query-client';
 import { disconnectRealtime } from '@/lib/realtime';
 import { tokenStorage } from '@/lib/token-storage';
+
+const USER_KEY = 'summitsync.user';
 
 export type User = components['schemas']['UserResource'];
 
@@ -40,18 +44,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     session.token = null;
     disconnectRealtime();
     setUser(null);
-    await tokenStorage.clear();
+    await Promise.all([tokenStorage.clear(), AsyncStorage.removeItem(USER_KEY), clearOfflineData()]);
   }, []);
 
-  const loadUser = useCallback(async () => {
-    const { data } = await api.GET('/v1/me');
+  const loadUser = useCallback(
+    async (offlineFallback = false) => {
+      try {
+        const { data } = await api.GET('/v1/me');
 
-    if (data) {
-      setUser(data.data);
-      // The account's language is authoritative (the server localizes emails and error messages with it).
-      setLocale(data.data.locale);
+        if (data) {
+          setUser(data.data);
+          // The account's language is authoritative (the server localizes emails and error messages with it).
+          setLocale(data.data.locale);
+        }
+      } catch (error) {
+        // No connection at app start: carry on with the account as last seen, so saved data opens offline. Never at
+        // sign-in (that must reach the server) nor for a refresh the user asked for.
+        const saved = offlineFallback ? await AsyncStorage.getItem(USER_KEY) : null;
+
+        if (saved === null) {
+          throw error;
+        }
+
+        setUser(JSON.parse(saved) as User);
+      }
+    },
+    [setLocale],
+  );
+
+  // Keeps the offline copy of the account current (profile edits, avatar, verification...).
+  useEffect(() => {
+    if (user !== null) {
+      void AsyncStorage.setItem(USER_KEY, JSON.stringify(user));
     }
-  }, [setLocale]);
+  }, [user]);
 
   // Declared first so the language is set before the bootstrap request below goes out.
   useEffect(() => {
@@ -66,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (stored !== null) {
         session.token = stored;
-        await loadUser();
+        await loadUser(true).catch(() => undefined);
       }
 
       setReady(true);
@@ -81,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async (token: string): Promise<AuthResult> => {
       session.token = token;
       await tokenStorage.set(token);
+      await AsyncStorage.removeItem(USER_KEY);
       await loadUser();
 
       return { status: 'ok' };
@@ -133,7 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await clear();
       },
 
-      refresh: loadUser,
+      refresh: () => loadUser(),
       setUser,
     }),
     [ready, user, accept, clear, loadUser, setUser],

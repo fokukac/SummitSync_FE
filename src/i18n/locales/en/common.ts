@@ -46,4 +46,12 @@ export default {
     'common.view.label': 'Layout',
     'common.view.tiles': 'Tile view',
     'common.view.list': 'List view',
+    'offline.banner': "You're offline. Showing saved data.",
+    'offline.pending': {
+        one: '{count} change will sync when you are back online',
+        other: '{count} changes will sync when you are back online',
+    },
+    'offline.queued': 'Waiting to send',
+    'offline.noData':
+        'Nothing saved yet. Connect to the internet to load this.',
 } satisfies Record<string, Message>;

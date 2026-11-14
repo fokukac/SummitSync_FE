@@ -2,6 +2,7 @@ import type { ReactElement, ReactNode } from 'react';
 import { ScrollView, StyleSheet, View, type RefreshControlProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { OfflineBanner } from '@/components/offline-banner';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { CONTENT_WIDTH, useBreakpoint } from '@/hooks/use-breakpoint';
@@ -14,7 +15,10 @@ export function Page({ children, refreshControl }: { children: ReactNode; refres
     <ThemedView style={styles.flex}>
       <SafeAreaView style={styles.flex} edges={['top', 'left', 'right']}>
         <ScrollView refreshControl={refreshControl} contentContainerStyle={[styles.content, breakpoint === 'expanded' && styles.contentWide]}>
-          <View style={[styles.column, { maxWidth: CONTENT_WIDTH[breakpoint] }]}>{children}</View>
+          <View style={[styles.column, { maxWidth: CONTENT_WIDTH[breakpoint] }]}>
+            <OfflineBanner />
+            {children}
+          </View>
         </ScrollView>
       </SafeAreaView>
     </ThemedView>

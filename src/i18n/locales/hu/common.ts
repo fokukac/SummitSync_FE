@@ -44,4 +44,12 @@ export default {
     'common.view.label': 'Megjelenítés',
     'common.view.tiles': 'Csempenézet',
     'common.view.list': 'Listanézet',
+    'offline.banner': 'Nincs kapcsolat. Mentett adatokat látsz.',
+    'offline.pending': {
+        one: '{count} módosítás szinkronizálódik, amint újra online vagy',
+        other: '{count} módosítás szinkronizálódik, amint újra online vagy',
+    },
+    'offline.queued': 'Küldésre vár',
+    'offline.noData':
+        'Még nincs mentett adat. Csatlakozz az internethez a betöltéshez.',
 };
