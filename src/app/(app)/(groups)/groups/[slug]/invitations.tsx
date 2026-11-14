@@ -6,6 +6,7 @@ import { Platform, Share, View } from 'react-native';
 
 import { api, unwrap, unwrapVoid } from '@/api/client';
 import { ConfirmDialog } from '@/components/confirm-dialog';
+import { DateTimeField } from '@/components/date-time-field';
 import { Button, ErrorText, Screen, TextField } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Card, QueryState } from '@/components/ui';
@@ -136,14 +137,7 @@ function CreateInvitation({ slug, onCreated }: { slug: string; onCreated: () => 
         keyboardType="number-pad"
         placeholder={t('invitations.create.unlimited')}
       />
-      <TextField
-        label={t('invitations.create.expires')}
-        value={expires}
-        onChangeText={setExpires}
-        error={form.errors.expires_at}
-        placeholder="2026-12-31 18:00"
-        autoCapitalize="none"
-      />
+      <DateTimeField label={t('invitations.create.expires')} value={expires} onChange={setExpires} error={form.errors.expires_at} />
       {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
       <Button title={t('invitations.create.submit')} onPress={() => void create()} loading={form.busy} />
     </View>

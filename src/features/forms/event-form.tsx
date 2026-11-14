@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { DateTimeField } from '@/components/date-time-field';
 import { Button, ErrorText, TextField } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Segmented } from '@/components/ui';
@@ -54,25 +55,8 @@ export function EventForm({ initial, statusOptions, submitLabel, submit }: Props
         multiline
         style={{ minHeight: 88 }}
       />
-      <TextField
-        label={t('events.form.starts')}
-        value={values.startsAt}
-        onChangeText={set('startsAt')}
-        error={form.errors.starts_at}
-        placeholder="2026-11-08 07:00"
-        autoCapitalize="none"
-      />
-      <TextField
-        label={t('events.form.ends')}
-        value={values.endsAt}
-        onChangeText={set('endsAt')}
-        error={form.errors.ends_at}
-        placeholder="2026-11-08 12:00"
-        autoCapitalize="none"
-      />
-      <ThemedText type="small" themeColor="textSecondary">
-        {t('events.form.dateHint')}
-      </ThemedText>
+      <DateTimeField label={t('events.form.starts')} value={values.startsAt} onChange={set('startsAt')} error={form.errors.starts_at} required />
+      <DateTimeField label={t('events.form.ends')} value={values.endsAt} onChange={set('endsAt')} error={form.errors.ends_at} suggest={values.startsAt} />
       <TextField label={t('events.form.timezone')} value={values.timezone} onChangeText={set('timezone')} error={form.errors.timezone} autoCapitalize="none" />
       <ThemedText type="small" themeColor="textSecondary">
         {t('events.form.timezoneHint')}

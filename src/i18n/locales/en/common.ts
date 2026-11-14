@@ -8,6 +8,8 @@ export default {
     'common.tryAgain': 'Try again',
     'common.add': 'Add',
     'common.copy': 'Copy',
+    'common.clear': 'Clear',
+    'common.dateTime.choose': 'Choose date and time',
     'common.back': 'Back',
     'common.continue': 'Continue',
     'common.close': 'Close',

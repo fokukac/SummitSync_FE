@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Switch, View } from 'react-native';
 
 import { api } from '@/api/client';
+import { DateTimeField } from '@/components/date-time-field';
 import { Button, ErrorText, TextField } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Card, Segmented } from '@/components/ui';
@@ -93,14 +94,7 @@ export function PollForm({ eventId, onCreated, onCancel }: { eventId: number; on
           </ThemedText>
         </View>
       </View>
-      <TextField
-        label={t('polls.create.closes')}
-        value={closes}
-        onChangeText={setCloses}
-        error={form.errors.closes_at}
-        placeholder="2026-11-08 06:00"
-        autoCapitalize="none"
-      />
+      <DateTimeField label={t('polls.create.closes')} value={closes} onChange={setCloses} error={form.errors.closes_at} />
       {form.message !== undefined ? <ErrorText>{form.message || t('polls.create.failed')}</ErrorText> : null}
       <Button title={t('polls.create.submit')} onPress={() => void create()} loading={form.busy} />
       <Button variant="plain" title={t('common.cancel')} onPress={onCancel} />
