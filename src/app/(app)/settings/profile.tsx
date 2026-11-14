@@ -6,7 +6,7 @@ import { api } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
 import { Button, ErrorText, Screen, TextField } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar } from '@/components/ui';
+import { PhotoEditor } from '@/components/ui';
 import { useI18n } from '@/i18n';
 import { useFormState } from '@/lib/use-form';
 
@@ -60,16 +60,18 @@ function PhotoSection() {
   }
 
   return (
-    <View style={{ gap: 12, alignItems: 'flex-start' }}>
-      <Avatar name={user?.name ?? ''} uri={user?.avatar} size={88} />
-      <View style={{ flexDirection: 'row', gap: 8 }}>
-        <Button title={t(user?.avatar ? 'settings.profile.photo.change' : 'settings.profile.photo.upload')} onPress={() => void pick()} loading={photo.busy} />
-        {user?.avatar ? <Button variant="plain" title={t('settings.profile.photo.remove')} onPress={() => void remove()} /> : null}
-      </View>
-      <ThemedText type="small" themeColor="textSecondary">
-        {t('settings.profile.photo.hint')}
-      </ThemedText>
-      {photo.errors.avatar ? <ErrorText>{photo.errors.avatar}</ErrorText> : null}
+    <View style={{ gap: 8, paddingBottom: 16 }}>
+      <PhotoEditor
+        name={user?.name ?? ''}
+        uri={user?.avatar}
+        busy={photo.busy}
+        changeLabel={t(user?.avatar ? 'settings.profile.photo.change' : 'settings.profile.photo.upload')}
+        removeLabel={t('settings.profile.photo.remove')}
+        hint={t('settings.profile.photo.hint')}
+        error={photo.errors.avatar}
+        onChange={() => void pick()}
+        onRemove={() => void remove()}
+      />
       {photo.message !== undefined ? <ErrorText>{photo.message || t('common.somethingWrong')}</ErrorText> : null}
     </View>
   );

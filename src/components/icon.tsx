@@ -3,7 +3,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 import { useShape, useTheme } from '@/hooks/use-theme';
 
-export type IconName = 'groups' | 'search' | 'settings' | 'plus' | 'back' | 'clock' | 'pin' | 'check' | 'up' | 'down';
+export type IconName = 'groups' | 'search' | 'settings' | 'plus' | 'back' | 'clock' | 'pin' | 'check' | 'up' | 'down' | 'camera' | 'trash';
 
 /** Stroke icons (24px grid), drawn with the theme's text colour unless told otherwise. */
 export function Icon({ name, size = 24, color }: { name: IconName; size?: number; color?: string }) {
@@ -49,6 +49,13 @@ export function Icon({ name, size = 24, color }: { name: IconName; size?: number
       {name === 'check' ? <Path d="m5 12.5 4.5 4.5L19 7.5" /> : null}
       {name === 'up' ? <Path d="m6 15 6-6 6 6" /> : null}
       {name === 'down' ? <Path d="m6 9 6 6 6-6" /> : null}
+      {name === 'camera' ? (
+        <>
+          <Path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+          <Circle cx={12} cy={13} r={4} />
+        </>
+      ) : null}
+      {name === 'trash' ? <Path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 5v6m4-6v6" /> : null}
       {name === 'back' ? <Path d="m15 18-6-6 6-6" /> : null}
     </Svg>
   );
