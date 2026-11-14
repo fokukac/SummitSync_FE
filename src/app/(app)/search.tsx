@@ -30,12 +30,12 @@ export default function SearchScreen() {
 
   return (
     <Page>
+      <ThemedText type="subtitle">{t('nav.search')}</ThemedText>
       <TextField
         label={t('nav.search')}
         placeholder={t('search.placeholder')}
         value={input}
         onChangeText={setInput}
-        autoFocus
         autoCapitalize="none"
         autoCorrect={false}
         returnKeyType="search"
@@ -102,7 +102,9 @@ export default function SearchScreen() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={{ gap: 12 }}>
-      <ThemedText type="subtitle">{title}</ThemedText>
+      <ThemedText type="subtitle" style={{ fontSize: 22, lineHeight: 28 }}>
+        {title}
+      </ThemedText>
       {children}
     </View>
   );

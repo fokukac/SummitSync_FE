@@ -11,7 +11,6 @@ export default function GroupsStack() {
   return (
     <Stack screenOptions={options}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="search" options={{ title: t('nav.search') }} />
       <Stack.Screen name="groups/[slug]" options={{ title: t('nav.groups') }} />
       <Stack.Screen name="events/[id]" options={{ title: '' }} />
     </Stack>
