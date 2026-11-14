@@ -6,6 +6,8 @@ export default {
     'common.tryAgain': 'Încercați din nou',
     'common.add': 'Adaugă',
     'common.copy': 'Copiază',
+    'common.clear': 'Șterge',
+    'common.dateTime.choose': 'Alegeți data și ora',
     'common.back': 'Înapoi',
     'common.continue': 'Continuă',
     'common.close': 'Închide',

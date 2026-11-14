@@ -6,6 +6,8 @@ export default {
     'common.tryAgain': 'Próbálja újra',
     'common.add': 'Hozzáadás',
     'common.copy': 'Másolás',
+    'common.clear': 'Törlés',
+    'common.dateTime.choose': 'Válasszon dátumot és időt',
     'common.back': 'Vissza',
     'common.continue': 'Folytatás',
     'common.close': 'Bezárás',
