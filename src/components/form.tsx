@@ -1,51 +1,112 @@
-import type { ReactNode } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
+import { type ReactNode, useState } from 'react';
+import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { Icon, type IconName } from '@/components/icon';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { familyFor } from '@/constants/themes';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { useShape, useTheme } from '@/hooks/use-theme';
 import { useAppTheme } from '@/theme/theme-provider';
 
-/** A centered, scrollable column for forms and simple pages. */
-export function Screen({ children }: { children: ReactNode }) {
+/**
+ * A scrollable column for forms and simple pages. By default the content is centered on the screen (sign-in and other
+ * short pages); `form` pins it to the top and makes it wider, for long create/edit forms.
+ */
+export function Screen({ children, form = false }: { children: ReactNode; form?: boolean }) {
+  const breakpoint = useBreakpoint();
+
   return (
     <ThemedView style={styles.flex}>
       <SafeAreaView style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled">
-          <View style={styles.column}>{children}</View>
+        <ScrollView contentContainerStyle={[styles.screen, form && styles.screenTop]} keyboardShouldPersistTaps="handled">
+          <View style={[styles.column, form && { maxWidth: breakpoint === 'compact' ? 640 : 560, gap: Spacing.four }]}>{children}</View>
         </ScrollView>
       </SafeAreaView>
     </ThemedView>
   );
 }
 
-type FieldProps = TextInputProps & { label: string; error?: string };
+/** A set of related fields in a form: spaced out and separated from the previous set by a hairline. */
+export function FormGroup({ children, first = false }: { children: ReactNode; first?: boolean }) {
+  const theme = useTheme();
 
-export function TextField({ label, error, style, ...props }: FieldProps) {
+  return (
+    <View style={[styles.group, !first && { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: theme.border, paddingTop: Spacing.four }]}>
+      {children}
+    </View>
+  );
+}
+
+/** The label above a field: quiet and small, the same everywhere (text fields, date fields, pickers). */
+export function FieldLabel({ children }: { children: ReactNode }) {
+  return (
+    <ThemedText type="smallBold" themeColor="textSecondary" style={{ fontSize: 13 }}>
+      {children}
+    </ThemedText>
+  );
+}
+
+type FieldProps = TextInputProps & {
+  label: string;
+  error?: string;
+  /** A button inside the field's right end (search, add), sharing its outline. */
+  action?: { icon: IconName; label: string; onPress: () => void; loading?: boolean };
+};
+
+export function TextField({ label, error, style, action, onFocus, onBlur, multiline, ...props }: FieldProps) {
   const { colors: theme, shape, body } = useAppTheme();
+  const [focused, setFocused] = useState(false);
 
   return (
     <View style={styles.field}>
-      <ThemedText type="small">{label}</ThemedText>
-      <TextInput
-        accessibilityLabel={label}
-        placeholderTextColor={theme.textSecondary}
+      <FieldLabel>{label}</FieldLabel>
+      <View
         style={[
-          styles.input,
+          styles.outline,
           {
-            color: theme.text,
             borderRadius: shape.radius,
-            fontFamily: familyFor(body, 500),
-            borderColor: error ? theme.danger : theme.border,
+            borderColor: error ? theme.danger : focused ? theme.primary : theme.border,
             backgroundColor: theme.backgroundElement,
+            alignItems: multiline ? 'flex-start' : 'center',
           },
-          style,
         ]}
-        {...props}
-      />
+      >
+        <TextInput
+          accessibilityLabel={label}
+          placeholderTextColor={theme.textSecondary}
+          multiline={multiline}
+          onFocus={(event) => {
+            setFocused(true);
+            onFocus?.(event);
+          }}
+          onBlur={(event) => {
+            setFocused(false);
+            onBlur?.(event);
+          }}
+          style={[
+            styles.input,
+            { color: theme.text, fontFamily: familyFor(body, 500) },
+            // The container draws the outline (and shows focus); the browser's own ring would double it.
+            Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : null,
+            style,
+          ]}
+          {...props}
+        />
+        {action ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={action.label}
+            disabled={action.loading}
+            onPress={action.onPress}
+            style={({ pressed }) => [styles.action, { opacity: pressed || action.loading ? 0.5 : 1 }]}
+          >
+            {action.loading ? <ActivityIndicator color={theme.primary} /> : <Icon name={action.icon} size={20} color={theme.primary} />}
+          </Pressable>
+        ) : null}
+      </View>
       {error ? <ErrorText>{error}</ErrorText> : null}
     </View>
   );
@@ -100,8 +161,12 @@ export function Button({ title, onPress, loading = false, variant = 'primary', c
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   screen: { flexGrow: 1, justifyContent: 'center', padding: Spacing.four },
+  screenTop: { justifyContent: 'flex-start', paddingVertical: Spacing.five },
   column: { width: '100%', maxWidth: MaxContentWidth / 2, alignSelf: 'center', gap: Spacing.three },
+  group: { gap: Spacing.three },
   field: { gap: Spacing.one },
-  input: { borderWidth: 1, paddingHorizontal: Spacing.three, paddingVertical: Spacing.three, fontSize: 16 },
+  outline: { flexDirection: 'row', borderWidth: 1, overflow: 'hidden' },
+  input: { flex: 1, paddingHorizontal: Spacing.three, paddingVertical: 12, minHeight: 46, fontSize: 16 },
+  action: { width: 46, minHeight: 46, alignSelf: 'stretch', alignItems: 'center', justifyContent: 'center' },
   button: { minHeight: 48, alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing.three },
 });

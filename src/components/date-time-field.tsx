@@ -2,7 +2,7 @@ import NativeDateTimePicker from '@expo/ui/community/datetime-picker';
 import { useState } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 
-import { Button, ErrorText } from '@/components/form';
+import { Button, ErrorText, FieldLabel } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
 import { useShape, useTheme } from '@/hooks/use-theme';
@@ -37,7 +37,7 @@ export function DateTimeField({ label, value, onChange, error, required = false,
 
   return (
     <View style={styles.field}>
-      <ThemedText type="small">{label}</ThemedText>
+      <FieldLabel>{label}</FieldLabel>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={label}
@@ -47,7 +47,7 @@ export function DateTimeField({ label, value, onChange, error, required = false,
         <ThemedText themeColor={value ? 'text' : 'textSecondary'}>{value || t('common.dateTime.choose')}</ThemedText>
       </Pressable>
       {error ? <ErrorText>{error}</ErrorText> : null}
-      {value && !required ? <Button variant="plain" title={t('common.clear')} onPress={() => onChange('')} /> : null}
+      {value && !required ? <Button compact variant="plain" title={t('common.clear')} onPress={() => onChange('')} /> : null}
 
       {Platform.OS === 'ios' && step !== 'closed' ? (
         <>

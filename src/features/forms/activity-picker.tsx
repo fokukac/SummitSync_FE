@@ -1,6 +1,7 @@
 import { Pressable, View } from 'react-native';
 
 import { ActivityIcon } from '@/components/activity-icon';
+import { FieldLabel } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { useShape, useTheme } from '@/hooks/use-theme';
 import { useMeta } from '@/features/forms/use-meta';
@@ -21,7 +22,7 @@ export function ActivityPicker({ value, onChange, error }: { value: number[]; on
 
   return (
     <View style={{ gap: 6 }}>
-      <ThemedText type="small">{t('activities.label')}</ThemedText>
+      <FieldLabel>{t('activities.label')}</FieldLabel>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         {meta.data?.activities.map((activity) => {
           const selected = value.includes(activity.id);

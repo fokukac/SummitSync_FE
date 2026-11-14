@@ -14,7 +14,7 @@ export default function NewEventScreen() {
   const queryClient = useQueryClient();
 
   return (
-    <Screen>
+    <Screen form>
       <Stack.Screen options={{ title: t('events.create') }} />
       <ThemedText type="subtitle">{t('events.create')}</ThemedText>
       <ThemedText themeColor="textSecondary">{t('events.create.description')}</ThemedText>

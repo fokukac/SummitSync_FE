@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-import { Button, ErrorText, TextField } from '@/components/form';
+import type { components } from '@/api/schema';
+import { Button, ErrorText, FormGroup, TextField } from '@/components/form';
 import { Segmented } from '@/components/segmented';
 import { ActivityPicker } from '@/features/forms/activity-picker';
 import { useI18n } from '@/i18n';
 import { useFormState } from '@/lib/use-form';
-import type { components } from '@/api/schema';
 
 export type GroupValues = { name: string; description: string; visibility: components['schemas']['GroupVisibility']; activityIds: number[] };
 
@@ -27,33 +27,44 @@ export function GroupForm({ initial, submitLabel, submit }: Props) {
 
   return (
     <>
-      <TextField
-        label={t('groups.form.name')}
-        value={values.name}
-        onChangeText={set('name')}
-        error={form.errors.name}
-        placeholder={t('groups.form.namePlaceholder')}
-      />
-      <TextField
-        label={t('groups.form.description')}
-        value={values.description}
-        onChangeText={set('description')}
-        error={form.errors.description}
-        placeholder={t('groups.form.descriptionPlaceholder')}
-        multiline
-        style={{ minHeight: 88 }}
-      />
-      <Segmented
-        value={values.visibility}
-        onChange={set('visibility')}
-        options={[
-          { value: 'public', label: t('groups.visibility.public') },
-          { value: 'private', label: t('groups.visibility.private') },
-        ]}
-      />
-      <ActivityPicker value={values.activityIds} onChange={set('activityIds')} error={form.errors.activity_ids} />
-      {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
-      <Button title={submitLabel} loading={form.busy} onPress={() => void submit(values, form.run)} />
+      <FormGroup first>
+        <TextField
+          label={t('groups.form.name')}
+          value={values.name}
+          onChangeText={set('name')}
+          error={form.errors.name}
+          placeholder={t('groups.form.namePlaceholder')}
+        />
+        <TextField
+          label={t('groups.form.description')}
+          value={values.description}
+          onChangeText={set('description')}
+          error={form.errors.description}
+          placeholder={t('groups.form.descriptionPlaceholder')}
+          multiline
+          style={{ minHeight: 96 }}
+        />
+      </FormGroup>
+
+      <FormGroup>
+        <Segmented
+          value={values.visibility}
+          onChange={set('visibility')}
+          options={[
+            { value: 'public', label: t('groups.visibility.public') },
+            { value: 'private', label: t('groups.visibility.private') },
+          ]}
+        />
+      </FormGroup>
+
+      <FormGroup>
+        <ActivityPicker value={values.activityIds} onChange={set('activityIds')} error={form.errors.activity_ids} />
+      </FormGroup>
+
+      <FormGroup>
+        {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
+        <Button title={submitLabel} loading={form.busy} onPress={() => void submit(values, form.run)} />
+      </FormGroup>
     </>
   );
 }
