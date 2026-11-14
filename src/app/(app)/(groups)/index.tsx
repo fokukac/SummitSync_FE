@@ -4,14 +4,12 @@ import { useState } from 'react';
 import { RefreshControl, View } from 'react-native';
 
 import { api, unwrap } from '@/api/client';
-import type { components } from '@/api/schema';
 import { Button, TextField } from '@/components/form';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, Card, Chip, QueryState, Segmented } from '@/components/ui';
+import { QueryState, Segmented } from '@/components/ui';
+import { GroupCard, type GroupSummary } from '@/features/group-card';
 import { useI18n } from '@/i18n';
-
-type GroupSummary = components['schemas']['GroupSummaryResource'];
 
 export default function GroupsScreen() {
   const { t } = useI18n();
@@ -39,6 +37,7 @@ export default function GroupsScreen() {
     <Page refreshControl={<RefreshControl refreshing={active.isRefetching && !active.isPending} onRefresh={() => void active.refetch()} />}>
       <ThemedText type="subtitle">{t('nav.groups')}</ThemedText>
       <Button variant="plain" title={t('groups.create')} onPress={() => router.push('/groups/new')} />
+      <Button variant="plain" title={t('nav.search')} onPress={() => router.push('/search')} />
       <Segmented
         value={mode}
         onChange={setMode}
@@ -59,36 +58,5 @@ export default function GroupsScreen() {
         </View>
       </QueryState>
     </Page>
-  );
-}
-
-function GroupCard({ group }: { group: GroupSummary }) {
-  const { t } = useI18n();
-
-  return (
-    <Card onPress={() => router.push({ pathname: '/groups/[slug]', params: { slug: group.slug } })}>
-      <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-        <Avatar name={group.name} uri={group.logo} size={44} />
-        <View style={{ flex: 1 }}>
-          <ThemedText type="smallBold">{group.name}</ThemedText>
-          <ThemedText type="small" themeColor="textSecondary">
-            {t('groups.membersCount', { count: group.members_count })}
-            {group.visibility === 'private' ? ` · ${t('common.private')}` : ''}
-          </ThemedText>
-        </View>
-      </View>
-      {group.description ? (
-        <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
-          {group.description}
-        </ThemedText>
-      ) : null}
-      {group.activities.length > 0 ? (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-          {group.activities.map((activity) => (
-            <Chip key={activity.id} label={activity.name} />
-          ))}
-        </View>
-      ) : null}
-    </Card>
   );
 }

@@ -3096,229 +3096,151 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "anyOf": [
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "groups": {
-                                                    "type": "array",
-                                                    "items": {}
-                                                },
-                                                "events": {
-                                                    "anyOf": [
-                                                        {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "type": "object",
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "title": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "starts_at": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "timezone": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "status": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "location_name": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "participants_count": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "activities": {
-                                                                        "type": "array",
-                                                                        "items": {}
-                                                                    },
-                                                                    "group": {
-                                                                        "type": "object",
-                                                                        "properties": {
-                                                                            "name": {
-                                                                                "type": "string"
-                                                                            },
-                                                                            "slug": {
-                                                                                "type": "string"
-                                                                            }
-                                                                        },
-                                                                        "required": [
-                                                                            "name",
-                                                                            "slug"
-                                                                        ]
-                                                                    }
-                                                                },
-                                                                "required": [
-                                                                    "id",
-                                                                    "title",
-                                                                    "starts_at",
-                                                                    "timezone",
-                                                                    "status",
-                                                                    "location_name",
-                                                                    "participants_count",
-                                                                    "activities",
-                                                                    "group"
-                                                                ]
-                                                            }
-                                                        },
-                                                        {
+                                    "type": "object",
+                                    "properties": {
+                                        "groups": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/GroupSummaryResource"
+                                            }
+                                        },
+                                        "events": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "starts_at": {
+                                                        "type": "string"
+                                                    },
+                                                    "timezone": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "$ref": "#/components/schemas/EventStatus"
+                                                    },
+                                                    "location_name": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "participants_count": {
+                                                        "type": "integer"
+                                                    },
+                                                    "activities": {
+                                                        "type": "array",
+                                                        "items": {
                                                             "type": "object",
-                                                            "additionalProperties": {
-                                                                "type": "object",
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "integer"
-                                                                    },
-                                                                    "title": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "starts_at": {
-                                                                        "type": "string",
-                                                                        "format": "date-time"
-                                                                    },
-                                                                    "timezone": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "status": {
-                                                                        "$ref": "#/components/schemas/EventStatus"
-                                                                    },
-                                                                    "location_name": {
-                                                                        "type": [
-                                                                            "string",
-                                                                            "null"
-                                                                        ]
-                                                                    },
-                                                                    "participants_count": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "activities": {
-                                                                        "type": "array",
-                                                                        "items": {}
-                                                                    },
-                                                                    "group": {
-                                                                        "type": "object",
-                                                                        "properties": {
-                                                                            "name": {
-                                                                                "type": "string"
-                                                                            },
-                                                                            "slug": {
-                                                                                "type": "string"
-                                                                            }
-                                                                        },
-                                                                        "required": [
-                                                                            "name",
-                                                                            "slug"
-                                                                        ]
-                                                                    }
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer"
                                                                 },
-                                                                "required": [
-                                                                    "id",
-                                                                    "title",
-                                                                    "starts_at",
-                                                                    "timezone",
-                                                                    "status",
-                                                                    "location_name",
-                                                                    "participants_count",
-                                                                    "activities",
-                                                                    "group"
-                                                                ]
-                                                            }
+                                                                "key": {
+                                                                    "type": "string"
+                                                                },
+                                                                "icon": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "id",
+                                                                "key",
+                                                                "icon",
+                                                                "name"
+                                                            ]
                                                         }
-                                                    ]
-                                                },
-                                                "members": {
-                                                    "type": "array",
-                                                    "items": {
+                                                    },
+                                                    "group": {
                                                         "type": "object",
                                                         "properties": {
-                                                            "id": {
-                                                                "type": "integer"
-                                                            },
                                                             "name": {
                                                                 "type": "string"
                                                             },
-                                                            "username": {
+                                                            "slug": {
                                                                 "type": "string"
-                                                            },
-                                                            "avatar": {
-                                                                "type": [
-                                                                    "string",
-                                                                    "null"
-                                                                ]
-                                                            },
-                                                            "groups": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "type": "object",
-                                                                    "properties": {
-                                                                        "name": {
-                                                                            "type": "string"
-                                                                        },
-                                                                        "slug": {
-                                                                            "type": "string"
-                                                                        }
-                                                                    },
-                                                                    "required": [
-                                                                        "name",
-                                                                        "slug"
-                                                                    ]
-                                                                }
                                                             }
                                                         },
                                                         "required": [
-                                                            "id",
                                                             "name",
-                                                            "username",
-                                                            "avatar",
-                                                            "groups"
+                                                            "slug"
                                                         ]
                                                     }
-                                                }
-                                            },
-                                            "required": [
-                                                "groups",
-                                                "events",
-                                                "members"
-                                            ]
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "title",
+                                                    "starts_at",
+                                                    "timezone",
+                                                    "status",
+                                                    "location_name",
+                                                    "participants_count",
+                                                    "activities",
+                                                    "group"
+                                                ]
+                                            }
                                         },
-                                        {
-                                            "type": "object",
-                                            "properties": {
-                                                "groups": {
-                                                    "type": "array",
-                                                    "items": {
+                                        "members": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
                                                         "type": "string"
                                                     },
-                                                    "minItems": 0,
-                                                    "maxItems": 0
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "avatar": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "groups": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "slug": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "required": [
+                                                                "name",
+                                                                "slug"
+                                                            ]
+                                                        }
+                                                    }
                                                 },
-                                                "events": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string"
-                                                    },
-                                                    "minItems": 0,
-                                                    "maxItems": 0
-                                                },
-                                                "members": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "string"
-                                                    },
-                                                    "minItems": 0,
-                                                    "maxItems": 0
-                                                }
-                                            },
-                                            "required": [
-                                                "groups",
-                                                "events",
-                                                "members"
-                                            ]
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "username",
+                                                    "avatar",
+                                                    "groups"
+                                                ]
+                                            }
                                         }
+                                    },
+                                    "required": [
+                                        "groups",
+                                        "events",
+                                        "members"
                                     ]
                                 }
                             }

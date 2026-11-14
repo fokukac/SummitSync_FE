@@ -2615,37 +2615,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        groups: unknown[];
+                        groups: components["schemas"]["GroupSummaryResource"][];
                         events: {
-                            id: string;
+                            id: number;
                             title: string;
                             starts_at: string;
                             timezone: string;
-                            status: string;
-                            location_name: string;
-                            participants_count: string;
-                            activities: unknown[];
+                            status: components["schemas"]["EventStatus"];
+                            location_name: string | null;
+                            participants_count: number;
+                            activities: {
+                                id: number;
+                                key: string;
+                                icon: string;
+                                name: string;
+                            }[];
                             group: {
                                 name: string;
                                 slug: string;
                             };
-                        }[] | {
-                            [key: string]: {
-                                id: number;
-                                title: string;
-                                /** Format: date-time */
-                                starts_at: string;
-                                timezone: string;
-                                status: components["schemas"]["EventStatus"];
-                                location_name: string | null;
-                                participants_count: string;
-                                activities: unknown[];
-                                group: {
-                                    name: string;
-                                    slug: string;
-                                };
-                            };
-                        };
+                        }[];
                         members: {
                             id: number;
                             name: string;
@@ -2656,10 +2645,6 @@ export interface operations {
                                 slug: string;
                             }[];
                         }[];
-                    } | {
-                        groups: string[];
-                        events: string[];
-                        members: string[];
                     };
                 };
             };
