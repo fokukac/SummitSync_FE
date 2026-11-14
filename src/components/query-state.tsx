@@ -1,12 +1,13 @@
 import { ActivityIndicator, StyleSheet } from 'react-native';
 import { type ReactNode } from 'react';
 
-import { ApiError } from '@/api/client';
 import { EmptyState } from '@/components/empty-state';
 import type { IconName } from '@/components/icon';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
+import { goBackOr } from '@/lib/navigation';
+import { queryFailure } from '@/lib/query-failure';
 
 type QueryLike = { isPending: boolean; isError: boolean; error?: unknown; fetchStatus?: string; refetch: () => unknown };
 
@@ -38,9 +39,24 @@ export function QueryState({ query, empty, emptyText, emptyIcon = 'list', emptyA
   }
 
   if (query.isError) {
+    const failure = queryFailure(query.error);
+
     // Gone (a removed event, a stale link): trying again will not help, so say it is not there instead of offering a retry.
-    if (query.error instanceof ApiError && query.error.status === 404) {
+    if (failure === 'notFound') {
       return <EmptyState icon="alert" tone="danger" text={t('common.notFound')} compact={compact} />;
+    }
+
+    // Not allowed (a private group, an event of a group you are not in): nothing is broken, so a calm lock rather than
+    // an alarm, and a way back instead of a retry.
+    if (failure === 'forbidden') {
+      return (
+        <EmptyState
+          icon="lock"
+          text={t('common.forbidden')}
+          action={compact ? undefined : { title: t('common.back'), onPress: () => goBackOr('/') }}
+          compact={compact}
+        />
+      );
     }
 
     return (

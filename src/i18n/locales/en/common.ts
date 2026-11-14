@@ -16,6 +16,7 @@ export default {
     'common.loading': 'Loading…',
     'common.somethingWrong': 'Something went wrong.',
     'common.notFound': "We couldn't find that. It may have been removed.",
+    'common.forbidden': "You don't have access to this.",
     'common.showPassword': 'Show password',
     'common.hidePassword': 'Hide password',
     'common.orContinueWith': 'Or continue with',

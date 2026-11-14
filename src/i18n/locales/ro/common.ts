@@ -14,6 +14,7 @@ export default {
     'common.loading': 'Se încarcă…',
     'common.somethingWrong': 'Ceva nu a funcționat.',
     'common.notFound': 'Nu am găsit asta. Este posibil să fi fost eliminat.',
+    'common.forbidden': 'Nu ai acces la aceasta.',
     'common.showPassword': 'Arată parola',
     'common.hidePassword': 'Ascunde parola',
     'common.orContinueWith': 'Sau continuați cu',
