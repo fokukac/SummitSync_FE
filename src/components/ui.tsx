@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import type { ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
+import { API_URL } from '@/api/client';
 import { Button } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -9,6 +10,7 @@ import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 import { initials } from '@/lib/format';
+import { resolveMediaUrl } from '@/lib/media';
 
 export function Card({ children, onPress }: { children: ReactNode; onPress?: () => void }) {
   const body = (
@@ -41,7 +43,7 @@ export function Avatar({ name, uri, size = 36 }: { name: string; uri?: string | 
   const theme = useTheme();
 
   return uri ? (
-    <Image source={{ uri }} accessibilityLabel={name} style={{ width: size, height: size, borderRadius: size / 2 }} />
+    <Image source={{ uri: resolveMediaUrl(uri, API_URL) }} accessibilityLabel={name} style={{ width: size, height: size, borderRadius: size / 2 }} />
   ) : (
     <View style={[styles.avatar, { width: size, height: size, borderRadius: size / 2, backgroundColor: theme.backgroundSelected }]}>
       <ThemedText type="smallBold" style={{ fontSize: size / 2.8 }}>
