@@ -8,6 +8,8 @@ import { ConfirmDialog } from '@/components/confirm-dialog';
 import { ThemedText } from '@/components/themed-text';
 import { Card, QueryState } from '@/components/ui';
 import { ChecklistBreakdown } from '@/features/event/checklist-breakdown';
+import { ChecklistSuggestions } from '@/features/event/checklist-suggestions';
+import { useMeta } from '@/features/forms/use-meta';
 import { useI18n } from '@/i18n';
 import { moveItem } from '@/lib/reorder';
 
@@ -39,6 +41,7 @@ export function ChecklistTab({
   const [label, setLabel] = useState('');
   const [deleting, setDeleting] = useState<Item>();
   const [showBreakdown, setShowBreakdown] = useState(false);
+  const [suggestionsFor, setSuggestionsFor] = useState<number>();
 
   const checklist = useQuery({
     queryKey,
@@ -50,6 +53,16 @@ export function ChecklistTab({
           }),
         )
       ).data,
+  });
+
+  // Shopping suggestions are a bonus behind a feature flag: without the flag or the counts there is simply no shopping button.
+  const meta = useMeta();
+  const countsKey = [...queryKey, 'suggestion-counts'];
+  const counts = useQuery({
+    queryKey: countsKey,
+    enabled: meta.data?.features['shopping-suggestions'] === true,
+    retry: false,
+    queryFn: async () => (await unwrap(api.GET('/v1/events/{event}/checklist/suggestions', { params: { path: { event: eventId } } }))).data,
   });
 
   const toggle = useMutation({
@@ -98,6 +111,7 @@ export function ChecklistTab({
       ),
     onSuccess: (created) => {
       queryClient.setQueryData<Item[]>(queryKey, (items) => [...(items ?? []), created]);
+      void queryClient.invalidateQueries({ queryKey: countsKey });
       setLabel('');
     },
   });
@@ -109,7 +123,10 @@ export function ChecklistTab({
           params: { path: { event: eventId, checklistItem: item.id } },
         }),
       ),
-    onSuccess: (_result, item) => queryClient.setQueryData<Item[]>(queryKey, (items) => items?.filter((existing) => existing.id !== item.id)),
+    onSuccess: (_result, item) => {
+      queryClient.setQueryData<Item[]>(queryKey, (items) => items?.filter((existing) => existing.id !== item.id));
+      void queryClient.invalidateQueries({ queryKey: countsKey });
+    },
     onSettled: () => setDeleting(undefined),
   });
 
@@ -183,6 +200,16 @@ export function ChecklistTab({
                 </ThemedText>
               </View>
             </Pressable>
+            {(counts.data?.[item.id] ?? 0) > 0 ? (
+              <>
+                <Button
+                  variant="plain"
+                  title={t('checklist.suggestions.toggleCount', { count: counts.data?.[item.id] ?? 0 })}
+                  onPress={() => setSuggestionsFor((open) => (open === item.id ? undefined : item.id))}
+                />
+                {suggestionsFor === item.id ? <ChecklistSuggestions eventId={eventId} itemId={item.id} /> : null}
+              </>
+            ) : null}
             {canManage ? (
               <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
                 <Pressable

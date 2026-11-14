@@ -4232,10 +4232,9 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "integer",
-                                                "minimum": 0
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "integer"
                                             }
                                         }
                                     },
@@ -4295,7 +4294,54 @@
                                     "properties": {
                                         "data": {
                                             "type": "array",
-                                            "items": {}
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "brand": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "price": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "currency": {
+                                                        "type": "string"
+                                                    },
+                                                    "image": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "url": {
+                                                        "type": "string"
+                                                    },
+                                                    "shop": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "name",
+                                                    "brand",
+                                                    "price",
+                                                    "currency",
+                                                    "image",
+                                                    "url",
+                                                    "shop"
+                                                ]
+                                            }
                                         }
                                     },
                                     "required": [

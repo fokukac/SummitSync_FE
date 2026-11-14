@@ -3169,7 +3169,9 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data: number[];
+                        data: {
+                            [key: string]: number;
+                        };
                     };
                 };
             };
@@ -3198,7 +3200,16 @@ export interface operations {
                 };
                 content: {
                     "application/json": {
-                        data: unknown[];
+                        data: {
+                            id: number;
+                            name: string;
+                            brand: string | null;
+                            price: number | null;
+                            currency: string;
+                            image: string | null;
+                            url: string;
+                            shop: string;
+                        }[];
                     };
                 };
             };
