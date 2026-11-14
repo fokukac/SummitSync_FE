@@ -132,7 +132,7 @@ type ButtonProps = {
   title: string;
   onPress: () => void;
   loading?: boolean;
-  variant?: 'primary' | 'plain';
+  variant?: 'primary' | 'plain' | 'outline';
   /** Sized to its label instead of the full width, for rows of actions. */
   compact?: boolean;
 };
@@ -151,12 +151,13 @@ export function Button({ title, onPress, loading = false, variant = 'primary', c
         styles.button,
         compact && { alignSelf: 'flex-start', minHeight: 44, paddingHorizontal: 18 },
         { borderRadius: shape.radius, backgroundColor: primary ? theme.primary : 'transparent', opacity: pressed || loading ? 0.7 : 1 },
+        variant === 'outline' && { borderWidth: 1, borderColor: theme.border },
       ]}
     >
       {loading ? (
         <ActivityIndicator color={primary ? theme.onPrimary : theme.text} />
       ) : (
-        <ThemedText type="smallBold" style={{ color: primary ? theme.onPrimary : theme.primary }}>
+        <ThemedText type="smallBold" style={{ color: primary ? theme.onPrimary : variant === 'outline' ? theme.text : theme.primary }}>
           {title}
         </ThemedText>
       )}
