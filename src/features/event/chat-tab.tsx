@@ -6,13 +6,13 @@ import { Pressable, TextInput, View } from 'react-native';
 import { api, ApiError, unwrap } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
 import { Button } from '@/components/form';
+import { IconButton } from '@/components/icon';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar } from '@/components/avatar';
-import { Card } from '@/components/card';
 import { QueryState } from '@/components/query-state';
+import { ChatMessage } from '@/features/event/chat-message';
 import { MessageActions } from '@/features/event/message-actions';
 import { useLiveChat } from '@/features/event/use-live-chat';
-import { pendingOutgoing } from '@/features/event/messages-cache';
+import { pendingOutgoing, startsBlock } from '@/features/event/messages-cache';
 import { CHAT_SEND, messagesKey, type ChatSendVars } from '@/features/event/offline-mutations';
 import { useShape, useTheme } from '@/hooks/use-theme';
 import { useAppTheme } from '@/theme/theme-provider';
@@ -97,50 +97,47 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
           {messages.hasNextPage ? (
             <Button variant="plain" title={t('chat.loadOlder')} loading={messages.isFetchingNextPage} onPress={() => void messages.fetchNextPage()} />
           ) : null}
-          {history.map((message) => (
-            <Card key={message.id}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  gap: 10,
-                  alignItems: 'flex-start',
-                }}
-              >
-                <Avatar name={message.user.name} uri={message.user.avatar} size={32} />
-                <View style={{ flex: 1 }}>
-                  <ThemedText type="smallBold">
-                    {message.user.name}{' '}
-                    <ThemedText type="small" themeColor="textSecondary">
-                      {formatShortDateTime(message.created_at, timezone, intlLocale)}
-                    </ThemedText>
-                  </ThemedText>
-                  <ThemedText>{message.body}</ThemedText>
-                </View>
-                <MessageActions eventId={eventId} message={message} own={message.user.id === user?.id} canModerate={canModerate} />
-              </View>
-            </Card>
+          {history.map((message, index) => (
+            <ChatMessage
+              key={message.id}
+              name={message.user.name}
+              avatar={message.user.avatar}
+              time={formatShortDateTime(message.created_at, timezone, intlLocale)}
+              body={message.body}
+              header={startsBlock(message, history[index - 1])}
+              own={message.user.id === user?.id}
+              actions={<MessageActions eventId={eventId} message={message} own={message.user.id === user?.id} canModerate={canModerate} />}
+            />
           ))}
-          {pending.map((item) => (
-            <Card key={item.clientId}>
-              <ThemedText themeColor="textSecondary">{item.body}</ThemedText>
-              {item.failed ? (
-                <Pressable accessibilityRole="button" onPress={() => retry(item)}>
-                  <ThemedText type="smallBold" style={{ color: theme.danger }}>
-                    {t(item.tooFast ? 'chat.tooFast' : 'chat.sendFailed')} {t('common.tryAgain')}
+          {pending.map((item, index) => (
+            <ChatMessage
+              key={item.clientId}
+              name={user?.name ?? ''}
+              avatar={user?.avatar}
+              body={item.body}
+              header={index === 0 && (history.length === 0 || history[history.length - 1].user.id !== user?.id)}
+              own
+              sending={!item.failed}
+              status={
+                item.failed ? (
+                  <Pressable accessibilityRole="button" onPress={() => retry(item)}>
+                    <ThemedText type="smallBold" style={{ color: theme.danger }}>
+                      {t(item.tooFast ? 'chat.tooFast' : 'chat.sendFailed')} {t('common.tryAgain')}
+                    </ThemedText>
+                  </Pressable>
+                ) : item.waiting ? (
+                  <ThemedText type="small" themeColor="textSecondary">
+                    {t('offline.queued')}
                   </ThemedText>
-                </Pressable>
-              ) : item.waiting ? (
-                <ThemedText type="small" themeColor="textSecondary">
-                  {t('offline.queued')}
-                </ThemedText>
-              ) : null}
-            </Card>
+                ) : null
+              }
+            />
           ))}
         </View>
       </QueryState>
 
       {canPost ? (
-        <View style={{ gap: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10, marginTop: 12 }}>
           <TextInput
             value={draft}
             onChangeText={setDraft}
@@ -150,18 +147,23 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
             multiline
             maxLength={MAX_LENGTH}
             style={{
+              flex: 1,
               color: theme.text,
               borderColor: theme.border,
               backgroundColor: theme.backgroundElement,
               borderWidth: 1,
               borderRadius: shape.radius,
               fontFamily: familyFor(bodyFont, 500),
-              padding: 12,
+              paddingHorizontal: 14,
+              paddingVertical: 12,
               minHeight: 48,
+              maxHeight: 140,
               fontSize: 16,
             }}
           />
-          <Button title={t('chat.send')} onPress={send} />
+          <View style={{ opacity: draft.trim() === '' ? 0.4 : 1 }}>
+            <IconButton name="send" label={t('chat.send')} filled onPress={send} />
+          </View>
         </View>
       ) : (
         <ThemedText type="small" themeColor="textSecondary">

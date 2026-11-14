@@ -7,6 +7,7 @@ import type { components } from '@/api/schema';
 import { ActionMenu, type MenuAction } from '@/components/action-menu';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Button, ErrorText } from '@/components/form';
+import { Icon } from '@/components/icon';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
@@ -30,6 +31,7 @@ type Props = {
  */
 export function MessageActions({ eventId, message, own, canModerate }: Props) {
   const { t } = useI18n();
+  const theme = useTheme();
   const queryClient = useQueryClient();
   const [menu, setMenu] = useState(false);
   const [reporting, setReporting] = useState(false);
@@ -91,7 +93,7 @@ export function MessageActions({ eventId, message, own, canModerate }: Props) {
   return (
     <>
       <Pressable accessibilityRole="button" accessibilityLabel={t('chat.actions')} hitSlop={12} onPress={() => setMenu(true)}>
-        <ThemedText themeColor="textSecondary">⋯</ThemedText>
+        <Icon name="more" size={20} color={theme.textSecondary} />
       </Pressable>
       <ActionMenu visible={menu} actions={actions} onClose={() => setMenu(false)} />
       <ReportDialog visible={reporting} eventId={eventId} messageId={message.id} onClose={() => setReporting(false)} />

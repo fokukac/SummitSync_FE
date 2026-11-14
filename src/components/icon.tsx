@@ -3,7 +3,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 import { useShape, useTheme } from '@/hooks/use-theme';
 
-export type IconName = 'groups' | 'search' | 'settings' | 'plus' | 'back' | 'clock' | 'pin' | 'check' | 'up' | 'down' | 'camera' | 'trash';
+export type IconName = 'groups' | 'search' | 'settings' | 'plus' | 'back' | 'clock' | 'pin' | 'check' | 'up' | 'down' | 'camera' | 'trash' | 'send' | 'more';
 
 /** Stroke icons (24px grid), drawn with the theme's text colour unless told otherwise. */
 export function Icon({ name, size = 24, color }: { name: IconName; size?: number; color?: string }) {
@@ -17,6 +17,14 @@ export function Icon({ name, size = 24, color }: { name: IconName; size?: number
           <Circle cx={9} cy={7} r={4} />
           <Path d="M22 21v-2a4 4 0 0 0-3-3.87" />
           <Path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </>
+      ) : null}
+      {name === 'send' ? <Path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" /> : null}
+      {name === 'more' ? (
+        <>
+          <Circle cx={5} cy={12} r={1} />
+          <Circle cx={12} cy={12} r={1} />
+          <Circle cx={19} cy={12} r={1} />
         </>
       ) : null}
       {name === 'search' ? (
