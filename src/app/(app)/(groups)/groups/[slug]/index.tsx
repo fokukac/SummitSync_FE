@@ -96,7 +96,17 @@ export default function GroupScreen() {
                   ]}
                 />
                 {tab === 'events' ? (
-                  <QueryState query={events} empty={events.data?.length === 0} emptyText={t('groups.noUpcomingEvents')}>
+                  <QueryState
+                    query={events}
+                    empty={events.data?.length === 0}
+                    emptyText={t('groups.noUpcomingEvents')}
+                    emptyIcon="calendar"
+                    emptyAction={
+                      data.can.createEvent
+                        ? { title: t('events.create'), onPress: () => router.push({ pathname: '/groups/[slug]/events/new', params: { slug } }) }
+                        : undefined
+                    }
+                  >
                     <View>
                       {events.data?.map((event) => (
                         <EventRow key={event.id} event={event} />

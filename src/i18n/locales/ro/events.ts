@@ -141,6 +141,7 @@ export default {
     'checklist.suggestions.toggle': 'Sugestii de cumpărături',
     'checklist.suggestions.toggleCount': 'Sugestii de cumpărături ({count})',
     'checklist.suggestions.none': 'Nu am găsit sugestii pentru acest element.',
+    'checklist.none': 'Încă nu este nimic pe listă.',
     'checklist.suggestions.failed': 'Sugestiile nu au putut fi încărcate.',
     'checklist.suggestions.disclosure':
         'Linkuri către magazine partenere. Dacă cumpărați prin ele, putem primi un comision, fără costuri suplimentare pentru dvs.',

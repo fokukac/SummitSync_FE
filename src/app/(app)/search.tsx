@@ -47,7 +47,7 @@ export default function SearchScreen() {
           {t('search.hint')}
         </ThemedText>
       ) : (
-        <QueryState query={search} empty={nothing} emptyText={t('search.noResults', { query: term })}>
+        <QueryState query={search} empty={nothing} emptyText={t('search.noResults', { query: term })} emptyIcon="search">
           {results && results.groups.length > 0 ? (
             <Section title={t('search.groups')}>
               <CardGrid>

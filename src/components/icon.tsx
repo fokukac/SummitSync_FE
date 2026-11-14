@@ -3,7 +3,30 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 import { useShape, useTheme } from '@/hooks/use-theme';
 
-export type IconName = 'groups' | 'search' | 'settings' | 'plus' | 'back' | 'clock' | 'pin' | 'check' | 'up' | 'down' | 'camera' | 'trash' | 'send' | 'more';
+export type IconName =
+  | 'groups'
+  | 'search'
+  | 'settings'
+  | 'plus'
+  | 'back'
+  | 'clock'
+  | 'pin'
+  | 'check'
+  | 'up'
+  | 'down'
+  | 'camera'
+  | 'trash'
+  | 'send'
+  | 'more'
+  | 'chat'
+  | 'calendar'
+  | 'list'
+  | 'poll'
+  | 'bag'
+  | 'mail'
+  | 'alert'
+  | 'ban'
+  | 'offline';
 
 /** Stroke icons (24px grid), drawn with the theme's text colour unless told otherwise. */
 export function Icon({ name, size = 24, color }: { name: IconName; size?: number; color?: string }) {
@@ -65,6 +88,27 @@ export function Icon({ name, size = 24, color }: { name: IconName; size?: number
       ) : null}
       {name === 'trash' ? <Path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 5v6m4-6v6" /> : null}
       {name === 'back' ? <Path d="m15 18-6-6 6-6" /> : null}
+      {name === 'chat' ? <Path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> : null}
+      {name === 'calendar' ? <Path d="M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM16 2v4M8 2v4M3 10h18" /> : null}
+      {name === 'list' ? <Path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" /> : null}
+      {name === 'poll' ? <Path d="M5 21V10M12 21V3M19 21v-7" /> : null}
+      {name === 'bag' ? <Path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0" /> : null}
+      {name === 'mail' ? <Path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM22 7l-10 6L2 7" /> : null}
+      {name === 'alert' ? (
+        <>
+          <Circle cx={12} cy={12} r={10} />
+          <Path d="M12 8v4M12 16h.01" />
+        </>
+      ) : null}
+      {name === 'ban' ? (
+        <>
+          <Circle cx={12} cy={12} r={10} />
+          <Path d="m4.9 4.9 14.2 14.2" />
+        </>
+      ) : null}
+      {name === 'offline' ? (
+        <Path d="M2 2l20 20M8.5 16.5a5 5 0 0 1 7 0M2 8.8a15 15 0 0 1 4.2-2.7M22 8.8a15 15 0 0 0-9.2-3.7M5 12.9a10 10 0 0 1 5.2-2.6M19 12.9a10 10 0 0 0-2.6-2M12 20h.01" />
+      ) : null}
     </Svg>
   );
 }

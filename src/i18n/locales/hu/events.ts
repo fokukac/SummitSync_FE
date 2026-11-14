@@ -135,6 +135,7 @@ export default {
     'checklist.suggestions.toggle': 'Vásárlási javaslatok',
     'checklist.suggestions.toggleCount': 'Vásárlási javaslatok ({count})',
     'checklist.suggestions.none': 'Nincs javaslat ehhez a tételhez.',
+    'checklist.none': 'Még nincs semmi a listán.',
     'checklist.suggestions.failed': 'A javaslatokat nem sikerült betölteni.',
     'checklist.suggestions.disclosure':
         'Partnerboltok hivatkozásai. Ha ezeken keresztül vásárol, jutalékot kaphatunk, Önnek többletköltség nélkül.',

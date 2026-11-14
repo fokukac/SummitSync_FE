@@ -27,7 +27,7 @@ export default function BlockedScreen() {
 
   return (
     <Screen form>
-      <QueryState query={blocked} empty={blocked.data?.length === 0} emptyText={t('settings.blocked.none')}>
+      <QueryState query={blocked} empty={blocked.data?.length === 0} emptyText={t('settings.blocked.none')} emptyIcon="ban">
         {blocked.data?.map((person) => (
           <Card key={person.id}>
             <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>

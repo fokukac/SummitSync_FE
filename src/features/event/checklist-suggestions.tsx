@@ -31,7 +31,7 @@ export function ChecklistSuggestions({ eventId, itemId }: { eventId: number; ite
   const products = suggestions.data ?? [];
 
   return (
-    <QueryState query={suggestions} empty={products.length === 0} emptyText={t('checklist.suggestions.none')}>
+    <QueryState query={suggestions} empty={products.length === 0} emptyText={t('checklist.suggestions.none')} emptyIcon="bag" compact>
       <View style={{ gap: 4, borderLeftWidth: 3, borderLeftColor: theme.primary, paddingLeft: 14, marginBottom: 8 }}>
         {products.map((product) => {
           const link = isWebUrl(product.url);

@@ -130,6 +130,7 @@ export default {
     'checklist.suggestions.toggle': 'Shopping suggestions',
     'checklist.suggestions.toggleCount': 'Shopping suggestions ({count})',
     'checklist.suggestions.none': 'No suggestions found for this item.',
+    'checklist.none': 'Nothing on the list yet.',
     'checklist.suggestions.failed': 'Suggestions could not be loaded.',
     'checklist.suggestions.disclosure':
         'Links to partner shops. If you buy through them we may earn a commission, at no extra cost to you.',

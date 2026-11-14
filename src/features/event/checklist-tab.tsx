@@ -126,7 +126,7 @@ export function ChecklistTab({
 
   return (
     <View style={{ gap: 12 }}>
-      <QueryState query={checklist} empty={checklist.data?.length === 0} emptyText={t('events.tabs.checklist')}>
+      <QueryState query={checklist} empty={checklist.data?.length === 0} emptyText={t('checklist.none')} emptyIcon="list">
         {(checklist.data?.length ?? 0) > 0 ? (
           <View style={{ gap: 6 }}>
             <ThemedText type="smallBold">
