@@ -1,11 +1,12 @@
 import { Image } from 'expo-image';
-import type { ReactNode } from 'react';
+import { Children, type ReactNode } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Ellipse, G } from 'react-native-svg';
 
 import { API_URL } from '@/api/client';
 import { Button } from '@/components/form';
 import { ActivityIcon } from '@/components/activity-icon';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Icon, type IconName } from '@/components/icon';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -29,6 +30,22 @@ export function Card({ children, onPress }: { children: ReactNode; onPress?: () 
     </Pressable>
   ) : (
     body
+  );
+}
+
+/** Lays cards out in two columns on wide screens and one column otherwise. */
+export function CardGrid({ children }: { children: ReactNode }) {
+  const wide = useBreakpoint() !== 'compact';
+  const items = Children.toArray(children);
+
+  return (
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: Spacing.four }}>
+      {items.map((child, index) => (
+        <View key={index} style={{ width: wide ? '48.5%' : '100%' }}>
+          {child}
+        </View>
+      ))}
+    </View>
   );
 }
 

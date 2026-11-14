@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { Icon } from '@/components/icon';
 import { familyFor } from '@/constants/themes';
 import { useI18n } from '@/i18n';
@@ -9,17 +10,24 @@ import { useAppTheme } from '@/theme/theme-provider';
 export default function AppTabs() {
   const { t } = useI18n();
   const { colors, body, shape } = useAppTheme();
+  // Wide windows (desktop browser, tablet) get a side rail instead of the phone-style bottom bar.
+  const rail = useBreakpoint() === 'expanded';
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
+        tabBarPosition: rail ? 'left' : 'bottom',
+        tabBarItemStyle: { borderRadius: shape.radius },
+        tabBarVariant: rail ? 'material' : 'uikit',
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {
           backgroundColor: colors.backgroundElement,
           borderTopColor: colors.border,
-          borderTopWidth: 1,
+          borderTopWidth: rail ? 0 : 1,
+          borderRightColor: colors.border,
+          borderRightWidth: rail ? 1 : 0,
           elevation: 0,
           shadowOpacity: 0,
           paddingTop: 6,

@@ -8,7 +8,7 @@ import { Button, TextField } from '@/components/form';
 import { IconButton } from '@/components/icon';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
-import { QueryState, Segmented } from '@/components/ui';
+import { CardGrid, QueryState, Segmented } from '@/components/ui';
 import { GroupCard, type GroupSummary } from '@/features/group-card';
 import { useI18n } from '@/i18n';
 
@@ -53,9 +53,11 @@ export default function GroupsScreen() {
       {mode === 'discover' ? <TextField label={t('nav.search')} value={search} onChangeText={setSearch} autoCapitalize="none" returnKeyType="search" /> : null}
       <QueryState query={active} empty={groups.length === 0} emptyText={t(mode === 'mine' ? 'groups.noneJoined' : 'groups.noneToDiscover')}>
         <View style={{ gap: 12 }}>
-          {groups.map((group) => (
-            <GroupCard key={group.slug} group={group} />
-          ))}
+          <CardGrid>
+            {groups.map((group) => (
+              <GroupCard key={group.slug} group={group} />
+            ))}
+          </CardGrid>
           {mode === 'discover' && discover.hasNextPage ? (
             <Button variant="plain" title={t('groups.loadMore')} loading={discover.isFetchingNextPage} onPress={() => void discover.fetchNextPage()} />
           ) : null}
