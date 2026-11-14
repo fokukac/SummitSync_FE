@@ -24,3 +24,21 @@ export function initials(name: string): string {
     .map((part) => part[0]?.toUpperCase() ?? '')
     .join('');
 }
+
+/** A product price in its own currency, or null when the shop gives none. Falls back to "12.50 EUR" for a currency code the runtime does not know. */
+export function formatPrice(price: number | null, currency: string, intlLocale: string): string | null {
+  if (price === null) {
+    return null;
+  }
+
+  try {
+    return new Intl.NumberFormat(intlLocale, { style: 'currency', currency }).format(price);
+  } catch {
+    return `${price.toFixed(2)} ${currency}`;
+  }
+}
+
+/** Product links come from third-party feeds: only web links are ever opened. */
+export function isWebUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url);
+}
