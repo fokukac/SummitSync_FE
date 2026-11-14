@@ -1,18 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { ActivityIndicator, Pressable, TextInput, View } from 'react-native';
+import { TextInput, View } from 'react-native';
 
 import { api, unwrap, unwrapVoid } from '@/api/client';
 import { Button, ErrorText } from '@/components/form';
 import { ConfirmDialog } from '@/components/confirm-dialog';
-import { IconButton } from '@/components/icon';
-import { ThemedText } from '@/components/themed-text';
-import { Card } from '@/components/card';
-import { Checkbox } from '@/components/checkbox';
-import { ProgressBar } from '@/components/progress-bar';
 import { QueryState } from '@/components/query-state';
+import { ChecklistRow } from '@/features/event/checklist-row';
 import { ChecklistBreakdown } from '@/features/event/checklist-breakdown';
-import { ChecklistSuggestions } from '@/features/event/checklist-suggestions';
 import { useMeta } from '@/features/forms/use-meta';
 import { familyFor } from '@/constants/themes';
 import { useShape, useTheme } from '@/hooks/use-theme';
@@ -127,72 +122,30 @@ export function ChecklistTab({
   return (
     <View style={{ gap: 12 }}>
       <QueryState query={checklist} empty={checklist.data?.length === 0} emptyText={t('checklist.none')} emptyIcon="list">
-        {(checklist.data?.length ?? 0) > 0 ? (
-          <View style={{ gap: 6 }}>
-            <ThemedText type="smallBold">
-              {checklist.data?.filter((item) => item.my_checked).length}/{checklist.data?.length}
-            </ThemedText>
-            <ProgressBar value={(checklist.data?.filter((item) => item.my_checked).length ?? 0) / (checklist.data?.length ?? 1)} />
-          </View>
-        ) : null}
         {error ? <ErrorText>{t('checklist.saveFailed')}</ErrorText> : null}
         {reorder.isError ? <ErrorText>{t('checklist.reorderFailed')}</ErrorText> : null}
-        {checklist.data?.map((item, index) => (
-          <Card key={item.id}>
-            <Pressable
-              accessibilityRole="checkbox"
-              accessibilityLabel={t('checklist.markDone', {
-                label: item.label,
-              })}
-              accessibilityState={{
-                checked: item.my_checked,
-                disabled: !canToggle,
-              }}
-              disabled={!canToggle}
-              onPress={() => {
+        <View style={{ borderTopWidth: 1, borderTopColor: theme.border }}>
+          {checklist.data?.map((item, index) => (
+            <ChecklistRow
+              key={item.id}
+              item={item}
+              eventId={eventId}
+              canToggle={canToggle}
+              canManage={canManage}
+              suggestions={counts.data?.[item.id] ?? 0}
+              suggestionsOpen={suggestionsFor === item.id}
+              isFirst={index === 0}
+              isLast={index === (checklist.data?.length ?? 0) - 1}
+              onToggle={() => {
                 setError(false);
                 toggle.mutate({ eventId, itemId: item.id, checked: !item.my_checked }, { onError: () => setError(true) });
               }}
-            >
-              <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-                <Checkbox checked={item.my_checked} />
-                <ThemedText
-                  style={{
-                    flex: 1,
-                    textDecorationLine: item.my_checked ? 'line-through' : 'none',
-                  }}
-                >
-                  {item.label}
-                </ThemedText>
-                <ThemedText type="smallBold" themeColor="textSecondary">
-                  {item.checked_count}/{item.total_participants}
-                </ThemedText>
-              </View>
-            </Pressable>
-            {(counts.data?.[item.id] ?? 0) > 0 ? (
-              <>
-                <Button
-                  compact
-                  variant="plain"
-                  title={t('checklist.suggestions.toggleCount', { count: counts.data?.[item.id] ?? 0 })}
-                  onPress={() => setSuggestionsFor((open) => (open === item.id ? undefined : item.id))}
-                />
-                {suggestionsFor === item.id ? <ChecklistSuggestions eventId={eventId} itemId={item.id} /> : null}
-              </>
-            ) : null}
-            {canManage ? (
-              <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-                <View style={{ opacity: index === 0 ? 0.3 : 1 }}>
-                  <IconButton name="up" label={t('checklist.moveUp')} onPress={() => index > 0 && move(index, -1)} />
-                </View>
-                <View style={{ opacity: index === (checklist.data?.length ?? 0) - 1 ? 0.3 : 1 }}>
-                  <IconButton name="down" label={t('checklist.moveDown')} onPress={() => index < (checklist.data?.length ?? 0) - 1 && move(index, 1)} />
-                </View>
-                <Button variant="plain" title={t('checklist.deleteItem')} onPress={() => setDeleting(item)} />
-              </View>
-            ) : null}
-          </Card>
-        ))}
+              onToggleSuggestions={() => setSuggestionsFor((open) => (open === item.id ? undefined : item.id))}
+              onMove={(offset) => move(index, offset)}
+              onDelete={() => setDeleting(item)}
+            />
+          ))}
+        </View>
       </QueryState>
       {canManage ? (
         <View style={{ gap: 8 }}>
@@ -207,7 +160,7 @@ export function ChecklistTab({
               onSubmitEditing={() => label.trim() && add.mutate()}
               style={{
                 flex: 1,
-                height: 48,
+                height: 46,
                 paddingHorizontal: 14,
                 fontSize: 16,
                 fontFamily: familyFor(body, 500),
@@ -218,11 +171,7 @@ export function ChecklistTab({
                 backgroundColor: theme.backgroundElement,
               }}
             />
-            {add.isPending ? (
-              <ActivityIndicator color={theme.primary} />
-            ) : (
-              <IconButton name="plus" label={t('common.add')} filled onPress={() => label.trim() && add.mutate()} />
-            )}
+            <Button compact title={t('common.add')} loading={add.isPending} onPress={() => label.trim() && add.mutate()} />
           </View>
           {add.isError ? <ErrorText>{t('checklist.addFailed')}</ErrorText> : null}
         </View>
@@ -231,7 +180,7 @@ export function ChecklistTab({
         <>
           <Button
             compact
-            variant="plain"
+            variant="outline"
             title={t(showBreakdown ? 'checklist.hideBreakdown' : 'checklist.showBreakdown')}
             onPress={() => setShowBreakdown((shown) => !shown)}
           />
