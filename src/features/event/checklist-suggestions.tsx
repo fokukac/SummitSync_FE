@@ -2,11 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { Linking, View } from 'react-native';
 
-import { api, unwrap } from '@/api/client';
+import { API_URL, api, unwrap } from '@/api/client';
 import { ThemedText } from '@/components/themed-text';
 import { Card, QueryState } from '@/components/ui';
 import { useI18n } from '@/i18n';
 import { formatPrice, isWebUrl } from '@/lib/format';
+import { resolveMediaUrl } from '@/lib/media';
 
 /** Partner-shop products for one checklist item. Links are affiliate links, so the disclosure always goes with them. */
 export function ChecklistSuggestions({ eventId, itemId }: { eventId: number; itemId: number }) {
@@ -28,7 +29,12 @@ export function ChecklistSuggestions({ eventId, itemId }: { eventId: number; ite
           <Card key={product.id} onPress={isWebUrl(product.url) ? () => void Linking.openURL(product.url) : undefined}>
             <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
               {product.image ? (
-                <Image source={{ uri: product.image }} accessibilityLabel={product.name} contentFit="contain" style={{ width: 56, height: 56 }} />
+                <Image
+                  source={{ uri: resolveMediaUrl(product.image, API_URL) }}
+                  accessibilityLabel={product.name}
+                  contentFit="contain"
+                  style={{ width: 56, height: 56 }}
+                />
               ) : null}
               <View style={{ flex: 1 }}>
                 <ThemedText type="smallBold" numberOfLines={2}>
