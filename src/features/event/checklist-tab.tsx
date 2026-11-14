@@ -7,6 +7,7 @@ import { Button, ErrorText, TextField } from '@/components/form';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { ThemedText } from '@/components/themed-text';
 import { Card, QueryState } from '@/components/ui';
+import { ChecklistBreakdown } from '@/features/event/checklist-breakdown';
 import { useI18n } from '@/i18n';
 
 type Item = {
@@ -19,13 +20,24 @@ type Item = {
 };
 
 /** The server only ever sends the viewer's own state plus anonymous counts (privacy invariant), so that is all there is to show. */
-export function ChecklistTab({ eventId, canToggle, canManage }: { eventId: number; canToggle: boolean; canManage: boolean }) {
+export function ChecklistTab({
+  eventId,
+  canToggle,
+  canManage,
+  canViewBreakdown,
+}: {
+  eventId: number;
+  canToggle: boolean;
+  canManage: boolean;
+  canViewBreakdown: boolean;
+}) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const queryKey = ['event', eventId, 'checklist'];
   const [error, setError] = useState(false);
   const [label, setLabel] = useState('');
   const [deleting, setDeleting] = useState<Item>();
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   const checklist = useQuery({
     queryKey,
@@ -151,6 +163,16 @@ export function ChecklistTab({ eventId, canToggle, canManage }: { eventId: numbe
           </Card>
         ))}
       </QueryState>
+      {canViewBreakdown ? (
+        <>
+          <Button
+            variant="plain"
+            title={t(showBreakdown ? 'checklist.hideBreakdown' : 'checklist.showBreakdown')}
+            onPress={() => setShowBreakdown((shown) => !shown)}
+          />
+          {showBreakdown ? <ChecklistBreakdown eventId={eventId} /> : null}
+        </>
+      ) : null}
       <ConfirmDialog
         visible={deleting !== undefined}
         title={t('checklist.deleteItem')}

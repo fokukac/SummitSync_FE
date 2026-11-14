@@ -2066,9 +2066,8 @@ export interface operations {
                                 id: number;
                                 name: string;
                                 username: string;
-                                avatar: null;
-                                /** @description In the order of the checklist, so the client can read them off item by item. */
-                                checked_item_ids: unknown[];
+                                avatar: string | null;
+                                checked_item_ids: number[];
                             }[];
                         };
                     };
