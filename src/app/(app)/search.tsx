@@ -7,7 +7,7 @@ import { api, unwrap } from '@/api/client';
 import { TextField } from '@/components/form';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, Card, Chip, QueryState } from '@/components/ui';
+import { Avatar, Card, CardGrid, Chip, QueryState } from '@/components/ui';
 import { GroupCard } from '@/features/group-card';
 import { useI18n } from '@/i18n';
 import { formatShortDateTime } from '@/lib/format';
@@ -48,9 +48,11 @@ export default function SearchScreen() {
         <QueryState query={search} empty={nothing} emptyText={t('search.noResults', { query: term })}>
           {results && results.groups.length > 0 ? (
             <Section title={t('search.groups')}>
-              {results.groups.map((group) => (
-                <GroupCard key={group.slug} group={group} />
-              ))}
+              <CardGrid>
+                {results.groups.map((group) => (
+                  <GroupCard key={group.slug} group={group} />
+                ))}
+              </CardGrid>
             </Section>
           ) : null}
 
