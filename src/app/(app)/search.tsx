@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -10,16 +9,15 @@ import { ThemedText } from '@/components/themed-text';
 import { Avatar } from '@/components/avatar';
 import { Card } from '@/components/card';
 import { CardGrid } from '@/components/card-grid';
-import { Chip } from '@/components/chip';
 import { QueryState } from '@/components/query-state';
+import { EventRow } from '@/features/event-row';
 import { GroupCard } from '@/features/group-card';
 import { useI18n } from '@/i18n';
-import { formatShortDateTime } from '@/lib/format';
 import { searchTerm, useDebouncedValue } from '@/lib/search';
 
 /** Groups, events and people in one search. Events and people only come from the viewer's own groups (the server enforces it). */
 export default function SearchScreen() {
-  const { t, intlLocale } = useI18n();
+  const { t } = useI18n();
   const [input, setInput] = useState('');
   const term = searchTerm(useDebouncedValue(input));
 
@@ -62,19 +60,11 @@ export default function SearchScreen() {
 
           {results && results.events.length > 0 ? (
             <Section title={t('search.events')}>
-              {results.events.map((event) => (
-                <Card key={event.id} onPress={() => router.push({ pathname: '/events/[id]', params: { id: String(event.id) } })}>
-                  <ThemedText type="smallBold">{event.title}</ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {formatShortDateTime(event.starts_at, event.timezone, intlLocale)}
-                    {event.location_name ? ` · ${event.location_name}` : ''}
-                  </ThemedText>
-                  <ThemedText type="small" themeColor="textSecondary">
-                    {event.group.name} · {t('events.going', { count: event.participants_count })}
-                  </ThemedText>
-                  {event.status !== 'published' ? <Chip label={t(`events.status.${event.status}`)} /> : null}
-                </Card>
-              ))}
+              <View>
+                {results.events.map((event) => (
+                  <EventRow key={event.id} event={event} group={event.group.name} />
+                ))}
+              </View>
             </Section>
           ) : null}
 

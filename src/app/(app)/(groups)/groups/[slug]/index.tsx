@@ -9,16 +9,17 @@ import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar } from '@/components/avatar';
 import { Card } from '@/components/card';
-import { Chip } from '@/components/chip';
 import { QueryState } from '@/components/query-state';
 import { Segmented } from '@/components/segmented';
 import { ActivityTags } from '@/features/activity-tags';
 import { GroupMembershipActions } from '@/features/membership-actions';
 import { useI18n } from '@/i18n';
-import { formatShortDateTime } from '@/lib/format';
+import { EventRow } from '@/features/event-row';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function GroupScreen() {
-  const { t, intlLocale } = useI18n();
+  const { t } = useI18n();
+  const theme = useTheme();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const [tab, setTab] = useState<'events' | 'members'>('events');
 
@@ -50,10 +51,10 @@ export default function GroupScreen() {
       <QueryState query={group}>
         {data ? (
           <>
-            <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-              <Avatar name={data.name} uri={data.logo} size={64} />
+            <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+              <Avatar name={data.name} uri={data.logo} size={80} />
               <View style={{ flex: 1 }}>
-                <ThemedText type="subtitle" style={{ fontSize: 24, lineHeight: 30 }}>
+                <ThemedText type="subtitle" style={{ fontSize: 26, lineHeight: 32 }}>
                   {data.name}
                 </ThemedText>
                 <ThemedText type="small" themeColor="textSecondary">
@@ -65,20 +66,24 @@ export default function GroupScreen() {
             {data.description ? <ThemedText>{data.description}</ThemedText> : null}
             {data.activities.length > 0 ? <ActivityTags activities={data.activities} /> : null}
 
-            <GroupMembershipActions slug={slug} can={data.can} />
-            {data.can.createEvent ? (
-              <Button title={t('events.create')} onPress={() => router.push({ pathname: '/groups/[slug]/events/new', params: { slug } })} />
-            ) : null}
-            {data.can.manageInvitations ? (
-              <Button
-                variant="plain"
-                title={t('invitations.section.title')}
-                onPress={() => router.push({ pathname: '/groups/[slug]/invitations', params: { slug } })}
-              />
-            ) : null}
-            {data.can.update ? (
-              <Button variant="plain" title={t('groups.edit')} onPress={() => router.push({ pathname: '/groups/[slug]/edit', params: { slug } })} />
-            ) : null}
+            {/* What you can do here, in one row: the main action first, the rest as quiet text buttons. */}
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: 6, rowGap: 4 }}>
+              <GroupMembershipActions slug={slug} can={data.can} />
+              {data.can.createEvent ? (
+                <Button compact title={t('events.create')} onPress={() => router.push({ pathname: '/groups/[slug]/events/new', params: { slug } })} />
+              ) : null}
+              {data.can.manageInvitations ? (
+                <Button
+                  compact
+                  variant="plain"
+                  title={t('invitations.section.title')}
+                  onPress={() => router.push({ pathname: '/groups/[slug]/invitations', params: { slug } })}
+                />
+              ) : null}
+              {data.can.update ? (
+                <Button compact variant="plain" title={t('groups.edit')} onPress={() => router.push({ pathname: '/groups/[slug]/edit', params: { slug } })} />
+              ) : null}
+            </View>
 
             {canSeeInside ? (
               <>
@@ -92,18 +97,11 @@ export default function GroupScreen() {
                 />
                 {tab === 'events' ? (
                   <QueryState query={events} empty={events.data?.length === 0} emptyText={t('groups.noUpcomingEvents')}>
-                    {events.data?.map((event) => (
-                      <Card key={event.id} onPress={() => router.push({ pathname: '/events/[id]', params: { id: String(event.id) } })}>
-                        <ThemedText type="smallBold">{event.title}</ThemedText>
-                        <ThemedText type="small" themeColor="textSecondary">
-                          {formatShortDateTime(event.starts_at, event.timezone, intlLocale)}
-                          {event.location_name ? ` · ${event.location_name}` : ''}
-                        </ThemedText>
-                        <ThemedText type="small" themeColor="textSecondary">
-                          {t('events.going', { count: event.participants_count })}
-                        </ThemedText>
-                      </Card>
-                    ))}
+                    <View>
+                      {events.data?.map((event) => (
+                        <EventRow key={event.id} event={event} />
+                      ))}
+                    </View>
                   </QueryState>
                 ) : (
                   <QueryState query={members}>
@@ -117,7 +115,11 @@ export default function GroupScreen() {
                               @{member.username}
                             </ThemedText>
                           </View>
-                          {member.role === 'admin' ? <Chip label={t('common.admin')} /> : null}
+                          {member.role === 'admin' ? (
+                            <ThemedText type="smallBold" style={{ color: theme.primary }}>
+                              {t('common.admin')}
+                            </ThemedText>
+                          ) : null}
                         </View>
                       </Card>
                     ))}
