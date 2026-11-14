@@ -2,8 +2,8 @@ import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 
 import { useAuth } from '@/auth/auth-context';
-import { Button, ErrorText, Screen, TextField } from '@/components/form';
-import { ThemedText } from '@/components/themed-text';
+import { AuthScreen } from '@/components/auth-screen';
+import { Button, ErrorText, TextField } from '@/components/form';
 import { useI18n } from '@/i18n';
 
 /** Second step of a sign-in for accounts with two-factor authentication (`challenge` comes from the login call). */
@@ -27,9 +27,10 @@ export default function TwoFactorScreen() {
   }
 
   return (
-    <Screen>
-      <ThemedText type="subtitle">{t(useRecovery ? 'auth.twofa.recovery.title' : 'auth.twofa.code.title')}</ThemedText>
-      <ThemedText themeColor="textSecondary">{t(useRecovery ? 'auth.twofa.recovery.description' : 'auth.twofa.code.description')}</ThemedText>
+    <AuthScreen
+      title={t(useRecovery ? 'auth.twofa.recovery.title' : 'auth.twofa.code.title')}
+      description={t(useRecovery ? 'auth.twofa.recovery.description' : 'auth.twofa.code.description')}
+    >
       <TextField
         label={t(useRecovery ? 'auth.twofa.recovery.title' : 'auth.twofa.code.title')}
         value={value}
@@ -43,6 +44,7 @@ export default function TwoFactorScreen() {
       {error ? <ErrorText>{error}</ErrorText> : null}
       <Button title={t('common.continue')} onPress={submit} loading={busy} />
       <Button
+        compact
         variant="plain"
         title={t(useRecovery ? 'auth.twofa.recovery.toggle' : 'auth.twofa.code.toggle')}
         onPress={() => {
@@ -51,6 +53,6 @@ export default function TwoFactorScreen() {
           setError(undefined);
         }}
       />
-    </Screen>
+    </AuthScreen>
   );
 }

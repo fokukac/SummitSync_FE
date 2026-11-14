@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { View } from 'react-native';
 
 import { api } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
-import { Button, Screen } from '@/components/form';
+import { AuthScreen } from '@/components/auth-screen';
+import { Button } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { useI18n } from '@/i18n';
 
@@ -21,14 +23,14 @@ export default function VerifyEmailScreen() {
   }
 
   return (
-    <Screen>
-      <ThemedText type="subtitle">{t('auth.verify.title')}</ThemedText>
-      <ThemedText themeColor="textSecondary">{t('auth.verify.description')}</ThemedText>
+    <AuthScreen title={t('auth.verify.title')} description={t('auth.verify.description')}>
       <ThemedText type="smallBold">{user?.email}</ThemedText>
       {sent ? <ThemedText type="small">{t('auth.verify.sent')}</ThemedText> : null}
       <Button title={t('auth.verify.resend')} onPress={resend} loading={busy} />
-      <Button variant="plain" title={t('common.continue')} onPress={() => void refresh()} />
-      <Button variant="plain" title={t('nav.logout')} onPress={() => void signOut()} />
-    </Screen>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
+        <Button compact variant="plain" title={t('common.continue')} onPress={() => void refresh()} />
+        <Button compact variant="plain" title={t('nav.logout')} onPress={() => void signOut()} />
+      </View>
+    </AuthScreen>
   );
 }

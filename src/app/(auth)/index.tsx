@@ -1,7 +1,8 @@
 import { Link, router } from 'expo-router';
 import { useState } from 'react';
 
-import { Button, ErrorText, Screen, TextField } from '@/components/form';
+import { AuthScreen } from '@/components/auth-screen';
+import { Button, ErrorText, TextField } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { useAuth } from '@/auth/auth-context';
 import { useI18n } from '@/i18n';
@@ -29,12 +30,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <Screen>
-      <ThemedText type="smallBold" themeColor="primary">
-        SummitSync
-      </ThemedText>
-      <ThemedText type="subtitle">{t('auth.login.title')}</ThemedText>
-      <ThemedText themeColor="textSecondary">{t('auth.login.description')}</ThemedText>
+    <AuthScreen title={t('auth.login.title')} description={t('auth.login.description')}>
       <TextField
         label={t('auth.email')}
         value={email}
@@ -66,6 +62,6 @@ export default function LoginScreen() {
           </ThemedText>
         </Link>
       </ThemedText>
-    </Screen>
+    </AuthScreen>
   );
 }

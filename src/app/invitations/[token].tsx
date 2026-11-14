@@ -4,7 +4,8 @@ import { useEffect } from 'react';
 
 import { api, ApiError, errorMessage, unwrap } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
-import { Button, ErrorText, Screen } from '@/components/form';
+import { AuthScreen } from '@/components/auth-screen';
+import { Button, ErrorText } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/card';
 import { QueryState } from '@/components/query-state';
@@ -54,9 +55,7 @@ export default function InvitationScreen() {
   const openGroup = (slug: string) => router.replace({ pathname: '/groups/[slug]', params: { slug } });
 
   return (
-    <Screen>
-      <ThemedText type="title">{t('invitations.head')}</ThemedText>
-
+    <AuthScreen title={t('invitations.head')}>
       {view === 'signedOut' ? (
         <Card>
           <ThemedText>{t('invitations.loginPrompt')}</ThemedText>
@@ -107,6 +106,6 @@ export default function InvitationScreen() {
           ) : null}
         </QueryState>
       ) : null}
-    </Screen>
+    </AuthScreen>
   );
 }
