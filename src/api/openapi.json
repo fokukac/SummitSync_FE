@@ -1585,12 +1585,16 @@
                                                                 "type": "string"
                                                             },
                                                             "avatar": {
-                                                                "type": "null"
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ]
                                                             },
                                                             "checked_item_ids": {
                                                                 "type": "array",
-                                                                "description": "In the order of the checklist, so the client can read them off item by item.",
-                                                                "items": {}
+                                                                "items": {
+                                                                    "type": "integer"
+                                                                }
                                                             }
                                                         },
                                                         "required": [

@@ -83,7 +83,12 @@ export default function EventScreen() {
             ) : null}
             {tab === 'chat' && canSeeInside ? <ChatTab eventId={eventId} canPost={data.can.postMessage} canModerate={data.can.moderateChat} /> : null}
             {tab === 'checklist' && canSeeInside ? (
-              <ChecklistTab eventId={eventId} canToggle={data.can.toggleOwnChecklist} canManage={data.can.manageChecklist} />
+              <ChecklistTab
+                eventId={eventId}
+                canToggle={data.can.toggleOwnChecklist}
+                canManage={data.can.manageChecklist}
+                canViewBreakdown={data.can.viewFullChecklistBreakdown}
+              />
             ) : null}
             {tab === 'polls' && canSeeInside ? <PollsTab eventId={eventId} canManage={data.can.managePolls} /> : null}
             {tab === 'members' && canSeeInside ? <ParticipantsTab eventId={eventId} canAssign={data.can.assignAssistants} /> : null}
