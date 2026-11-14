@@ -41,7 +41,7 @@ export function ParticipantsTab({ eventId, canAssign }: { eventId: number; canAs
   });
 
   return (
-    <QueryState query={participants} empty={participants.data?.length === 0} emptyText={t('checklist.breakdown.none')}>
+    <QueryState query={participants} empty={participants.data?.length === 0} emptyText={t('checklist.breakdown.none')} emptyIcon="groups">
       {participants.data?.map((person) => (
         <Card key={person.id}>
           <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>

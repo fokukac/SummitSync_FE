@@ -49,7 +49,7 @@ export function PollsTab({ eventId, canManage }: { eventId: number; canManage: b
           }}
         />
       ) : null}
-      <QueryState query={polls} empty={polls.data?.length === 0} emptyText={t('polls.none')}>
+      <QueryState query={polls} empty={polls.data?.length === 0} emptyText={t('polls.none')} emptyIcon="poll">
         {polls.data?.map((poll) => (
           <PollCard key={poll.id} eventId={eventId} poll={poll} canManage={canManage} />
         ))}

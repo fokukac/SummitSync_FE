@@ -50,7 +50,7 @@ export default function InvitationsScreen() {
     <Page>
       <Stack.Screen options={{ title: t('invitations.section.title') }} />
       <CreateInvitation slug={slug} onCreated={() => void queryClient.invalidateQueries({ queryKey })} />
-      <QueryState query={invitations} empty={invitations.data?.length === 0} emptyText={t('invitations.section.none')}>
+      <QueryState query={invitations} empty={invitations.data?.length === 0} emptyText={t('invitations.section.none')} emptyIcon="mail">
         {invitations.data?.map((invitation) => (
           <Card key={invitation.token}>
             <ThemedText type="small" selectable numberOfLines={2}>

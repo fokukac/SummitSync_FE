@@ -29,7 +29,7 @@ export function ChecklistBreakdown({ eventId }: { eventId: number }) {
   const rows = breakdown.data ? breakdownRows(breakdown.data) : [];
 
   return (
-    <QueryState query={breakdown} empty={rows.length === 0} emptyText={t('checklist.breakdown.none')}>
+    <QueryState query={breakdown} empty={rows.length === 0} emptyText={t('checklist.breakdown.none')} emptyIcon="groups" compact>
       <CardGrid>
         {rows.map(({ person, done, total, items }) => (
           <Card key={person.id}>

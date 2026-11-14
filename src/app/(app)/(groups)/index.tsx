@@ -53,7 +53,13 @@ export default function GroupsScreen() {
         ]}
       />
       {mode === 'discover' ? <TextField label={t('nav.search')} value={search} onChangeText={setSearch} autoCapitalize="none" returnKeyType="search" /> : null}
-      <QueryState query={active} empty={groups.length === 0} emptyText={t(mode === 'mine' ? 'groups.noneJoined' : 'groups.noneToDiscover')}>
+      <QueryState
+        query={active}
+        empty={groups.length === 0}
+        emptyText={t(mode === 'mine' ? 'groups.noneJoined' : 'groups.noneToDiscover')}
+        emptyIcon="groups"
+        emptyAction={mode === 'mine' ? { title: t('groups.create'), onPress: () => router.push('/groups/new') } : undefined}
+      >
         <View style={{ gap: 12 }}>
           <CardGrid>
             {groups.map((group) => (

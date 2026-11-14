@@ -189,7 +189,7 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
   const panelHeight = Math.max(360, Math.min(560, windowHeight - 300));
 
   const list = (
-    <QueryState query={messages} empty={history.length === 0 && pending.length === 0} emptyText={t('chat.none')}>
+    <QueryState query={messages} empty={history.length === 0 && pending.length === 0} emptyText={t('chat.none')} emptyIcon="chat">
       <ScrollView
         ref={scroller}
         style={{ height: panelHeight }}
