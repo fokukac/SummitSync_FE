@@ -7,7 +7,8 @@ import { Button, ErrorText } from '@/components/form';
 import { PollForm } from '@/features/event/poll-form';
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/card';
-import { Chip } from '@/components/chip';
+import { ProgressBar } from '@/components/progress-bar';
+import { Radio } from '@/components/radio';
 import { QueryState } from '@/components/query-state';
 import { useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
@@ -87,23 +88,23 @@ function PollCard({ eventId, poll, canManage }: { eventId: number; poll: Poll; c
 
   return (
     <Card>
-      <ThemedText type="smallBold">{poll.title}</ThemedText>
+      <ThemedText type="subtitle" style={{ fontSize: 20, lineHeight: 26 }}>
+        {poll.title}
+      </ThemedText>
       {poll.description ? (
         <ThemedText type="small" themeColor="textSecondary">
           {poll.description}
         </ThemedText>
       ) : null}
-      <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
-        <Chip label={t(poll.is_closed ? 'polls.closed' : 'polls.open')} />
-        <Chip label={t(poll.is_anonymous ? 'polls.anonymous' : 'polls.publicVotes')} />
-      </View>
-      {poll.closes_at && !poll.is_closed ? (
-        <ThemedText type="small" themeColor="textSecondary">
-          {t('polls.closesAt', {
-            date: formatShortDateTime(poll.closes_at, Intl.DateTimeFormat().resolvedOptions().timeZone, intlLocale),
-          })}
+      <ThemedText type="small" themeColor="textSecondary">
+        <ThemedText type="smallBold" style={{ color: poll.is_closed ? theme.textSecondary : theme.primary }}>
+          {t(poll.is_closed ? 'polls.closed' : 'polls.open')}
         </ThemedText>
-      ) : null}
+        {` · ${t(poll.is_anonymous ? 'polls.anonymous' : 'polls.publicVotes')}`}
+        {poll.closes_at && !poll.is_closed
+          ? ` · ${t('polls.closesAt', { date: formatShortDateTime(poll.closes_at, Intl.DateTimeFormat().resolvedOptions().timeZone, intlLocale) })}`
+          : ''}
+      </ThemedText>
       {poll.options.map((option) => {
         const mine = poll.my_vote === option.id;
         const share = poll.results_visible && total > 0 ? (option.votes_count ?? 0) / total : 0;
@@ -115,39 +116,25 @@ function PollCard({ eventId, poll, canManage }: { eventId: number; poll: Poll; c
             accessibilityState={{ selected: mine, disabled: !poll.can_vote }}
             disabled={!poll.can_vote || vote.isPending}
             onPress={() => vote.mutate(option.id)}
-            style={{ gap: 4, opacity: vote.isPending ? 0.6 : 1 }}
+            style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 8, opacity: vote.isPending ? 0.6 : 1 }}
           >
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                gap: 8,
-              }}
-            >
-              <ThemedText type={mine ? 'smallBold' : 'small'} style={{ flex: 1 }}>
-                {option.label}
-                {mine ? ` · ${t('polls.yourVote')}` : ''}
-              </ThemedText>
-              {poll.results_visible ? <ThemedText type="small">{t('polls.votes', { count: option.votes_count ?? 0 })}</ThemedText> : null}
+            <View style={{ paddingTop: 1 }}>
+              <Radio selected={mine} />
             </View>
-            {poll.results_visible ? (
-              <View
-                style={{
-                  height: 6,
-                  borderRadius: 2,
-                  backgroundColor: theme.backgroundSelected,
-                }}
-              >
-                <View
-                  style={{
-                    width: `${Math.round(share * 100)}%`,
-                    height: 6,
-                    borderRadius: 2,
-                    backgroundColor: theme.primary,
-                  }}
-                />
+            <View style={{ flex: 1, gap: 6 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
+                <ThemedText type={mine ? 'smallBold' : 'small'} themeColor="text" style={{ flex: 1, fontSize: 15 }}>
+                  {option.label}
+                  {mine ? ` · ${t('polls.yourVote')}` : ''}
+                </ThemedText>
+                {poll.results_visible ? (
+                  <ThemedText type="small" themeColor="textSecondary" style={{ fontVariant: ['tabular-nums'] }}>
+                    {t('polls.votes', { count: option.votes_count ?? 0 })}
+                  </ThemedText>
+                ) : null}
               </View>
-            ) : null}
+              {poll.results_visible ? <ProgressBar value={share} /> : null}
+            </View>
           </Pressable>
         );
       })}

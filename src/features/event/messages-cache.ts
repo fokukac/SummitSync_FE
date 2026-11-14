@@ -38,3 +38,13 @@ export function pendingOutgoing<T extends { clientId: string }>(outgoing: T[], h
 
   return outgoing.filter((item) => !delivered.has(item.clientId));
 }
+
+/** Messages from the same person this close together read as one block: the name and avatar are shown once. */
+const GROUP_WINDOW_MS = 5 * 60 * 1000;
+
+/** True when `message` starts a new block (a different sender than `previous`, or a long pause since it). */
+export function startsBlock(message: Pick<Message, 'user' | 'created_at'>, previous: Pick<Message, 'user' | 'created_at'> | undefined): boolean {
+  return (
+    !previous || previous.user.id !== message.user.id || new Date(message.created_at).getTime() - new Date(previous.created_at).getTime() > GROUP_WINDOW_MS
+  );
+}
