@@ -4,9 +4,9 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { Platform, View } from 'react-native';
 
 import { api, unwrap } from '@/api/client';
-import { Button, ErrorText, Screen } from '@/components/form';
+import { ErrorText, Screen } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, QueryState } from '@/components/ui';
+import { PhotoEditor, QueryState } from '@/components/ui';
 import { GroupForm } from '@/features/forms/group-form';
 import { useI18n } from '@/i18n';
 import { goBackOr } from '@/lib/navigation';
@@ -99,14 +99,20 @@ function LogoSection({ slug, name, logo, onChanged }: { slug: string; name: stri
   }
 
   return (
-    <View style={{ gap: 8, alignItems: 'flex-start' }}>
-      <ThemedText type="small">{t('groups.logo.label')}</ThemedText>
-      <Avatar name={name} uri={logo} size={72} />
-      <View style={{ flexDirection: 'row', gap: 8 }}>
-        <Button title={t(logo ? 'groups.logo.change' : 'groups.logo.upload')} onPress={() => void pick()} loading={form.busy} />
-        {logo ? <Button variant="plain" title={t('groups.logo.remove')} onPress={() => void remove()} /> : null}
-      </View>
-      {form.errors.logo ? <ErrorText>{form.errors.logo}</ErrorText> : null}
+    <View style={{ gap: 8 }}>
+      <ThemedText type="smallBold">{t('groups.logo.label')}</ThemedText>
+      <PhotoEditor
+        name={name}
+        uri={logo}
+        busy={form.busy}
+        changeLabel={t(logo ? 'groups.logo.change' : 'groups.logo.upload')}
+        removeLabel={t('groups.logo.remove')}
+        hint={t('groups.logo.hint')}
+        error={form.errors.logo}
+        onChange={() => void pick()}
+        onRemove={() => void remove()}
+      />
+      {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
     </View>
   );
 }
