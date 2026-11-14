@@ -172,6 +172,7 @@ export function ChecklistTab({
             {(counts.data?.[item.id] ?? 0) > 0 ? (
               <>
                 <Button
+                  compact
                   variant="plain"
                   title={t('checklist.suggestions.toggleCount', { count: counts.data?.[item.id] ?? 0 })}
                   onPress={() => setSuggestionsFor((open) => (open === item.id ? undefined : item.id))}
@@ -229,6 +230,7 @@ export function ChecklistTab({
       {canViewBreakdown ? (
         <>
           <Button
+            compact
             variant="plain"
             title={t(showBreakdown ? 'checklist.hideBreakdown' : 'checklist.showBreakdown')}
             onPress={() => setShowBreakdown((shown) => !shown)}
