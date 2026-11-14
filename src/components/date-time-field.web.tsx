@@ -1,7 +1,6 @@
 import { View } from 'react-native';
 
-import { Button, ErrorText } from '@/components/form';
-import { ThemedText } from '@/components/themed-text';
+import { Button, ErrorText, FieldLabel } from '@/components/form';
 import type { DateTimeFieldProps } from '@/components/date-time-field';
 import { Spacing } from '@/constants/theme';
 import { familyFor } from '@/constants/themes';
@@ -20,7 +19,7 @@ export function DateTimeField({ label, value, onChange, error, required = false 
 
   return (
     <View style={{ gap: Spacing.one }}>
-      <ThemedText type="small">{label}</ThemedText>
+      <FieldLabel>{label}</FieldLabel>
       <input
         type="datetime-local"
         aria-label={label}
@@ -38,7 +37,7 @@ export function DateTimeField({ label, value, onChange, error, required = false 
         }}
       />
       {error ? <ErrorText>{error}</ErrorText> : null}
-      {value && !required ? <Button variant="plain" title={t('common.clear')} onPress={() => onChange('')} /> : null}
+      {value && !required ? <Button compact variant="plain" title={t('common.clear')} onPress={() => onChange('')} /> : null}
     </View>
   );
 }

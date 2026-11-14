@@ -29,7 +29,7 @@ export default function EditGroupScreen() {
   };
 
   return (
-    <Screen>
+    <Screen form>
       <Stack.Screen options={{ title: t('groups.edit') }} />
       <QueryState query={group}>
         {data ? (

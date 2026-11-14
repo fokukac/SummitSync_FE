@@ -12,7 +12,7 @@ export default function NewGroupScreen() {
   const queryClient = useQueryClient();
 
   return (
-    <Screen>
+    <Screen form>
       <Stack.Screen options={{ title: t('groups.create') }} />
       <ThemedText type="subtitle">{t('groups.create.title')}</ThemedText>
       <ThemedText themeColor="textSecondary">{t('groups.create.description')}</ThemedText>

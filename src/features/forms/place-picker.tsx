@@ -41,8 +41,14 @@ export function PlacePicker({ value, onChange, error }: { value: Place; onChange
         error={error}
         placeholder={t('events.form.meetingPointPlaceholder')}
       />
-      <TextField label={t('events.form.searchPlace')} value={term} onChangeText={setTerm} onSubmitEditing={search} returnKeyType="search" />
-      <Button variant="plain" title={t('nav.search')} onPress={() => void search()} loading={busy} />
+      <TextField
+        label={t('events.form.searchPlace')}
+        value={term}
+        onChangeText={setTerm}
+        onSubmitEditing={search}
+        returnKeyType="search"
+        action={{ icon: 'search', label: t('nav.search'), onPress: () => void search(), loading: busy }}
+      />
       {results?.length === 0 ? (
         <ThemedText type="small" themeColor="textSecondary">
           {t('events.form.noPlaces')}
@@ -67,7 +73,7 @@ export function PlacePicker({ value, onChange, error }: { value: Place; onChange
           <ThemedText type="small" themeColor="textSecondary">
             {t('events.form.pinned', { coordinates: `${value.latitude.toFixed(4)}, ${value.longitude.toFixed(4)}` })}
           </ThemedText>
-          <Button variant="plain" title={t('events.form.removePin')} onPress={() => onChange({ ...value, latitude: null, longitude: null })} />
+          <Button compact variant="plain" title={t('events.form.removePin')} onPress={() => onChange({ ...value, latitude: null, longitude: null })} />
         </View>
       ) : null}
     </View>

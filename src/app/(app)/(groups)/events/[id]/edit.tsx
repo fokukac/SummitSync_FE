@@ -21,7 +21,7 @@ export default function EditEventScreen() {
   const data = event.data;
 
   return (
-    <Screen>
+    <Screen form>
       <Stack.Screen options={{ title: t('events.edit') }} />
       <QueryState query={event}>
         {data ? (
