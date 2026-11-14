@@ -28,6 +28,7 @@ export default function AppTabs() {
       }}
     >
       <Tabs.Screen name="(groups)" options={{ title: t('nav.groups'), tabBarIcon: ({ color }) => <Icon name="groups" color={String(color)} /> }} />
+      <Tabs.Screen name="search" options={{ title: t('nav.search'), tabBarIcon: ({ color }) => <Icon name="search" color={String(color)} /> }} />
       <Tabs.Screen name="settings" options={{ title: t('nav.settings'), tabBarIcon: ({ color }) => <Icon name="settings" color={String(color)} /> }} />
     </Tabs>
   );

@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { ActivityIndicator, Pressable, TextInput, View } from 'react-native';
 
 import { api, unwrap, unwrapVoid } from '@/api/client';
-import { Button, ErrorText, TextField } from '@/components/form';
+import { Button, ErrorText } from '@/components/form';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { IconButton } from '@/components/icon';
 import { ThemedText } from '@/components/themed-text';
@@ -11,7 +11,10 @@ import { Card, Checkbox, ProgressBar, QueryState } from '@/components/ui';
 import { ChecklistBreakdown } from '@/features/event/checklist-breakdown';
 import { ChecklistSuggestions } from '@/features/event/checklist-suggestions';
 import { useMeta } from '@/features/forms/use-meta';
+import { familyFor } from '@/constants/themes';
+import { useShape, useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
+import { useAppTheme } from '@/theme/theme-provider';
 import { moveItem } from '@/lib/reorder';
 
 type Item = {
@@ -36,6 +39,9 @@ export function ChecklistTab({
   canViewBreakdown: boolean;
 }) {
   const { t } = useI18n();
+  const theme = useTheme();
+  const shape = useShape();
+  const { body } = useAppTheme();
   const queryClient = useQueryClient();
   const queryKey = ['event', eventId, 'checklist'];
   const [error, setError] = useState(false);
@@ -155,20 +161,6 @@ export function ChecklistTab({
 
   return (
     <View style={{ gap: 12 }}>
-      {canManage ? (
-        <View style={{ gap: 8 }}>
-          <TextField
-            label={t('events.tabs.checklist')}
-            value={label}
-            onChangeText={setLabel}
-            placeholder={t('checklist.addPlaceholder')}
-            maxLength={150}
-            onSubmitEditing={() => label.trim() && add.mutate()}
-          />
-          {add.isError ? <ErrorText>{t('checklist.addFailed')}</ErrorText> : null}
-          <Button title={t('common.add')} onPress={() => add.mutate()} loading={add.isPending} />
-        </View>
-      ) : null}
       <QueryState query={checklist} empty={checklist.data?.length === 0} emptyText={t('events.tabs.checklist')}>
         {(checklist.data?.length ?? 0) > 0 ? (
           <View style={{ gap: 6 }}>
@@ -233,6 +225,39 @@ export function ChecklistTab({
           </Card>
         ))}
       </QueryState>
+      {canManage ? (
+        <View style={{ gap: 8 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <TextInput
+              accessibilityLabel={t('events.tabs.checklist')}
+              value={label}
+              onChangeText={setLabel}
+              placeholder={t('checklist.addPlaceholder')}
+              placeholderTextColor={theme.textSecondary}
+              maxLength={150}
+              onSubmitEditing={() => label.trim() && add.mutate()}
+              style={{
+                flex: 1,
+                height: 48,
+                paddingHorizontal: 14,
+                fontSize: 16,
+                fontFamily: familyFor(body, 500),
+                color: theme.text,
+                borderColor: theme.border,
+                borderWidth: 1,
+                borderRadius: shape.radius,
+                backgroundColor: theme.backgroundElement,
+              }}
+            />
+            {add.isPending ? (
+              <ActivityIndicator color={theme.primary} />
+            ) : (
+              <IconButton name="plus" label={t('common.add')} filled onPress={() => label.trim() && add.mutate()} />
+            )}
+          </View>
+          {add.isError ? <ErrorText>{t('checklist.addFailed')}</ErrorText> : null}
+        </View>
+      ) : null}
       {canViewBreakdown ? (
         <>
           <Button

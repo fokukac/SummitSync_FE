@@ -39,7 +39,6 @@ export default function GroupsScreen() {
       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <ThemedText type="subtitle">{t('nav.groups')}</ThemedText>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <IconButton name="search" label={t('nav.search')} onPress={() => router.push('/search')} />
           <IconButton name="plus" label={t('groups.create')} filled onPress={() => router.push('/groups/new')} />
         </View>
       </View>
