@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
-import type { PersistQueryClientProviderProps } from '@tanstack/react-query-persist-client';
+import { removeOldestQuery, type PersistQueryClientProviderProps } from '@tanstack/react-query-persist-client';
 import Constants from 'expo-constants';
 
 import { registerOfflineMutations } from '@/features/event/offline-mutations';
+import { fitToLimit } from '@/lib/cache-size';
 import { startOnlineTracking } from '@/lib/online';
 
 const WEEK = 7 * 24 * 60 * 60 * 1000;
@@ -22,7 +23,15 @@ export const queryClient = new QueryClient({
 
 registerOfflineMutations(queryClient);
 
-const persister = createAsyncStoragePersister({ storage: AsyncStorage, key: 'summitsync.query-cache', throttleTime: 1000 });
+const persister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+  key: 'summitsync.query-cache',
+  throttleTime: 1000,
+  // Never write more than the platform's storage allows: trim before saving, and if a write still fails (storage full),
+  // drop the oldest saved query and try again.
+  serialize: (client) => JSON.stringify(fitToLimit(client)),
+  retry: removeOldestQuery,
+});
 
 export const persistOptions: PersistQueryClientProviderProps['persistOptions'] = {
   persister,
