@@ -52,17 +52,19 @@ export function FieldLabel({ children }: { children: ReactNode }) {
 type FieldProps = TextInputProps & {
   label: string;
   error?: string;
+  /** The label is still read by screen readers but not drawn (a list of fields whose placeholders say what they are). */
+  hideLabel?: boolean;
   /** A button inside the field's right end (search, add), sharing its outline. */
   action?: { icon: IconName; label: string; onPress: () => void; loading?: boolean };
 };
 
-export function TextField({ label, error, style, action, onFocus, onBlur, multiline, ...props }: FieldProps) {
+export function TextField({ label, error, hideLabel, style, action, onFocus, onBlur, multiline, ...props }: FieldProps) {
   const { colors: theme, shape, body } = useAppTheme();
   const [focused, setFocused] = useState(false);
 
   return (
     <View style={styles.field}>
-      <FieldLabel>{label}</FieldLabel>
+      {hideLabel ? null : <FieldLabel>{label}</FieldLabel>}
       <View
         style={[
           styles.outline,
@@ -135,9 +137,11 @@ type ButtonProps = {
   variant?: 'primary' | 'plain' | 'outline';
   /** Sized to its label instead of the full width, for rows of actions. */
   compact?: boolean;
+  /** An icon before the label. */
+  icon?: IconName;
 };
 
-export function Button({ title, onPress, loading = false, variant = 'primary', compact = false }: ButtonProps) {
+export function Button({ title, onPress, loading = false, variant = 'primary', compact = false, icon }: ButtonProps) {
   const theme = useTheme();
   const shape = useShape();
   const primary = variant === 'primary';
@@ -157,9 +161,12 @@ export function Button({ title, onPress, loading = false, variant = 'primary', c
       {loading ? (
         <ActivityIndicator color={primary ? theme.onPrimary : theme.text} />
       ) : (
-        <ThemedText type="smallBold" style={{ color: primary ? theme.onPrimary : variant === 'outline' ? theme.text : theme.primary }}>
-          {title}
-        </ThemedText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          {icon ? <Icon name={icon} size={16} color={primary ? theme.onPrimary : variant === 'outline' ? theme.text : theme.primary} /> : null}
+          <ThemedText type="smallBold" style={{ color: primary ? theme.onPrimary : variant === 'outline' ? theme.text : theme.primary }}>
+            {title}
+          </ThemedText>
+        </View>
       )}
     </Pressable>
   );

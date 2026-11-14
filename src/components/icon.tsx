@@ -27,6 +27,7 @@ export type IconName =
   | 'alert'
   | 'lock'
   | 'smile'
+  | 'close'
   | 'eye'
   | 'eyeOff'
   | 'ban'
@@ -104,6 +105,7 @@ export function Icon({ name, size = 24, color }: { name: IconName; size?: number
           <Path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01" />
         </>
       ) : null}
+      {name === 'close' ? <Path d="M18 6 6 18M6 6l12 12" /> : null}
       {name === 'eye' ? (
         <>
           <Path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z" />
