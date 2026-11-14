@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import type { components } from '@/api/schema';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, Card, Chip } from '@/components/ui';
+import { Avatar, Card, TagLine } from '@/components/ui';
 import { useI18n } from '@/i18n';
 
 export type GroupSummary = components['schemas']['GroupSummaryResource'];
@@ -29,13 +29,7 @@ export function GroupCard({ group }: { group: GroupSummary }) {
           {group.description}
         </ThemedText>
       ) : null}
-      {group.activities.length > 0 ? (
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-          {group.activities.map((activity) => (
-            <Chip key={activity.id} label={activity.name} />
-          ))}
-        </View>
-      ) : null}
+      {group.activities.length > 0 ? <TagLine tags={group.activities.map((activity) => activity.name)} /> : null}
     </Card>
   );
 }

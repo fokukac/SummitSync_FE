@@ -9,6 +9,7 @@ import { Button, ErrorText, TextField } from '@/components/form';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar, Card } from '@/components/ui';
+import { ThemePicker } from '@/features/theme-picker';
 import { supportedLocales, useI18n } from '@/i18n';
 import { useFormState } from '@/lib/use-form';
 
@@ -64,6 +65,8 @@ export default function SettingsScreen() {
       <Card onPress={() => router.push('/settings/blocked')}>
         <ThemedText type="smallBold">{t('settings.blocked.title')}</ThemedText>
       </Card>
+
+      <ThemePicker />
 
       <ThemedText type="smallBold">{t('nav.language')}</ThemedText>
       <View style={{ flexDirection: 'row', gap: 16 }}>

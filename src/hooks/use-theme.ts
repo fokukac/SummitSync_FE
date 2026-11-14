@@ -1,14 +1,12 @@
-/**
- * Learn more about light and dark modes:
- * https://docs.expo.dev/guides/color-schemes/
- */
+import type { Palette, Shape } from '@/constants/themes';
+import { useAppTheme } from '@/theme/theme-provider';
 
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+/** The active palette (light or dark, of the chosen theme). */
+export function useTheme(): Palette {
+  return useAppTheme().colors;
+}
 
-export function useTheme() {
-  const scheme = useColorScheme();
-  const theme = scheme === 'dark' ? 'dark' : 'light';
-
-  return Colors[theme];
+/** Corner radii and avatar shape of the chosen theme. */
+export function useShape(): Shape {
+  return useAppTheme().shape;
 }

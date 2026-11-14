@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View, type RefreshControlProps } from 'react-na
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedView } from '@/components/themed-view';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
+import { MaxContentWidth, Spacing } from '@/constants/theme';
 
 /** Scrollable content page inside the tabs: centered column with room for the tab bar. */
 export function Page({ children, refreshControl }: { children: ReactNode; refreshControl?: ReactElement<RefreshControlProps> }) {
@@ -20,6 +20,6 @@ export function Page({ children, refreshControl }: { children: ReactNode; refres
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  content: { padding: Spacing.four, paddingBottom: BottomTabInset + Spacing.four },
+  content: { padding: Spacing.four, paddingBottom: Spacing.four },
   column: { width: '100%', maxWidth: MaxContentWidth, alignSelf: 'center', gap: Spacing.three },
 });

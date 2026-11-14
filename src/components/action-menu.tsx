@@ -3,7 +3,7 @@ import { Modal, Pressable, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { useShape, useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 
 export type MenuAction = { label: string; onPress: () => void; destructive?: boolean };
@@ -12,11 +12,12 @@ export type MenuAction = { label: string; onPress: () => void; destructive?: boo
 export function ActionMenu({ visible, actions, onClose }: { visible: boolean; actions: MenuAction[]; onClose: () => void }) {
   const { t } = useI18n();
   const theme = useTheme();
+  const shape = useShape();
 
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel={t('common.close')}>
-        <ThemedView style={styles.menu}>
+        <ThemedView type="backgroundElement" style={[styles.menu, { borderRadius: shape.radius }]}>
           {actions.map((action) => (
             <Pressable
               key={action.label}
@@ -40,6 +41,6 @@ export function ActionMenu({ visible, actions, onClose }: { visible: boolean; ac
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', padding: Spacing.four },
-  menu: { width: '100%', maxWidth: 360, borderRadius: Spacing.three, paddingVertical: Spacing.two },
+  menu: { width: '100%', maxWidth: 360, paddingVertical: Spacing.two },
   item: { paddingHorizontal: Spacing.four, paddingVertical: Spacing.three },
 });

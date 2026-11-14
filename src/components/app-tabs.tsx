@@ -1,26 +1,34 @@
-import { NativeTabs } from 'expo-router/native-tabs';
-import { useColorScheme } from 'react-native';
+import { Tabs } from 'expo-router';
 
-import { Colors } from '@/constants/theme';
+import { Icon } from '@/components/icon';
+import { familyFor } from '@/constants/themes';
 import { useI18n } from '@/i18n';
+import { useAppTheme } from '@/theme/theme-provider';
 
-/** Native tab bar (Android/iOS). The web counterpart is `app-tabs.web.tsx`. */
+/** The bottom tab bar, drawn the same on every platform so it follows the chosen theme (labels, icons, hairline). */
 export default function AppTabs() {
   const { t } = useI18n();
-  const scheme = useColorScheme();
-  const colors = Colors[scheme === 'dark' ? 'dark' : 'light'];
+  const { colors, body, shape } = useAppTheme();
 
   return (
-    <NativeTabs backgroundColor={colors.background} indicatorColor={colors.backgroundElement} labelStyle={{ selected: { color: colors.text } }}>
-      <NativeTabs.Trigger name="(groups)">
-        <NativeTabs.Trigger.Label>{t('nav.groups')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon src={require('@/assets/images/tabIcons/home.png')} renderingMode="template" />
-      </NativeTabs.Trigger>
-
-      <NativeTabs.Trigger name="settings">
-        <NativeTabs.Trigger.Label>{t('nav.settings')}</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon src={require('@/assets/images/tabIcons/explore.png')} renderingMode="template" />
-      </NativeTabs.Trigger>
-    </NativeTabs>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarStyle: {
+          backgroundColor: colors.backgroundElement,
+          borderTopColor: colors.border,
+          borderTopWidth: 1,
+          elevation: 0,
+          shadowOpacity: 0,
+          paddingTop: 6,
+        },
+        tabBarLabelStyle: { fontFamily: familyFor(body, 600), fontSize: 11.5, textTransform: shape.uppercaseHeadings ? 'uppercase' : 'none' },
+      }}
+    >
+      <Tabs.Screen name="(groups)" options={{ title: t('nav.groups'), tabBarIcon: ({ color }) => <Icon name="groups" color={String(color)} /> }} />
+      <Tabs.Screen name="settings" options={{ title: t('nav.settings'), tabBarIcon: ({ color }) => <Icon name="settings" color={String(color)} /> }} />
+    </Tabs>
   );
 }

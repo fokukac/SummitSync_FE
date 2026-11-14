@@ -5,6 +5,7 @@ import { RefreshControl, View } from 'react-native';
 
 import { api, unwrap } from '@/api/client';
 import { Button, TextField } from '@/components/form';
+import { IconButton } from '@/components/icon';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
 import { QueryState, Segmented } from '@/components/ui';
@@ -35,9 +36,13 @@ export default function GroupsScreen() {
 
   return (
     <Page refreshControl={<RefreshControl refreshing={active.isRefetching && !active.isPending} onRefresh={() => void active.refetch()} />}>
-      <ThemedText type="subtitle">{t('nav.groups')}</ThemedText>
-      <Button variant="plain" title={t('groups.create')} onPress={() => router.push('/groups/new')} />
-      <Button variant="plain" title={t('nav.search')} onPress={() => router.push('/search')} />
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <ThemedText type="subtitle">{t('nav.groups')}</ThemedText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <IconButton name="search" label={t('nav.search')} onPress={() => router.push('/search')} />
+          <IconButton name="plus" label={t('groups.create')} filled onPress={() => router.push('/groups/new')} />
+        </View>
+      </View>
       <Segmented
         value={mode}
         onChange={setMode}

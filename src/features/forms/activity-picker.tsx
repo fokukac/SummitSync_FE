@@ -1,7 +1,7 @@
 import { Pressable, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { useTheme } from '@/hooks/use-theme';
+import { useShape, useTheme } from '@/hooks/use-theme';
 import { useMeta } from '@/features/forms/use-meta';
 import { useI18n } from '@/i18n';
 
@@ -11,6 +11,7 @@ const MAX = 4;
 export function ActivityPicker({ value, onChange, error }: { value: number[]; onChange: (ids: number[]) => void; error?: string }) {
   const { t } = useI18n();
   const theme = useTheme();
+  const shape = useShape();
   const meta = useMeta();
 
   function toggle(id: number) {
@@ -30,7 +31,12 @@ export function ActivityPicker({ value, onChange, error }: { value: number[]; on
               accessibilityRole="checkbox"
               accessibilityState={{ checked: selected }}
               onPress={() => toggle(activity.id)}
-              style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: selected ? theme.primary : theme.backgroundSelected }}
+              style={{
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                borderRadius: shape.radiusSmall,
+                backgroundColor: selected ? theme.primary : theme.backgroundSelected,
+              }}
             >
               <ThemedText type="small" style={{ color: selected ? theme.onPrimary : theme.text }}>
                 {activity.name}
