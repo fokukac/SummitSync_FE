@@ -48,3 +48,46 @@ export function startsBlock(message: Pick<Message, 'user' | 'created_at'>, previ
     !previous || previous.user.id !== message.user.id || new Date(message.created_at).getTime() - new Date(previous.created_at).getTime() > GROUP_WINDOW_MS
   );
 }
+
+export type ChatPerson = { user: Message['user']; ids: number[]; last: string };
+
+/** Everyone who wrote in these messages (oldest first), most recently active first, with their message ids in order. */
+export function peopleOf(messages: Pick<Message, 'id' | 'user' | 'created_at'>[]): ChatPerson[] {
+  const byUser = new Map<number, ChatPerson>();
+
+  for (const message of messages) {
+    const entry = byUser.get(message.user.id);
+
+    if (entry) {
+      entry.ids.push(message.id);
+      entry.last = message.created_at;
+    } else {
+      byUser.set(message.user.id, { user: message.user, ids: [message.id], last: message.created_at });
+    }
+  }
+
+  return [...byUser.values()].sort((a, b) => b.last.localeCompare(a.last));
+}
+
+/**
+ * Which of a person's messages their arrows move to. Forward starts at their oldest message and wraps; backward starts
+ * at their newest and wraps. `current` is the message id the arrows are on now (undefined before the first press).
+ * Returns the index into `ids`; `-1` means "at the oldest loaded message: load older history first, then ask again".
+ */
+export function jumpTarget(ids: number[], current: number | undefined, direction: 1 | -1, canLoadOlder: boolean): number {
+  const at = current === undefined ? -1 : ids.indexOf(current);
+
+  if (direction === 1) {
+    return at === -1 ? 0 : (at + 1) % ids.length;
+  }
+
+  if (at === -1) {
+    return ids.length - 1;
+  }
+
+  if (at === 0) {
+    return canLoadOlder ? -1 : ids.length - 1;
+  }
+
+  return at - 1;
+}

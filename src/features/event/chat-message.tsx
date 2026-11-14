@@ -21,17 +21,31 @@ type Props = {
   sending?: boolean;
   /** The "..." menu. */
   actions?: React.ReactNode;
+  /** Briefly marked after the People panel jumped to this message. */
+  highlighted?: boolean;
 };
 
 /**
  * One chat message, flat: no bubble, no card. Avatar on the left, name and time above the text, the "..." menu at the
  * right edge. Follow-up messages in a block line up under the first one's text.
  */
-export function ChatMessage({ name, avatar, time, body, header, own = false, status, sending = false, actions }: Props) {
+export function ChatMessage({ name, avatar, time, body, header, own = false, status, sending = false, actions, highlighted = false }: Props) {
   const theme = useTheme();
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginTop: header ? 14 : 2, opacity: sending ? 0.6 : 1 }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: 12,
+        marginTop: header ? 14 : 2,
+        paddingVertical: 2,
+        marginHorizontal: -8,
+        paddingHorizontal: 8,
+        opacity: sending ? 0.6 : 1,
+        backgroundColor: highlighted ? theme.backgroundSelected : 'transparent',
+      }}
+    >
       <View style={{ width: AVATAR }}>{header ? <Avatar name={name} uri={avatar} size={AVATAR} /> : null}</View>
       <View style={{ flex: 1 }}>
         {header ? (
