@@ -14,14 +14,27 @@ npm run android             # emulator or device; reaches the host as http://10.
 
 Demo login (backend `DemoSeeder`): `alice@example.test` / `password`.
 
+## Test build for a phone (APK)
+
+```bash
+scripts/build-apk.sh            # -> dist/summitsync-test.apk
+```
+
+Builds locally (JDK 17 and the Android SDK, `ANDROID_HOME`) against this machine's address on the local network, so the
+phone and the computer must be on the same Wi-Fi and the backend running (`sail up -d`). It allows plain http to that
+address (test builds only, via `APP_ALLOW_CLEARTEXT` in `app.config.js`) and is signed with the debug key. Install with
+`adb install -r dist/summitsync-test.apk`, or copy the file to the phone and open it (allow installs from that app).
+Pass a different address as the first argument if the autodetected one is wrong; the address is baked into the build, so
+rebuild if the computer's address changes.
+
 ## Commands
 
-| Command | What it does |
-| --- | --- |
-| `npm run check` | lint + type check + tests (what CI runs) |
-| `npm run format` | Prettier (CI checks it; generated files are ignored) |
+| Command                | What it does                                                                                          |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| `npm run check`        | lint + type check + tests (what CI runs)                                                              |
+| `npm run format`       | Prettier (CI checks it; generated files are ignored)                                                  |
 | `npm run sync:backend` | re-export the OpenAPI spec, regenerate `src/api/schema.d.ts`, copy the website's translation catalogs |
-| `npm run build:web` | static web build into `dist/` |
+| `npm run build:web`    | static web build into `dist/`                                                                         |
 
 Always add packages with `npx expo install <pkg>` (it picks the SDK-compatible version). Dependencies install with
 `legacy-peer-deps` (see `.npmrc`): `openapi-typescript` has not declared TypeScript 6 support yet.
