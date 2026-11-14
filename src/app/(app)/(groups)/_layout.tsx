@@ -16,3 +16,6 @@ export default function GroupsStack() {
     </Stack>
   );
 }
+
+/** A deep link or a reload straight into a group or event keeps the groups list underneath, so back and the Groups tab lead somewhere. */
+export const unstable_settings = { anchor: 'index' };
