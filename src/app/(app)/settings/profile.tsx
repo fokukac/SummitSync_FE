@@ -4,7 +4,8 @@ import { Platform, View } from 'react-native';
 
 import { api } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
-import { Button, ErrorText, Screen, TextField } from '@/components/form';
+import { Button, ErrorText, FormGroup, Screen, TextField } from '@/components/form';
+import { SectionTitle } from '@/components/section-title';
 import { ThemedText } from '@/components/themed-text';
 import { PhotoEditor } from '@/components/photo-editor';
 import { useI18n } from '@/i18n';
@@ -14,10 +15,16 @@ export default function ProfileScreen() {
   const { user } = useAuth();
 
   return (
-    <Screen>
-      <PhotoSection />
-      <DetailsSection key={user?.id} />
-      <EmailSection />
+    <Screen form>
+      <FormGroup first>
+        <PhotoSection />
+      </FormGroup>
+      <FormGroup>
+        <DetailsSection key={user?.id} />
+      </FormGroup>
+      <FormGroup>
+        <EmailSection />
+      </FormGroup>
     </Screen>
   );
 }
@@ -60,7 +67,7 @@ function PhotoSection() {
   }
 
   return (
-    <View style={{ gap: 8, paddingBottom: 16 }}>
+    <View style={{ gap: 8 }}>
       <PhotoEditor
         name={user?.name ?? ''}
         uri={user?.avatar}
@@ -96,8 +103,8 @@ function DetailsSection() {
   }
 
   return (
-    <View style={{ gap: 12 }}>
-      <ThemedText type="smallBold">{t('settings.profile.title')}</ThemedText>
+    <View style={{ gap: 16 }}>
+      <SectionTitle title={t('settings.profile.title')} />
       <TextField label={t('auth.name')} value={name} onChangeText={setName} error={form.errors.name} autoComplete="name" />
       <TextField label={t('auth.username')} value={username} onChangeText={setUsername} error={form.errors.username} autoCapitalize="none" />
       {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
@@ -137,8 +144,8 @@ function EmailSection() {
   }
 
   return (
-    <View style={{ gap: 12 }}>
-      <ThemedText type="smallBold">{t('settings.email.change.title')}</ThemedText>
+    <View style={{ gap: 16 }}>
+      <SectionTitle title={t('settings.email.change.title')} />
       <ThemedText type="small" themeColor="textSecondary">
         {user?.email}
       </ThemedText>
@@ -149,7 +156,7 @@ function EmailSection() {
       ) : user.pending_email ? (
         <>
           <ThemedText type="small">{t('settings.email.pending', { email: user.pending_email })}</ThemedText>
-          <Button variant="plain" title={t('settings.email.cancel')} onPress={() => void cancel()} loading={form.busy} />
+          <Button compact variant="plain" title={t('settings.email.cancel')} onPress={() => void cancel()} loading={form.busy} />
         </>
       ) : (
         <>

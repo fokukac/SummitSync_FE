@@ -1,21 +1,26 @@
-import * as Clipboard from 'expo-clipboard';
 import { Linking, Platform, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useState } from 'react';
 
 import { api, deleteBody } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
-import { Button, ErrorText, Screen, TextField } from '@/components/form';
+import { CodeBlock } from '@/components/code-block';
+import { Button, ErrorText, FormGroup, Screen, TextField } from '@/components/form';
+import { SectionTitle } from '@/components/section-title';
 import { ThemedText } from '@/components/themed-text';
-import { Card } from '@/components/card';
+import { useShape } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 import { useFormState } from '@/lib/use-form';
 
 export default function SecurityScreen() {
   return (
-    <Screen>
-      <PasswordSection />
-      <TwoFactorSection />
+    <Screen form>
+      <FormGroup first>
+        <PasswordSection />
+      </FormGroup>
+      <FormGroup>
+        <TwoFactorSection />
+      </FormGroup>
     </Screen>
   );
 }
@@ -44,8 +49,8 @@ function PasswordSection() {
   }
 
   return (
-    <View style={{ gap: 12 }}>
-      <ThemedText type="smallBold">{t(user?.has_password ? 'settings.security.password.title' : 'settings.security.password.setTitle')}</ThemedText>
+    <View style={{ gap: 16 }}>
+      <SectionTitle title={t(user?.has_password ? 'settings.security.password.title' : 'settings.security.password.setTitle')} />
       {user?.has_password ? (
         <TextField
           label={t('settings.security.currentPassword')}
@@ -87,6 +92,7 @@ type Setup = { secret: string; otpauthUrl: string; recoveryCodes: string[]; pass
 
 function TwoFactorSection() {
   const { t } = useI18n();
+  const shape = useShape();
   const { user, refresh } = useAuth();
   const [password, setPassword] = useState('');
   const [setup, setSetup] = useState<Setup>();
@@ -147,26 +153,24 @@ function TwoFactorSection() {
   const failure = form.errors.current_password ?? form.errors.code ?? (form.message !== undefined ? form.message || t('common.somethingWrong') : undefined);
 
   return (
-    <View style={{ gap: 12 }}>
-      <ThemedText type="smallBold">{t('twofa.enable.title')}</ThemedText>
+    <View style={{ gap: 16 }}>
+      <SectionTitle title={t('twofa.enable.title')} />
 
       {setup ? (
         <>
           <ThemedText type="small" themeColor="textSecondary">
             {t('twofa.enable.description')}
           </ThemedText>
-          <View style={{ alignItems: 'center', padding: 12, backgroundColor: '#ffffff', borderRadius: 8, alignSelf: 'flex-start' }}>
+          <View style={{ alignItems: 'center', padding: 12, backgroundColor: '#ffffff', borderRadius: shape.radius, alignSelf: 'flex-start' }}>
             <QRCode value={setup.otpauthUrl} size={180} />
           </View>
-          {Platform.OS !== 'web' ? <Button variant="plain" title={t('twofa.enable.title')} onPress={() => void Linking.openURL(setup.otpauthUrl)} /> : null}
+          {Platform.OS !== 'web' ? (
+            <Button compact variant="plain" title={t('twofa.enable.title')} onPress={() => void Linking.openURL(setup.otpauthUrl)} />
+          ) : null}
           <ThemedText type="small" themeColor="textSecondary">
             {t('twofa.manualCode')}
           </ThemedText>
-          <Card onPress={() => void Clipboard.setStringAsync(setup.secret)}>
-            <ThemedText type="code" selectable>
-              {setup.secret}
-            </ThemedText>
-          </Card>
+          <CodeBlock codes={[setup.secret]} />
           <RecoveryCodes codes={setup.recoveryCodes} />
           <TextField
             label={t('twofa.verify.title')}
@@ -178,7 +182,7 @@ function TwoFactorSection() {
           />
           {failure ? <ErrorText>{failure}</ErrorText> : null}
           <Button title={t('common.confirm')} onPress={() => void confirm()} loading={form.busy} />
-          <Button variant="plain" title={t('common.cancel')} onPress={() => void cancelSetup()} />
+          <Button compact variant="plain" title={t('common.cancel')} onPress={() => void cancelSetup()} />
         </>
       ) : user.two_factor_enabled ? (
         <>
@@ -194,8 +198,10 @@ function TwoFactorSection() {
             autoComplete="current-password"
           />
           {failure ? <ErrorText>{failure}</ErrorText> : null}
-          <Button variant="plain" title={t('twofa.recovery.regenerate')} onPress={() => void regenerate()} loading={form.busy} />
-          <Button variant="plain" title={t('settings.security.twofa.disable')} onPress={() => void disable()} />
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
+            <Button compact variant="plain" title={t('twofa.recovery.regenerate')} onPress={() => void regenerate()} loading={form.busy} />
+            <Button compact variant="plain" title={t('settings.security.twofa.disable')} onPress={() => void disable()} />
+          </View>
         </>
       ) : !user.has_password ? (
         <ThemedText type="small" themeColor="textSecondary">
@@ -225,17 +231,5 @@ function TwoFactorSection() {
 function RecoveryCodes({ codes }: { codes: string[] }) {
   const { t } = useI18n();
 
-  return (
-    <Card onPress={() => void Clipboard.setStringAsync(codes.join('\n'))}>
-      <ThemedText type="smallBold">{t('twofa.recovery.title')}</ThemedText>
-      <ThemedText type="small" themeColor="textSecondary">
-        {t('twofa.recovery.description')}
-      </ThemedText>
-      {codes.map((recovery) => (
-        <ThemedText key={recovery} type="code" selectable>
-          {recovery}
-        </ThemedText>
-      ))}
-    </Card>
-  );
+  return <CodeBlock codes={codes} title={t('twofa.recovery.title')} hint={t('twofa.recovery.description')} />;
 }
