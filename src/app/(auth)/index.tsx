@@ -30,6 +30,9 @@ export default function LoginScreen() {
 
   return (
     <Screen>
+      <ThemedText type="smallBold" themeColor="primary">
+        SummitSync
+      </ThemedText>
       <ThemedText type="subtitle">{t('auth.login.title')}</ThemedText>
       <ThemedText themeColor="textSecondary">{t('auth.login.description')}</ThemedText>
       <TextField
@@ -57,8 +60,10 @@ export default function LoginScreen() {
       <Button title={t('nav.login')} onPress={submit} loading={busy} />
       <ThemedText type="small" themeColor="textSecondary">
         {t('auth.noAccount')}{' '}
-        <Link href="/register" style={{ fontWeight: '700' }}>
-          {t('nav.signup')}
+        <Link href="/register">
+          <ThemedText type="smallBold" themeColor="primary">
+            {t('nav.signup')}
+          </ThemedText>
         </Link>
       </ThemedText>
     </Screen>

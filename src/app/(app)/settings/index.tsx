@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 
 import { api, deleteBody } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
@@ -8,7 +8,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog';
 import { Button, ErrorText, TextField } from '@/components/form';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, Card } from '@/components/ui';
+import { Avatar, Card, Segmented } from '@/components/ui';
 import { ThemePicker } from '@/features/theme-picker';
 import { supportedLocales, useI18n } from '@/i18n';
 import { useFormState } from '@/lib/use-form';
@@ -69,15 +69,11 @@ export default function SettingsScreen() {
       <ThemePicker />
 
       <ThemedText type="smallBold">{t('nav.language')}</ThemedText>
-      <View style={{ flexDirection: 'row', gap: 16 }}>
-        {Object.entries(supportedLocales).map(([code, name]) => (
-          <Pressable key={code} accessibilityRole="button" accessibilityState={{ selected: locale === code }} onPress={() => void chooseLocale(code)}>
-            <ThemedText type={locale === code ? 'smallBold' : 'small'} themeColor={locale === code ? 'text' : 'textSecondary'}>
-              {name}
-            </ThemedText>
-          </Pressable>
-        ))}
-      </View>
+      <Segmented
+        value={locale}
+        onChange={(code) => void chooseLocale(code)}
+        options={Object.entries(supportedLocales).map(([code, name]) => ({ value: code, label: name }))}
+      />
 
       <Button variant="plain" title={t('nav.logout')} onPress={() => void signOut()} />
       <Button variant="plain" title={t('settings.delete.title')} onPress={() => setDeleting(true)} />

@@ -8,7 +8,9 @@ export default function NotFound() {
     <Screen>
       <ThemedText type="subtitle">404</ThemedText>
       <Link href="/">
-        <ThemedText type="link">Home</ThemedText>
+        <ThemedText type="smallBold" themeColor="primary">
+          Home
+        </ThemedText>
       </Link>
     </Screen>
   );

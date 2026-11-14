@@ -229,9 +229,10 @@ type QueryLike = { isPending: boolean; isError: boolean; refetch: () => unknown 
 /** The three non-happy states of a query, in one place; renders `children` once data is there. */
 export function QueryState({ query, empty, emptyText, children }: { query: QueryLike; empty?: boolean; emptyText?: string; children: ReactNode }) {
   const { t } = useI18n();
+  const theme = useTheme();
 
   if (query.isPending) {
-    return <ActivityIndicator style={styles.state} />;
+    return <ActivityIndicator color={theme.primary} style={styles.state} />;
   }
 
   if (query.isError) {

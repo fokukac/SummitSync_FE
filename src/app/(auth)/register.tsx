@@ -29,6 +29,9 @@ export default function RegisterScreen() {
 
   return (
     <Screen>
+      <ThemedText type="smallBold" themeColor="primary">
+        SummitSync
+      </ThemedText>
       <ThemedText type="subtitle">{t('auth.register.title')}</ThemedText>
       <ThemedText themeColor="textSecondary">{t('auth.register.description')}</ThemedText>
       <TextField
@@ -79,8 +82,10 @@ export default function RegisterScreen() {
       <Button title={t('auth.register.submit')} onPress={submit} loading={busy} />
       <ThemedText type="small" themeColor="textSecondary">
         {t('auth.haveAccount')}{' '}
-        <Link href="/" style={{ fontWeight: '700' }}>
-          {t('nav.login')}
+        <Link href="/">
+          <ThemedText type="smallBold" themeColor="primary">
+            {t('nav.login')}
+          </ThemedText>
         </Link>
       </ThemedText>
     </Screen>
