@@ -1,17 +1,29 @@
-import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
+import { Platform, StyleSheet, Text, type TextProps, type TextStyle } from 'react-native';
 
 import { Fonts, ThemeColor } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { familyFor } from '@/constants/themes';
+import { useAppTheme } from '@/theme/theme-provider';
 
 export type ThemedTextProps = TextProps & {
   type?: 'default' | 'title' | 'small' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code';
   themeColor?: ThemeColor;
 };
 
-export function ThemedText({ style, type = 'default', themeColor, ...rest }: ThemedTextProps) {
-  const theme = useTheme();
+/** Titles use the theme's heading typeface; everything else its body typeface. */
+const HEADINGS = new Set<ThemedTextProps['type']>(['title', 'subtitle']);
 
-  return <Text style={[{ color: theme[themeColor ?? 'text'] }, styles[type], style]} {...rest} />;
+export function ThemedText({ style, type = 'default', themeColor, ...rest }: ThemedTextProps) {
+  const { colors, heading, body, shape } = useAppTheme();
+  const base: TextStyle = styles[type];
+  const isHeading = HEADINGS.has(type);
+  const weight = Number(StyleSheet.flatten([base, style])?.fontWeight ?? 500);
+  const fontFamily = type === 'code' ? undefined : familyFor(isHeading ? heading : body, weight);
+
+  // A custom family is one file per weight: asking for `fontWeight` on top would synthesise a second bold.
+  const typeface: TextStyle = fontFamily ? { fontFamily, fontWeight: 'normal' } : {};
+  const casing: TextStyle = isHeading && shape.uppercaseHeadings ? { textTransform: 'uppercase', letterSpacing: 0.5 } : {};
+
+  return <Text style={[{ color: colors[themeColor ?? 'text'] }, base, style, typeface, casing]} {...rest} />;
 }
 
 const styles = StyleSheet.create({
@@ -37,7 +49,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 32,
-    lineHeight: 44,
+    lineHeight: 40,
     fontWeight: 600,
   },
   link: {

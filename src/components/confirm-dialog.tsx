@@ -5,6 +5,7 @@ import { Button } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
+import { useShape } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 
 type Props = {
@@ -21,12 +22,13 @@ type Props = {
 /** One confirmation dialog for every destructive action, on all platforms (never `window.confirm`). */
 export function ConfirmDialog({ visible, title, description, confirmLabel, onConfirm, onCancel, loading, children }: Props) {
   const { t } = useI18n();
+  const shape = useShape();
 
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onCancel}>
       <Pressable style={styles.backdrop} onPress={onCancel} accessibilityLabel={t('common.cancel')}>
         <Pressable accessibilityRole="alert">
-          <ThemedView style={styles.dialog}>
+          <ThemedView type="backgroundElement" style={[styles.dialog, { borderRadius: shape.radius }]}>
             <ThemedText type="smallBold">{title}</ThemedText>
             {description ? (
               <ThemedText type="small" themeColor="textSecondary">
@@ -47,6 +49,6 @@ export function ConfirmDialog({ visible, title, description, confirmLabel, onCon
 
 const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', padding: Spacing.four },
-  dialog: { width: '100%', maxWidth: 420, padding: Spacing.four, borderRadius: Spacing.three, gap: Spacing.three },
+  dialog: { width: '100%', maxWidth: 420, padding: Spacing.four, gap: Spacing.three },
   actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: Spacing.two },
 });

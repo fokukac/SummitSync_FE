@@ -5,7 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { familyFor } from '@/constants/themes';
+import { useShape, useTheme } from '@/hooks/use-theme';
+import { useAppTheme } from '@/theme/theme-provider';
 
 /** A centered, scrollable column for forms and simple pages. */
 export function Screen({ children }: { children: ReactNode }) {
@@ -23,7 +25,7 @@ export function Screen({ children }: { children: ReactNode }) {
 type FieldProps = TextInputProps & { label: string; error?: string };
 
 export function TextField({ label, error, style, ...props }: FieldProps) {
-  const theme = useTheme();
+  const { colors: theme, shape, body } = useAppTheme();
 
   return (
     <View style={styles.field}>
@@ -31,7 +33,17 @@ export function TextField({ label, error, style, ...props }: FieldProps) {
       <TextInput
         accessibilityLabel={label}
         placeholderTextColor={theme.textSecondary}
-        style={[styles.input, { color: theme.text, borderColor: error ? theme.danger : theme.border, backgroundColor: theme.backgroundElement }, style]}
+        style={[
+          styles.input,
+          {
+            color: theme.text,
+            borderRadius: shape.radius,
+            fontFamily: familyFor(body, 500),
+            borderColor: error ? theme.danger : theme.border,
+            backgroundColor: theme.backgroundElement,
+          },
+          style,
+        ]}
         {...props}
       />
       {error ? <ErrorText>{error}</ErrorText> : null}
@@ -53,6 +65,7 @@ type ButtonProps = { title: string; onPress: () => void; loading?: boolean; vari
 
 export function Button({ title, onPress, loading = false, variant = 'primary' }: ButtonProps) {
   const theme = useTheme();
+  const shape = useShape();
   const primary = variant === 'primary';
 
   return (
@@ -60,7 +73,10 @@ export function Button({ title, onPress, loading = false, variant = 'primary' }:
       accessibilityRole="button"
       disabled={loading}
       onPress={onPress}
-      style={({ pressed }) => [styles.button, { backgroundColor: primary ? theme.primary : 'transparent', opacity: pressed || loading ? 0.7 : 1 }]}
+      style={({ pressed }) => [
+        styles.button,
+        { borderRadius: shape.radius, backgroundColor: primary ? theme.primary : 'transparent', opacity: pressed || loading ? 0.7 : 1 },
+      ]}
     >
       {loading ? (
         <ActivityIndicator color={primary ? theme.onPrimary : theme.text} />
@@ -78,6 +94,6 @@ const styles = StyleSheet.create({
   screen: { flexGrow: 1, justifyContent: 'center', padding: Spacing.four },
   column: { width: '100%', maxWidth: MaxContentWidth / 2, alignSelf: 'center', gap: Spacing.three },
   field: { gap: Spacing.one },
-  input: { borderWidth: 1, borderRadius: Spacing.two, paddingHorizontal: Spacing.three, paddingVertical: Spacing.three, fontSize: 16 },
-  button: { minHeight: 48, borderRadius: Spacing.two, alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing.three },
+  input: { borderWidth: 1, paddingHorizontal: Spacing.three, paddingVertical: Spacing.three, fontSize: 16 },
+  button: { minHeight: 48, alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing.three },
 });

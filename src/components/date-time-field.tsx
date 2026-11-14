@@ -5,7 +5,7 @@ import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { Button, ErrorText } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+import { useShape, useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 import { combineDayAndTime, dateToField, fieldToDate, pickerStart } from '@/lib/date-field';
 
@@ -30,6 +30,7 @@ type Step = 'closed' | 'date' | 'time';
 export function DateTimeField({ label, value, onChange, error, required = false, suggest = '' }: DateTimeFieldProps) {
   const { t } = useI18n();
   const theme = useTheme();
+  const shape = useShape();
   const [step, setStep] = useState<Step>('closed');
   const [day, setDay] = useState<Date>();
   const current = fieldToDate(value) ?? pickerStart(suggest);
@@ -41,7 +42,7 @@ export function DateTimeField({ label, value, onChange, error, required = false,
         accessibilityRole="button"
         accessibilityLabel={label}
         onPress={() => setStep(step === 'closed' ? 'date' : 'closed')}
-        style={[styles.input, { borderColor: error ? theme.danger : theme.border, backgroundColor: theme.backgroundElement }]}
+        style={[styles.input, { borderRadius: shape.radius, borderColor: error ? theme.danger : theme.border, backgroundColor: theme.backgroundElement }]}
       >
         <ThemedText themeColor={value ? 'text' : 'textSecondary'}>{value || t('common.dateTime.choose')}</ThemedText>
       </Pressable>
@@ -87,5 +88,5 @@ export function DateTimeField({ label, value, onChange, error, required = false,
 
 const styles = StyleSheet.create({
   field: { gap: Spacing.one },
-  input: { borderWidth: 1, borderRadius: Spacing.two, paddingHorizontal: Spacing.three, paddingVertical: Spacing.three },
+  input: { borderWidth: 1, paddingHorizontal: Spacing.three, paddingVertical: Spacing.three },
 });
