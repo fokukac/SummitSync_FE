@@ -3,7 +3,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 
 import { useShape, useTheme } from '@/hooks/use-theme';
 
-export type IconName = 'groups' | 'search' | 'settings' | 'plus' | 'back';
+export type IconName = 'groups' | 'search' | 'settings' | 'plus' | 'back' | 'clock' | 'pin' | 'check' | 'up' | 'down';
 
 /** Stroke icons (24px grid), drawn with the theme's text colour unless told otherwise. */
 export function Icon({ name, size = 24, color }: { name: IconName; size?: number; color?: string }) {
@@ -34,6 +34,21 @@ export function Icon({ name, size = 24, color }: { name: IconName; size?: number
         </>
       ) : null}
       {name === 'plus' ? <Path d="M12 5v14M5 12h14" /> : null}
+      {name === 'clock' ? (
+        <>
+          <Circle cx={12} cy={12} r={9} />
+          <Path d="M12 7v5l3 2" />
+        </>
+      ) : null}
+      {name === 'pin' ? (
+        <>
+          <Path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z" />
+          <Circle cx={12} cy={10} r={2.5} />
+        </>
+      ) : null}
+      {name === 'check' ? <Path d="m5 12.5 4.5 4.5L19 7.5" /> : null}
+      {name === 'up' ? <Path d="m6 15 6-6 6 6" /> : null}
+      {name === 'down' ? <Path d="m6 9 6 6 6-6" /> : null}
       {name === 'back' ? <Path d="m15 18-6-6 6-6" /> : null}
     </Svg>
   );

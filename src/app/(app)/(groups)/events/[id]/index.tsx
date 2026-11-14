@@ -7,7 +7,7 @@ import { api, unwrap } from '@/api/client';
 import { Button } from '@/components/form';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
-import { Chip, QueryState, Segmented } from '@/components/ui';
+import { Fact, Hero, Note, Pill, QueryState, Segmented } from '@/components/ui';
 import { ChatTab } from '@/features/event/chat-tab';
 import { ChecklistTab } from '@/features/event/checklist-tab';
 import { EventMembershipActions } from '@/features/membership-actions';
@@ -53,23 +53,24 @@ export default function EventScreen() {
             <Segmented value={tab} onChange={setTab} options={tabs} />
 
             {tab === 'overview' ? (
-              <View style={{ gap: 12 }}>
-                <ThemedText type="subtitle" style={{ fontSize: 26, lineHeight: 32 }}>
+              <View style={{ gap: 16 }}>
+                <Hero>
+                  <Pill label={t(`events.status.${data.status}`)} />
+                  {(data.activities ?? []).slice(0, 2).map((activity) => (
+                    <Pill key={activity.id} label={activity.name} accent />
+                  ))}
+                </Hero>
+                <ThemedText type="subtitle" style={{ fontSize: 28, lineHeight: 34 }}>
                   {data.title}
                 </ThemedText>
-                <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
-                  <Chip label={t(`events.status.${data.status}`)} />
-                  {(data.activities ?? []).map((activity) => (
-                    <Chip key={activity.id} label={activity.name} />
-                  ))}
+                <View style={{ gap: 12 }}>
+                  <Fact icon="clock">{formatEventDateTime(data.starts_at, data.timezone, intlLocale)}</Fact>
+                  {data.location_name ? <Fact icon="pin">{data.location_name}</Fact> : null}
+                  <Fact icon="groups">{t('events.going', { count: data.participants_count })}</Fact>
                 </View>
-                <ThemedText>{formatEventDateTime(data.starts_at, data.timezone, intlLocale)}</ThemedText>
-                {data.location_name ? <ThemedText>{data.location_name}</ThemedText> : null}
-                <ThemedText themeColor="textSecondary">{t('events.going', { count: data.participants_count })}</ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
-                  {data.group?.name}
-                </ThemedText>
-                {data.description ? <ThemedText>{data.description}</ThemedText> : null}
+                {data.description || data.group?.name ? (
+                  <Note title={data.group?.name}>{data.description ? <ThemedText>{data.description}</ThemedText> : null}</Note>
+                ) : null}
                 <EventMembershipActions eventId={eventId} can={data.can} />
                 {data.can.update ? (
                   <Button

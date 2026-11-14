@@ -7,7 +7,7 @@ import { api, unwrap } from '@/api/client';
 import { Button } from '@/components/form';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, Card, Chip, QueryState, Segmented } from '@/components/ui';
+import { Avatar, Card, Chip, QueryState, Segmented, TagLine } from '@/components/ui';
 import { GroupMembershipActions } from '@/features/membership-actions';
 import { useI18n } from '@/i18n';
 import { formatShortDateTime } from '@/lib/format';
@@ -58,13 +58,7 @@ export default function GroupScreen() {
               </View>
             </View>
             {data.description ? <ThemedText>{data.description}</ThemedText> : null}
-            {data.activities.length > 0 ? (
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-                {data.activities.map((activity) => (
-                  <Chip key={activity.id} label={activity.name} />
-                ))}
-              </View>
-            ) : null}
+            {data.activities.length > 0 ? <TagLine tags={data.activities.map((activity) => activity.name)} /> : null}
 
             <GroupMembershipActions slug={slug} can={data.can} />
             {data.can.createEvent ? (

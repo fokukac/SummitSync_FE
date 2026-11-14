@@ -5,8 +5,9 @@ import { Pressable, View } from 'react-native';
 import { api, unwrap, unwrapVoid } from '@/api/client';
 import { Button, ErrorText, TextField } from '@/components/form';
 import { ConfirmDialog } from '@/components/confirm-dialog';
+import { IconButton } from '@/components/icon';
 import { ThemedText } from '@/components/themed-text';
-import { Card, QueryState } from '@/components/ui';
+import { Card, Checkbox, ProgressBar, QueryState } from '@/components/ui';
 import { ChecklistBreakdown } from '@/features/event/checklist-breakdown';
 import { ChecklistSuggestions } from '@/features/event/checklist-suggestions';
 import { useMeta } from '@/features/forms/use-meta';
@@ -169,6 +170,14 @@ export function ChecklistTab({
         </View>
       ) : null}
       <QueryState query={checklist} empty={checklist.data?.length === 0} emptyText={t('events.tabs.checklist')}>
+        {(checklist.data?.length ?? 0) > 0 ? (
+          <View style={{ gap: 6 }}>
+            <ThemedText type="smallBold">
+              {checklist.data?.filter((item) => item.my_checked).length}/{checklist.data?.length}
+            </ThemedText>
+            <ProgressBar value={(checklist.data?.filter((item) => item.my_checked).length ?? 0) / (checklist.data?.length ?? 1)} />
+          </View>
+        ) : null}
         {error ? <ErrorText>{t('checklist.saveFailed')}</ErrorText> : null}
         {reorder.isError ? <ErrorText>{t('checklist.reorderFailed')}</ErrorText> : null}
         {checklist.data?.map((item, index) => (
@@ -186,7 +195,7 @@ export function ChecklistTab({
               onPress={() => toggle.mutate({ item, checked: !item.my_checked })}
             >
               <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-                <ThemedText>{item.my_checked ? '☑' : '☐'}</ThemedText>
+                <Checkbox checked={item.my_checked} />
                 <ThemedText
                   style={{
                     flex: 1,
@@ -195,7 +204,7 @@ export function ChecklistTab({
                 >
                   {item.label}
                 </ThemedText>
-                <ThemedText type="small" themeColor="textSecondary">
+                <ThemedText type="smallBold" themeColor="textSecondary">
                   {item.checked_count}/{item.total_participants}
                 </ThemedText>
               </View>
@@ -212,24 +221,12 @@ export function ChecklistTab({
             ) : null}
             {canManage ? (
               <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={t('checklist.moveUp')}
-                  disabled={index === 0}
-                  onPress={() => move(index, -1)}
-                  style={{ padding: 8, opacity: index === 0 ? 0.3 : 1 }}
-                >
-                  <ThemedText>↑</ThemedText>
-                </Pressable>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel={t('checklist.moveDown')}
-                  disabled={index === (checklist.data?.length ?? 0) - 1}
-                  onPress={() => move(index, 1)}
-                  style={{ padding: 8, opacity: index === (checklist.data?.length ?? 0) - 1 ? 0.3 : 1 }}
-                >
-                  <ThemedText>↓</ThemedText>
-                </Pressable>
+                <View style={{ opacity: index === 0 ? 0.3 : 1 }}>
+                  <IconButton name="up" label={t('checklist.moveUp')} onPress={() => index > 0 && move(index, -1)} />
+                </View>
+                <View style={{ opacity: index === (checklist.data?.length ?? 0) - 1 ? 0.3 : 1 }}>
+                  <IconButton name="down" label={t('checklist.moveDown')} onPress={() => index < (checklist.data?.length ?? 0) - 1 && move(index, 1)} />
+                </View>
                 <Button variant="plain" title={t('checklist.deleteItem')} onPress={() => setDeleting(item)} />
               </View>
             ) : null}
