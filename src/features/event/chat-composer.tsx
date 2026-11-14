@@ -11,6 +11,9 @@ import { insertAt } from '@/lib/emojis';
 import { useAppTheme } from '@/theme/theme-provider';
 
 const BUTTON = 44;
+const MAX_INPUT_HEIGHT = 140;
+/** What the field is taller than its text (native reports the text alone): padding (10 + 10) and border (1 + 1). */
+const FIELD_CHROME = 22;
 const COUNTER_FROM = 200;
 
 type Props = { draft: string; onChange: (text: string) => void; onSend: () => void; maxLength: number };
@@ -26,6 +29,7 @@ export function ChatComposer({ draft, onChange, onSend, maxLength }: Props) {
   const { body: bodyFont } = useAppTheme();
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [focused, setFocused] = useState(false);
+  const [inputHeight, setInputHeight] = useState(BUTTON);
   // Where the caret is (kept in a ref: it changes on every key press) and, only right after an emoji was inserted, where to put it.
   const caret = useRef({ start: 0, end: 0 });
   const [forced, setForced] = useState<{ start: number; end: number }>();
@@ -93,10 +97,20 @@ export function ChatComposer({ draft, onChange, onSend, maxLength }: Props) {
           placeholderTextColor={theme.textSecondary}
           accessibilityLabel={t('chat.placeholder')}
           multiline
+          // One line to start with (a browser's multi-line field is two rows tall by default, which towered over the buttons),
+          // then growing with the text up to a limit. On the web the browser does the growing itself; on a phone the
+          // measured text height sets the field's height.
+          numberOfLines={1}
+          onContentSizeChange={
+            Platform.OS === 'web'
+              ? undefined
+              : (event) => setInputHeight(Math.min(MAX_INPUT_HEIGHT, Math.max(BUTTON, event.nativeEvent.contentSize.height + FIELD_CHROME)))
+          }
           maxLength={maxLength}
           style={[
             {
               flex: 1,
+              ...(Platform.OS === 'web' ? { minHeight: BUTTON, maxHeight: MAX_INPUT_HEIGHT, fieldSizing: 'content' } : { height: inputHeight }),
               color: theme.text,
               fontFamily: familyFor(bodyFont, 500),
               borderWidth: 1,
@@ -105,9 +119,8 @@ export function ChatComposer({ draft, onChange, onSend, maxLength }: Props) {
               backgroundColor: theme.backgroundElement,
               paddingHorizontal: 16,
               paddingVertical: 10,
-              minHeight: BUTTON,
-              maxHeight: 140,
               fontSize: 16,
+              lineHeight: 22,
             },
             // The outline is drawn by the border (which also shows focus); the browser's own ring would double it.
             Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : null,
