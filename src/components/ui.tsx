@@ -5,6 +5,7 @@ import Svg, { Ellipse, G } from 'react-native-svg';
 
 import { API_URL } from '@/api/client';
 import { Button } from '@/components/form';
+import { ActivityIcon } from '@/components/activity-icon';
 import { Icon, type IconName } from '@/components/icon';
 import { ThemedText } from '@/components/themed-text';
 import { Spacing } from '@/constants/theme';
@@ -43,22 +44,29 @@ export function Chip({ label }: { label: string }) {
   );
 }
 
-/** Short facts on one line ("Hiking · Climbing"), in the accent colour. Replaces a wrapping row of chips. */
-export function TagLine({ tags }: { tags: string[] }) {
+/** Activities in the accent colour, each with its icon, wrapping over as many lines as needed. */
+export function ActivityTags({ activities }: { activities: { id: number; name: string; icon: string }[] }) {
   const { shape, colors } = useAppTheme();
 
   return (
-    <ThemedText
-      type="small"
-      style={{ color: colors.primary, textTransform: shape.uppercaseHeadings ? 'uppercase' : 'none', letterSpacing: shape.uppercaseHeadings ? 0.6 : 0 }}
-    >
-      {tags.join(' · ')}
-    </ThemedText>
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: 14, rowGap: 4 }}>
+      {activities.map((activity) => (
+        <View key={activity.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+          <ActivityIcon icon={activity.icon} size={15} color={colors.primary} />
+          <ThemedText
+            type="small"
+            style={{ color: colors.primary, textTransform: shape.uppercaseHeadings ? 'uppercase' : 'none', letterSpacing: shape.uppercaseHeadings ? 0.6 : 0 }}
+          >
+            {activity.name}
+          </ThemedText>
+        </View>
+      ))}
+    </View>
   );
 }
 
 /** A label sitting on the hero image (status, activity). */
-export function Pill({ label, accent = false }: { label: string; accent?: boolean }) {
+export function Pill({ label, accent = false, icon }: { label: string; accent?: boolean; icon?: string }) {
   const { colors, shape, definition } = useAppTheme();
   // On the orange hero of Social Sport an orange pill would vanish, so the accent pill is ink there.
   const accentBg = definition.id === 'social' ? colors.text : colors.primary;
@@ -71,8 +79,12 @@ export function Pill({ label, accent = false }: { label: string; accent?: boolea
         borderRadius: shape.radiusSmall,
         paddingHorizontal: 10,
         paddingVertical: 4,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5,
       }}
     >
+      {icon ? <ActivityIcon icon={icon} size={14} color={accent ? accentFg : colors.text} /> : null}
       <ThemedText type="smallBold" style={{ fontSize: 12.5, lineHeight: 18, color: accent ? accentFg : colors.text }}>
         {label}
       </ThemedText>
