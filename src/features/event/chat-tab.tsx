@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import {
   type NativeScrollEvent,
   type NativeSyntheticEvent,
+  Platform,
   Pressable,
   ScrollView,
   type ScrollViewInstance,
@@ -15,7 +16,7 @@ import {
 import { api, ApiError, unwrap } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
 import { Button } from '@/components/form';
-import { Icon, IconButton } from '@/components/icon';
+import { Icon } from '@/components/icon';
 import { QueryState } from '@/components/query-state';
 import { ThemedText } from '@/components/themed-text';
 import { familyFor } from '@/constants/themes';
@@ -53,6 +54,7 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
 
   const [draft, setDraft] = useState('');
   const [peopleOpen, setPeopleOpen] = useState(false);
+  const [composerFocused, setComposerFocused] = useState(false);
   const [cursors, setCursors] = useState<Record<number, number>>({});
   const [highlightId, setHighlightId] = useState<number>();
   const highlightTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -243,33 +245,53 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
   );
 
   const composer = canPost ? (
-    <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10, marginTop: 12 }}>
+    // One control: the field and the send button share a single outline, with the button as the field's own right end.
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        marginTop: 12,
+        borderWidth: 1,
+        borderColor: composerFocused ? theme.primary : theme.border,
+        borderRadius: shape.radius,
+        backgroundColor: theme.backgroundElement,
+        overflow: 'hidden',
+      }}
+    >
       <TextInput
         value={draft}
         onChangeText={setDraft}
+        onFocus={() => setComposerFocused(true)}
+        onBlur={() => setComposerFocused(false)}
         placeholder={t('chat.placeholder')}
         placeholderTextColor={theme.textSecondary}
         accessibilityLabel={t('chat.placeholder')}
         multiline
         maxLength={MAX_LENGTH}
-        style={{
-          flex: 1,
-          color: theme.text,
-          borderColor: theme.border,
-          backgroundColor: theme.backgroundElement,
-          borderWidth: 1,
-          borderRadius: shape.radius,
-          fontFamily: familyFor(bodyFont, 500),
-          paddingHorizontal: 14,
-          paddingVertical: 12,
-          minHeight: 48,
-          maxHeight: 140,
-          fontSize: 16,
-        }}
+        style={[
+          {
+            flex: 1,
+            color: theme.text,
+            fontFamily: familyFor(bodyFont, 500),
+            paddingHorizontal: 14,
+            paddingVertical: 12,
+            minHeight: 46,
+            maxHeight: 140,
+            fontSize: 16,
+          },
+          // The outline is drawn by the container (it also shows focus); the browser's own would double it.
+          Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : null,
+        ]}
       />
-      <View style={{ opacity: draft.trim() === '' ? 0.4 : 1 }}>
-        <IconButton name="send" label={t('chat.send')} filled onPress={send} />
-      </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={t('chat.send')}
+        accessibilityState={{ disabled: draft.trim() === '' }}
+        onPress={send}
+        style={{ width: 46, height: 46, alignItems: 'center', justifyContent: 'center', backgroundColor: draft.trim() === '' ? 'transparent' : theme.primary }}
+      >
+        <Icon name="send" size={20} color={draft.trim() === '' ? theme.textSecondary : theme.onPrimary} />
+      </Pressable>
     </View>
   ) : (
     <ThemedText type="small" themeColor="textSecondary" style={{ marginTop: 12 }}>
