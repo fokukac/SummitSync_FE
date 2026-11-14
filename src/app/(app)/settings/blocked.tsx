@@ -26,7 +26,7 @@ export default function BlockedScreen() {
   });
 
   return (
-    <Screen>
+    <Screen form>
       <QueryState query={blocked} empty={blocked.data?.length === 0} emptyText={t('settings.blocked.none')}>
         {blocked.data?.map((person) => (
           <Card key={person.id}>
@@ -39,6 +39,7 @@ export default function BlockedScreen() {
                 </ThemedText>
               </View>
               <Button
+                compact
                 variant="plain"
                 title={t('settings.blocked.unblock')}
                 loading={unblock.isPending && unblock.variables === person.id}
