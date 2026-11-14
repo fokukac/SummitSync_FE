@@ -1,13 +1,14 @@
 import { ActivityIndicator, StyleSheet } from 'react-native';
 import { type ReactNode } from 'react';
 
+import { ApiError } from '@/api/client';
 import { EmptyState } from '@/components/empty-state';
 import type { IconName } from '@/components/icon';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 
-type QueryLike = { isPending: boolean; isError: boolean; fetchStatus?: string; refetch: () => unknown };
+type QueryLike = { isPending: boolean; isError: boolean; error?: unknown; fetchStatus?: string; refetch: () => unknown };
 
 type Props = {
   query: QueryLike;
@@ -37,9 +38,15 @@ export function QueryState({ query, empty, emptyText, emptyIcon = 'list', emptyA
   }
 
   if (query.isError) {
+    // Gone (a removed event, a stale link): trying again will not help, so say it is not there instead of offering a retry.
+    if (query.error instanceof ApiError && query.error.status === 404) {
+      return <EmptyState icon="alert" tone="danger" text={t('common.notFound')} compact={compact} />;
+    }
+
     return (
       <EmptyState
         icon="alert"
+        tone="danger"
         text={t('common.somethingWrong')}
         action={{ title: t('common.tryAgain'), onPress: () => void query.refetch() }}
         compact={compact}
