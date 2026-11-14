@@ -23,13 +23,15 @@ type Props = {
   actions?: React.ReactNode;
   /** Briefly marked after the People panel jumped to this message. */
   highlighted?: boolean;
+  /** An emoji-only message (up to three): shown large, as the website does. */
+  big?: boolean;
 };
 
 /**
  * One chat message, flat: no bubble, no card. Avatar on the left, name and time above the text, the "..." menu at the
  * right edge. Follow-up messages in a block line up under the first one's text.
  */
-export function ChatMessage({ name, avatar, time, body, header, own = false, status, sending = false, actions, highlighted = false }: Props) {
+export function ChatMessage({ name, avatar, time, body, header, own = false, status, sending = false, actions, highlighted = false, big = false }: Props) {
   const theme = useTheme();
 
   return (
@@ -60,7 +62,7 @@ export function ChatMessage({ name, avatar, time, body, header, own = false, sta
             ) : null}
           </View>
         ) : null}
-        <ThemedText>{body}</ThemedText>
+        <ThemedText style={big ? { fontSize: 36, lineHeight: 44 } : undefined}>{body}</ThemedText>
         {status}
       </View>
       {actions}
