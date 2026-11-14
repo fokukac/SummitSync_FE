@@ -1,17 +1,16 @@
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 
+import { EmptyState } from '@/components/empty-state';
 import { Screen } from '@/components/form';
-import { ThemedText } from '@/components/themed-text';
+import { useI18n } from '@/i18n';
 
+/** A link that leads nowhere (a mistyped address, an old deep link). */
 export default function NotFound() {
+  const { t } = useI18n();
+
   return (
     <Screen>
-      <ThemedText type="subtitle">404</ThemedText>
-      <Link href="/">
-        <ThemedText type="smallBold" themeColor="primary">
-          Home
-        </ThemedText>
-      </Link>
+      <EmptyState icon="alert" tone="danger" text={t('common.notFound')} action={{ title: t('nav.home'), onPress: () => router.replace('/') }} />
     </Screen>
   );
 }

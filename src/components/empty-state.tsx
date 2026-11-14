@@ -13,10 +13,12 @@ type Props = {
   action?: { title: string; onPress: () => void; loading?: boolean };
   /** Smaller, for a panel inside a page rather than a whole screen. */
   compact?: boolean;
+  /** `danger` for something that went wrong (a tinted tile), `neutral` for simply nothing here. */
+  tone?: 'neutral' | 'danger';
 };
 
 /** Nothing here yet (or nothing could be loaded): an icon on a soft tile, one sentence, and the next step if there is one. */
-export function EmptyState({ icon, text, action, compact = false }: Props) {
+export function EmptyState({ icon, text, action, compact = false, tone = 'neutral' }: Props) {
   const theme = useTheme();
   const shape = useShape();
   const tile = compact ? 40 : 56;
@@ -28,12 +30,13 @@ export function EmptyState({ icon, text, action, compact = false }: Props) {
           width: tile,
           height: tile,
           borderRadius: shape.avatar === 'round' ? tile / 2 : shape.radius,
-          backgroundColor: theme.backgroundSelected,
+          // A tint of the danger colour (8-digit hex: 22 is about 13% opacity) for problems, the quiet tile otherwise.
+          backgroundColor: tone === 'danger' ? `${theme.danger}22` : theme.backgroundSelected,
           alignItems: 'center',
           justifyContent: 'center',
         }}
       >
-        <Icon name={icon} size={compact ? 20 : 26} color={theme.textSecondary} />
+        <Icon name={icon} size={compact ? 20 : 26} color={tone === 'danger' ? theme.danger : theme.textSecondary} />
       </View>
       <ThemedText themeColor="textSecondary" style={{ textAlign: 'center', maxWidth: 320 }}>
         {text}

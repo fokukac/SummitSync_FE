@@ -112,13 +112,19 @@ export function TextField({ label, error, style, action, onFocus, onBlur, multil
   );
 }
 
+/** A problem to tell the person about, inline: a small alert icon and the message in the danger colour. Never colour alone. */
 export function ErrorText({ children }: { children: ReactNode }) {
   const theme = useTheme();
 
   return (
-    <ThemedText type="small" style={{ color: theme.danger }} accessibilityRole="alert">
-      {children}
-    </ThemedText>
+    <View accessibilityRole="alert" style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 6 }}>
+      <View style={{ paddingTop: 2 }}>
+        <Icon name="alert" size={16} color={theme.danger} />
+      </View>
+      <ThemedText type="small" style={{ color: theme.danger, flex: 1 }}>
+        {children}
+      </ThemedText>
+    </View>
   );
 }
 
