@@ -3,7 +3,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 
 import { api, unwrap } from '@/api/client';
 import { Screen } from '@/components/form';
-import { QueryState } from '@/components/ui';
+import { QueryState } from '@/components/query-state';
 import { EventForm } from '@/features/forms/event-form';
 import { eventBody, toFieldDateTime } from '@/lib/event-values';
 import { useI18n } from '@/i18n';

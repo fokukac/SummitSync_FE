@@ -3,7 +3,9 @@ import { View } from 'react-native';
 
 import { api, unwrap } from '@/api/client';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, Card, QueryState } from '@/components/ui';
+import { Avatar } from '@/components/avatar';
+import { Card } from '@/components/card';
+import { QueryState } from '@/components/query-state';
 import { useI18n } from '@/i18n';
 import { breakdownRows } from '@/lib/checklist-breakdown';
 

@@ -6,7 +6,7 @@ import { api } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
 import { Button, ErrorText, Screen, TextField } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
-import { PhotoEditor } from '@/components/ui';
+import { PhotoEditor } from '@/components/photo-editor';
 import { useI18n } from '@/i18n';
 import { useFormState } from '@/lib/use-form';
 

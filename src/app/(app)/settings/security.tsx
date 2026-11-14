@@ -7,7 +7,7 @@ import { api, deleteBody } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
 import { Button, ErrorText, Screen, TextField } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
-import { Card } from '@/components/ui';
+import { Card } from '@/components/card';
 import { useI18n } from '@/i18n';
 import { useFormState } from '@/lib/use-form';
 

@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { api, unwrap } from '@/api/client';
 import { Button, TextField } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
-import { Card } from '@/components/ui';
+import { Card } from '@/components/card';
 import { useI18n } from '@/i18n';
 
 export type Place = { name: string; latitude: number | null; longitude: number | null };

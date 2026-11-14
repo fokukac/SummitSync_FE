@@ -4,7 +4,8 @@ import { Linking, View } from 'react-native';
 
 import { API_URL, api, unwrap } from '@/api/client';
 import { ThemedText } from '@/components/themed-text';
-import { Card, QueryState } from '@/components/ui';
+import { Card } from '@/components/card';
+import { QueryState } from '@/components/query-state';
 import { useI18n } from '@/i18n';
 import { formatPrice, isWebUrl } from '@/lib/format';
 import { resolveMediaUrl } from '@/lib/media';
