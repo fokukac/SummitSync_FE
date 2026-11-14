@@ -288,19 +288,20 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
   );
 
   if (wide) {
-    // Beside the chat, as on the website: a column of people with arrows to step through each one's messages.
+    // Two columns, as on the website: the chat, and beside it the people with arrows to step through each one's
+    // messages. The composer runs underneath both, across the full width.
     return (
-      <View style={{ flexDirection: 'row', gap: 20, alignItems: 'flex-start' }}>
-        <View style={{ flex: 1, minWidth: 0 }}>
-          {list}
-          {composer}
+      <View>
+        <View style={{ flexDirection: 'row', gap: 20, alignItems: 'flex-start' }}>
+          <View style={{ flex: 1, minWidth: 0 }}>{list}</View>
+          <View style={{ width: PEOPLE_WIDTH, borderLeftWidth: 1, borderLeftColor: theme.border }}>
+            <ThemedText type="smallBold" style={{ paddingHorizontal: 12, paddingBottom: 8 }}>
+              {t('chat.people')}
+            </ThemedText>
+            {peoplePanel}
+          </View>
         </View>
-        <View style={{ width: PEOPLE_WIDTH, borderLeftWidth: 1, borderLeftColor: theme.border }}>
-          <ThemedText type="smallBold" style={{ paddingHorizontal: 12, paddingBottom: 8 }}>
-            {t('chat.people')}
-          </ThemedText>
-          {peoplePanel}
-        </View>
+        {composer}
       </View>
     );
   }
