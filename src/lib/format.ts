@@ -42,3 +42,17 @@ export function formatPrice(price: number | null, currency: string, intlLocale: 
 export function isWebUrl(url: string): boolean {
   return /^https?:\/\//i.test(url);
 }
+
+/** Calendar-tile parts of an event start in the event's own timezone: day number, short month and the time of day. */
+export function formatDateParts(iso: string, timezone: string, intlLocale: string): { day: string; month: string; time: string } {
+  const date = new Date(iso);
+  const parts = (options: Intl.DateTimeFormatOptions) => {
+    try {
+      return new Intl.DateTimeFormat(intlLocale, { ...options, timeZone: timezone }).format(date);
+    } catch {
+      return new Intl.DateTimeFormat(intlLocale, options).format(date);
+    }
+  };
+
+  return { day: parts({ day: 'numeric' }), month: parts({ month: 'short' }), time: parts({ timeStyle: 'short' }) };
+}

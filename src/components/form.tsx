@@ -61,9 +61,16 @@ export function ErrorText({ children }: { children: ReactNode }) {
   );
 }
 
-type ButtonProps = { title: string; onPress: () => void; loading?: boolean; variant?: 'primary' | 'plain' };
+type ButtonProps = {
+  title: string;
+  onPress: () => void;
+  loading?: boolean;
+  variant?: 'primary' | 'plain';
+  /** Sized to its label instead of the full width, for rows of actions. */
+  compact?: boolean;
+};
 
-export function Button({ title, onPress, loading = false, variant = 'primary' }: ButtonProps) {
+export function Button({ title, onPress, loading = false, variant = 'primary', compact = false }: ButtonProps) {
   const theme = useTheme();
   const shape = useShape();
   const primary = variant === 'primary';
@@ -75,6 +82,7 @@ export function Button({ title, onPress, loading = false, variant = 'primary' }:
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
+        compact && { alignSelf: 'flex-start', minHeight: 44, paddingHorizontal: 18 },
         { borderRadius: shape.radius, backgroundColor: primary ? theme.primary : 'transparent', opacity: pressed || loading ? 0.7 : 1 },
       ]}
     >

@@ -7,7 +7,8 @@ import { Platform, Share, View } from 'react-native';
 import { api, unwrap, unwrapVoid } from '@/api/client';
 import { ConfirmDialog } from '@/components/confirm-dialog';
 import { DateTimeField } from '@/components/date-time-field';
-import { Button, ErrorText, Screen, TextField } from '@/components/form';
+import { Button, ErrorText, TextField } from '@/components/form';
+import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/card';
 import { QueryState } from '@/components/query-state';
@@ -46,7 +47,7 @@ export default function InvitationsScreen() {
   }
 
   return (
-    <Screen>
+    <Page>
       <Stack.Screen options={{ title: t('invitations.section.title') }} />
       <CreateInvitation slug={slug} onCreated={() => void queryClient.invalidateQueries({ queryKey })} />
       <QueryState query={invitations} empty={invitations.data?.length === 0} emptyText={t('invitations.section.none')}>
@@ -68,13 +69,14 @@ export default function InvitationsScreen() {
                 .filter(Boolean)
                 .join(' · ')}
             </ThemedText>
-            <View style={{ flexDirection: 'row', gap: 8 }}>
+            <View style={{ flexDirection: 'row', gap: 4 }}>
               <Button
+                compact
                 variant="plain"
                 title={copied === invitation.url ? t('invitations.copied') : t('common.copy')}
                 onPress={() => void share(invitation.url)}
               />
-              <Button variant="plain" title={t('invitations.revoke')} onPress={() => setRevoking(invitation.token)} />
+              <Button compact variant="plain" title={t('invitations.revoke')} onPress={() => setRevoking(invitation.token)} />
             </View>
           </Card>
         ))}
@@ -88,7 +90,7 @@ export default function InvitationsScreen() {
         onCancel={() => setRevoking(undefined)}
         onConfirm={() => revoking && revoke.mutate(revoking)}
       />
-    </Screen>
+    </Page>
   );
 }
 
@@ -117,7 +119,9 @@ function CreateInvitation({ slug, onCreated }: { slug: string; onCreated: () => 
 
   return (
     <View style={{ gap: 12 }}>
-      <ThemedText type="smallBold">{t('invitations.create.title')}</ThemedText>
+      <ThemedText type="subtitle" style={{ fontSize: 22, lineHeight: 28 }}>
+        {t('invitations.create.title')}
+      </ThemedText>
       <ThemedText type="small" themeColor="textSecondary">
         {t('invitations.create.description')}
       </ThemedText>

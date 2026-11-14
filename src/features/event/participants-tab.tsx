@@ -6,12 +6,13 @@ import { Button } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar } from '@/components/avatar';
 import { Card } from '@/components/card';
-import { Chip } from '@/components/chip';
 import { QueryState } from '@/components/query-state';
+import { useTheme } from '@/hooks/use-theme';
 import { useI18n } from '@/i18n';
 
 export function ParticipantsTab({ eventId, canAssign }: { eventId: number; canAssign: boolean }) {
   const { t } = useI18n();
+  const theme = useTheme();
   const queryClient = useQueryClient();
   const queryKey = ['event', eventId, 'participants'];
   const assistant = useMutation({
@@ -51,12 +52,16 @@ export function ParticipantsTab({ eventId, canAssign }: { eventId: number; canAs
                 @{person.username}
               </ThemedText>
             </View>
-            {person.role ? <Chip label={t(`events.role.${person.role}`)} /> : null}
+            {person.role && person.role !== 'participant' ? (
+              <ThemedText type="smallBold" style={{ color: theme.primary }}>
+                {t(`events.role.${person.role}`)}
+              </ThemedText>
+            ) : null}
             {canAssign && person.role === 'participant' ? (
-              <Button variant="plain" title={t('events.makeAssistant')} onPress={() => assistant.mutate({ userId: person.id, make: true })} />
+              <Button compact variant="plain" title={t('events.makeAssistant')} onPress={() => assistant.mutate({ userId: person.id, make: true })} />
             ) : null}
             {canAssign && person.role === 'assistant' ? (
-              <Button variant="plain" title={t('events.removeAssistant')} onPress={() => assistant.mutate({ userId: person.id, make: false })} />
+              <Button compact variant="plain" title={t('events.removeAssistant')} onPress={() => assistant.mutate({ userId: person.id, make: false })} />
             ) : null}
           </View>
         </Card>
