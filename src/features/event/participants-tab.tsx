@@ -4,7 +4,10 @@ import { View } from 'react-native';
 import { api, unwrapVoid, unwrap } from '@/api/client';
 import { Button } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, Card, Chip, QueryState } from '@/components/ui';
+import { Avatar } from '@/components/avatar';
+import { Card } from '@/components/card';
+import { Chip } from '@/components/chip';
+import { QueryState } from '@/components/query-state';
 import { useI18n } from '@/i18n';
 
 export function ParticipantsTab({ eventId, canAssign }: { eventId: number; canAssign: boolean }) {

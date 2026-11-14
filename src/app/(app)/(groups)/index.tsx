@@ -8,7 +8,9 @@ import { Button, TextField } from '@/components/form';
 import { IconButton } from '@/components/icon';
 import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
-import { CardGrid, QueryState, Segmented } from '@/components/ui';
+import { CardGrid } from '@/components/card-grid';
+import { QueryState } from '@/components/query-state';
+import { Segmented } from '@/components/segmented';
 import { GroupCard, type GroupSummary } from '@/features/group-card';
 import { useI18n } from '@/i18n';
 

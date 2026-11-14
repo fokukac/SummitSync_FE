@@ -4,7 +4,9 @@ import { View } from 'react-native';
 import { api, unwrapVoid } from '@/api/client';
 import { Button, Screen } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, Card, QueryState } from '@/components/ui';
+import { Avatar } from '@/components/avatar';
+import { Card } from '@/components/card';
+import { QueryState } from '@/components/query-state';
 import { useBlocked } from '@/features/blocks';
 import { useI18n } from '@/i18n';
 

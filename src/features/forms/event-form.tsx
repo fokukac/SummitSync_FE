@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { DateTimeField } from '@/components/date-time-field';
 import { Button, ErrorText, TextField } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
-import { Segmented } from '@/components/ui';
+import { Segmented } from '@/components/segmented';
 import { ActivityPicker } from '@/features/forms/activity-picker';
 import { PlacePicker } from '@/features/forms/place-picker';
 import { deviceTimezone, type EventValues } from '@/lib/event-values';

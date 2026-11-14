@@ -1,7 +1,7 @@
 import { Pressable, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { Segmented } from '@/components/ui';
+import { Segmented } from '@/components/segmented';
 import { THEME_IDS, THEMES } from '@/constants/themes';
 import { useI18n } from '@/i18n';
 import { useAppTheme, type Appearance } from '@/theme/theme-provider';

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { Button, ErrorText, TextField } from '@/components/form';
-import { Segmented } from '@/components/ui';
+import { Segmented } from '@/components/segmented';
 import { ActivityPicker } from '@/features/forms/activity-picker';
 import { useI18n } from '@/i18n';
 import { useFormState } from '@/lib/use-form';

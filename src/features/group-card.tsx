@@ -3,7 +3,9 @@ import { View } from 'react-native';
 
 import type { components } from '@/api/schema';
 import { ThemedText } from '@/components/themed-text';
-import { Avatar, Card, ActivityTags } from '@/components/ui';
+import { Avatar } from '@/components/avatar';
+import { Card } from '@/components/card';
+import { ActivityTags } from '@/features/activity-tags';
 import { useI18n } from '@/i18n';
 
 export type GroupSummary = components['schemas']['GroupSummaryResource'];
