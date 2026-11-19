@@ -1,7 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import * as ImagePicker from 'expo-image-picker';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 
 import { api, unwrap } from '@/api/client';
 import { ErrorText, Screen } from '@/components/form';
@@ -11,6 +10,7 @@ import { QueryState } from '@/components/query-state';
 import { GroupForm } from '@/features/forms/group-form';
 import { useI18n } from '@/i18n';
 import { goBackOr } from '@/lib/navigation';
+import { appendPhoto, pickSquarePhoto } from '@/lib/upload';
 import { useFormState } from '@/lib/use-form';
 
 export default function EditGroupScreen() {
@@ -69,20 +69,14 @@ function LogoSection({ slug, name, logo, onChanged }: { slug: string; name: stri
   const form = useFormState();
 
   async function pick() {
-    const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.9 });
-    const asset = picked.canceled ? undefined : picked.assets[0];
+    const uri = await pickSquarePhoto();
 
-    if (!asset) {
+    if (!uri) {
       return;
     }
 
     const body = new FormData();
-
-    if (Platform.OS === 'web') {
-      body.append('logo', await (await fetch(asset.uri)).blob(), asset.fileName ?? 'logo.jpg');
-    } else {
-      body.append('logo', { uri: asset.uri, name: asset.fileName ?? 'logo.jpg', type: asset.mimeType ?? 'image/jpeg' } as unknown as Blob);
-    }
+    await appendPhoto(body, 'logo', uri, 'logo.jpg');
 
     const result = await form.run(api.POST('/v1/groups/{group}/logo', { params: { path: { group: slug } }, body: { logo: '' }, bodySerializer: () => body }));
 

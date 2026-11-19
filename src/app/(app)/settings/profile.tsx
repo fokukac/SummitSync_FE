@@ -1,6 +1,5 @@
-import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 
 import { api } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
@@ -9,6 +8,7 @@ import { SectionTitle } from '@/components/section-title';
 import { ThemedText } from '@/components/themed-text';
 import { PhotoEditor } from '@/components/photo-editor';
 import { useI18n } from '@/i18n';
+import { appendPhoto, pickSquarePhoto } from '@/lib/upload';
 import { useFormState } from '@/lib/use-form';
 
 export default function ProfileScreen() {
@@ -35,21 +35,14 @@ function PhotoSection() {
   const photo = useFormState();
 
   async function pick() {
-    const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.9 });
-    const asset = picked.canceled ? undefined : picked.assets[0];
+    const uri = await pickSquarePhoto();
 
-    if (!asset) {
+    if (!uri) {
       return;
     }
 
     const form = new FormData();
-
-    if (Platform.OS === 'web') {
-      form.append('avatar', await (await fetch(asset.uri)).blob(), asset.fileName ?? 'photo.jpg');
-    } else {
-      // React Native's FormData takes a { uri, name, type } descriptor instead of a Blob.
-      form.append('avatar', { uri: asset.uri, name: asset.fileName ?? 'photo.jpg', type: asset.mimeType ?? 'image/jpeg' } as unknown as Blob);
-    }
+    await appendPhoto(form, 'avatar', uri, 'photo.jpg');
 
     const result = await photo.run(api.POST('/v1/me/avatar', { body: { avatar: '' }, bodySerializer: () => form }));
 
