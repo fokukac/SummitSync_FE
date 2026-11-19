@@ -266,6 +266,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/auth/google": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sign in with a Google access token obtained by the app's native Google sign-in, and receive an API token
+         * @description The token is verified with Google and must have been issued to one of this project's OAuth clients. The
+         *     account is found, linked or created exactly as in the website's Google sign-in.
+         */
+        post: operations["v1.auth.google"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/me/blocks": {
         parameters: {
             query?: never;
@@ -974,6 +995,11 @@ export interface components {
          * @enum {string}
          */
         EventStatus: "draft" | "published" | "cancelled" | "completed";
+        /** GoogleLoginRequest */
+        GoogleLoginRequest: {
+            access_token: string;
+            device_name: string;
+        };
         /**
          * GroupMemberStatus
          * @enum {string}
@@ -1938,6 +1964,33 @@ export interface operations {
                 content?: never;
             };
             401: components["responses"]["AuthenticationException"];
+            422: components["responses"]["ValidationException"];
+        };
+    };
+    "v1.auth.google": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GoogleLoginRequest"];
+            };
+        };
+        responses: {
+            /** @description `ApiTokenResource` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        data: components["schemas"]["ApiTokenResource"];
+                    };
+                };
+            };
             422: components["responses"]["ValidationException"];
         };
     };

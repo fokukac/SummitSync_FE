@@ -1305,6 +1305,50 @@
                 }
             }
         },
+        "/v1/auth/google": {
+            "post": {
+                "operationId": "v1.auth.google",
+                "description": "The token is verified with Google and must have been issued to one of this project's OAuth clients. The\naccount is found, linked or created exactly as in the website's Google sign-in.",
+                "summary": "Sign in with a Google access token obtained by the app's native Google sign-in, and receive an API token",
+                "tags": [
+                    "GoogleLogin"
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GoogleLoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "`ApiTokenResource`",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/components/schemas/ApiTokenResource"
+                                        }
+                                    },
+                                    "required": [
+                                        "data"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "$ref": "#/components/responses/ValidationException"
+                    }
+                },
+                "security": []
+            }
+        },
         "/v1/me/blocks": {
             "get": {
                 "operationId": "v1.me.blocks.index",
@@ -4868,6 +4912,24 @@
                     "completed"
                 ],
                 "title": "EventStatus"
+            },
+            "GoogleLoginRequest": {
+                "type": "object",
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "maxLength": 4096
+                    },
+                    "device_name": {
+                        "type": "string",
+                        "maxLength": 100
+                    }
+                },
+                "required": [
+                    "access_token",
+                    "device_name"
+                ],
+                "title": "GoogleLoginRequest"
             },
             "GroupMemberStatus": {
                 "type": "string",

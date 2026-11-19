@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { AuthScreen } from '@/components/auth-screen';
 import { Button, ErrorText, TextField } from '@/components/form';
+import { GoogleSignInButton } from '@/components/google-sign-in-button';
 import { ThemedText } from '@/components/themed-text';
 import { useAuth } from '@/auth/auth-context';
 import { useI18n } from '@/i18n';
@@ -54,6 +55,7 @@ export default function LoginScreen() {
       />
       {message ? <ErrorText>{message}</ErrorText> : null}
       <Button title={t('nav.login')} onPress={submit} loading={busy} />
+      <GoogleSignInButton />
       <ThemedText type="small" themeColor="textSecondary">
         {t('auth.noAccount')}{' '}
         <Link href="/register">
