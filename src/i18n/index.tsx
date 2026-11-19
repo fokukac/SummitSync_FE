@@ -36,9 +36,34 @@ function pick(message: Message, locale: string, params?: MessageParams): string 
     return message;
   }
 
-  const form = new Intl.PluralRules(intlLocales[locale] ?? locale).select(Number(params?.count ?? 0));
+  const form = pluralForm(locale, Number(params?.count ?? 0));
 
   return message[form] ?? message.other;
+}
+
+type PluralCategory = 'zero' | 'one' | 'two' | 'few' | 'many' | 'other';
+
+/**
+ * Hermes (the JavaScript engine of the Android app) has no `Intl.PluralRules`: constructing it crashes the app.
+ * Where it is missing, the rules of the supported languages are spelled out; they are CLDR's cardinal rules.
+ */
+export function pluralForm(locale: string, count: number): PluralCategory {
+  if (typeof Intl !== 'undefined' && typeof Intl.PluralRules === 'function') {
+    return new Intl.PluralRules(intlLocales[locale] ?? locale).select(count) as PluralCategory;
+  }
+
+  if (locale === 'ro') {
+    const last = count % 100;
+
+    if (count === 1) {
+      return 'one';
+    }
+
+    return count === 0 || (last >= 1 && last <= 19) ? 'few' : 'other';
+  }
+
+  // English and Hungarian: "one" is exactly 1.
+  return count === 1 ? 'one' : 'other';
 }
 
 /** Unknown keys come back unchanged, so text that is not a catalog key passes through safely. */
