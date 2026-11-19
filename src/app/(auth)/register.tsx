@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '@/auth/auth-context';
 import { AuthScreen } from '@/components/auth-screen';
 import { Button, ErrorText, TextField } from '@/components/form';
+import { GoogleSignInButton } from '@/components/google-sign-in-button';
 import { ThemedText } from '@/components/themed-text';
 import { useI18n } from '@/i18n';
 
@@ -76,6 +77,7 @@ export default function RegisterScreen() {
       />
       {message ? <ErrorText>{message}</ErrorText> : null}
       <Button title={t('auth.register.submit')} onPress={submit} loading={busy} />
+      <GoogleSignInButton />
       <ThemedText type="small" themeColor="textSecondary">
         {t('auth.haveAccount')}{' '}
         <Link href="/">

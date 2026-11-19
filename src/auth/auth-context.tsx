@@ -8,6 +8,7 @@ import type { components } from '@/api/schema';
 import { useI18n } from '@/i18n';
 import { clearOfflineData } from '@/lib/query-client';
 import { disconnectRealtime } from '@/lib/realtime';
+import { forgetGoogleAccount, requestGoogleAccessToken } from '@/auth/google-sign-in';
 import { tokenStorage } from '@/lib/token-storage';
 
 const USER_KEY = 'summitsync.user';
@@ -22,6 +23,8 @@ type Auth = {
   ready: boolean;
   user: User | null;
   signIn: (email: string, password: string) => Promise<AuthResult>;
+  /** Native Google account picker, then the backend swaps Google's token for ours. `cancelled` = the user backed out. */
+  signInWithGoogle: () => Promise<AuthResult | { status: 'cancelled' }>;
   signUp: (input: { name: string; username: string; email: string; password: string; passwordConfirmation: string }) => Promise<AuthResult>;
   completeTwoFactor: (challengeToken: string, input: { code?: string; recoveryCode?: string }) => Promise<AuthResult>;
   signOut: () => Promise<void>;
@@ -143,6 +146,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }, t('common.networkError'));
       },
 
+      async signInWithGoogle() {
+        let accessToken: string | null;
+
+        try {
+          accessToken = await requestGoogleAccessToken();
+        } catch {
+          return { status: 'error', message: t('common.somethingWrong'), errors: {} };
+        }
+
+        if (accessToken === null) {
+          return { status: 'cancelled' };
+        }
+
+        return attempt(async () => {
+          const { data, error } = await api.POST('/v1/auth/google', { body: { access_token: accessToken, device_name: deviceName() } });
+
+          return data ? accept(data.data.token) : { status: 'error', message: errorMessage(error), errors: validationErrors(error) };
+        }, t('common.networkError'));
+      },
+
       async signUp(input) {
         return attempt(async () => {
           const { data, error } = await api.POST('/v1/auth/register', {
@@ -172,7 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       async signOut() {
         await api.POST('/v1/auth/logout').catch(() => undefined);
-        await clear();
+        await Promise.all([clear(), forgetGoogleAccount()]);
       },
 
       refresh: () => loadUser(),

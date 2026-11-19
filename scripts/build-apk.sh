@@ -30,6 +30,9 @@ export EXPO_PUBLIC_REVERB_PORT="${EXPO_PUBLIC_REVERB_PORT:-8080}"
 # The Reverb app key is public by design (the website ships it to every browser); the secret is never read.
 export EXPO_PUBLIC_REVERB_KEY="${EXPO_PUBLIC_REVERB_KEY:-$(sed -n 's/^REVERB_APP_KEY=//p' "$BACKEND_DIR/.env" | tr -d '"')}"
 
+# Google sign-in: the web OAuth client id (public by design; the secret is never read).
+export EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID="${EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID:-$(sed -n 's/^GOOGLE_CLIENT_ID=//p' "$BACKEND_DIR/.env" | tr -d '"')}"
+
 echo "Backend: $EXPO_PUBLIC_API_URL   Realtime: $HOST:$EXPO_PUBLIC_REVERB_PORT   ABIs: $ABIS"
 
 # The native project is generated from app.json / app.config.js (it is git-ignored), so rebuild it fresh each time.
