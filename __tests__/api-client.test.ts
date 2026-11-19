@@ -1,5 +1,4 @@
-import { session, validationErrors } from '@/api/client';
-import { api } from '@/api/client';
+import { api, REQUEST_TIMEOUT_MS, session, validationErrors } from '@/api/client';
 
 describe('validationErrors', () => {
   it('keeps the first message per field', () => {
@@ -65,5 +64,28 @@ describe('api middleware', () => {
     await api.GET('/v1/me');
 
     expect(onUnauthorized).not.toHaveBeenCalled();
+  });
+});
+
+describe('request timeout', () => {
+  const originalFetch = globalThis.fetch;
+
+  afterEach(() => {
+    jest.useRealTimers();
+    globalThis.fetch = originalFetch;
+  });
+
+  it('aborts a request the server never answers, so callers get an error instead of an endless spinner', async () => {
+    jest.useFakeTimers();
+    globalThis.fetch = ((_: Request, init?: RequestInit) =>
+      new Promise((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(new Error('aborted')));
+      })) as unknown as typeof fetch;
+
+    const pending = api.GET('/v1/me');
+    const outcome = expect(pending).rejects.toThrow('aborted');
+
+    await jest.advanceTimersByTimeAsync(REQUEST_TIMEOUT_MS);
+    await outcome;
   });
 });

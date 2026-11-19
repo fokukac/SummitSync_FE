@@ -13,6 +13,7 @@ export default {
     'common.close': 'Închide',
     'common.loading': 'Se încarcă…',
     'common.somethingWrong': 'Ceva nu a funcționat.',
+    'common.networkError': 'Nu se poate contacta serverul. Verificați conexiunea și încercați din nou.',
     'common.notFound': 'Nu am găsit asta. Este posibil să fi fost eliminat.',
     'common.forbidden': 'Nu ai acces la aceasta.',
     'common.showPassword': 'Arată parola',

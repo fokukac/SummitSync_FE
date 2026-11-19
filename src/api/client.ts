@@ -38,10 +38,26 @@ const middleware: Middleware = {
   },
 };
 
+/** Without a limit an unreachable server (wrong Wi-Fi, firewall) leaves every screen spinning forever. */
+export const REQUEST_TIMEOUT_MS = 20_000;
+/** Photo uploads over a slow mobile connection legitimately take longer. */
+export const UPLOAD_TIMEOUT_MS = 120_000;
+
+/** Aborts the request after the timeout; the abort rejects like any other network failure. */
+function fetchWithTimeout(request: Request): Promise<Response> {
+  const upload = request.headers.get('Content-Type')?.startsWith('multipart/') ?? false;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), upload ? UPLOAD_TIMEOUT_MS : REQUEST_TIMEOUT_MS);
+
+  request.signal?.addEventListener('abort', () => controller.abort());
+
+  // Looked up per call (not captured at import time) so tests and polyfills can replace global fetch.
+  return globalThis.fetch(request, { signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
 export const api = createClient<paths>({
   baseUrl: `${API_URL}/api`,
-  // Looked up per call (not captured at import time) so tests and polyfills can replace global fetch.
-  fetch: (request) => globalThis.fetch(request),
+  fetch: fetchWithTimeout,
 });
 api.use(middleware);
 
