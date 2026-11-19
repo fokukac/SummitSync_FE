@@ -3,12 +3,15 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { useColorScheme } from 'react-native';
 
 import { DEFAULT_THEME, THEMES, familyFor, isThemeId, type FontFamily, type Palette, type Shape, type ThemeDefinition, type ThemeId } from '@/constants/themes';
+import { DEFAULT_DENSITY, DEFAULT_FONT_SIZE, DENSITY_SCALE, FONT_SCALE, isDensity, isFontSize, type Density, type FontSize } from '@/lib/display';
 import { loadThemeFonts } from '@/theme/fonts';
 
 export type Appearance = 'system' | 'light' | 'dark';
 
 const THEME_KEY = 'summitsync.theme';
 const APPEARANCE_KEY = 'summitsync.appearance';
+const DENSITY_KEY = 'summitsync.density';
+const FONT_SIZE_KEY = 'summitsync.fontSize';
 
 type ThemeContextValue = {
   /** False until the saved choice and its fonts are loaded; the root layout keeps the splash screen up until then. */
@@ -18,6 +21,14 @@ type ThemeContextValue = {
   setTheme: (id: ThemeId) => void;
   appearance: Appearance;
   setAppearance: (value: Appearance) => void;
+  density: Density;
+  setDensity: (value: Density) => void;
+  /** Multiplier for spacing (see `useSpacing`). */
+  spaceScale: number;
+  fontSize: FontSize;
+  setFontSize: (value: FontSize) => void;
+  /** Multiplier for text sizes (applied by `ThemedText`). */
+  fontScale: number;
   scheme: 'light' | 'dark';
   colors: Palette;
   shape: Shape;
@@ -32,15 +43,24 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [themeId, setThemeId] = useState<ThemeId>(DEFAULT_THEME);
   const [appearance, setAppearanceState] = useState<Appearance>('system');
+  const [density, setDensityState] = useState<Density>(DEFAULT_DENSITY);
+  const [fontSize, setFontSizeState] = useState<FontSize>(DEFAULT_FONT_SIZE);
 
   useEffect(() => {
     void (async () => {
-      const [savedTheme, savedAppearance] = await Promise.all([AsyncStorage.getItem(THEME_KEY), AsyncStorage.getItem(APPEARANCE_KEY)]);
+      const [savedTheme, savedAppearance, savedDensity, savedFontSize] = await Promise.all([
+        AsyncStorage.getItem(THEME_KEY),
+        AsyncStorage.getItem(APPEARANCE_KEY),
+        AsyncStorage.getItem(DENSITY_KEY),
+        AsyncStorage.getItem(FONT_SIZE_KEY),
+      ]);
       const id = isThemeId(savedTheme) ? savedTheme : DEFAULT_THEME;
 
       await loadThemeFonts(id);
       setThemeId(id);
       setAppearanceState(savedAppearance === 'light' || savedAppearance === 'dark' ? savedAppearance : 'system');
+      setDensityState(isDensity(savedDensity) ? savedDensity : DEFAULT_DENSITY);
+      setFontSizeState(isFontSize(savedFontSize) ? savedFontSize : DEFAULT_FONT_SIZE);
       setReady(true);
     })();
   }, []);
@@ -56,6 +76,16 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
     void AsyncStorage.setItem(APPEARANCE_KEY, value);
   }, []);
 
+  const setDensity = useCallback((value: Density) => {
+    setDensityState(value);
+    void AsyncStorage.setItem(DENSITY_KEY, value);
+  }, []);
+
+  const setFontSize = useCallback((value: FontSize) => {
+    setFontSizeState(value);
+    void AsyncStorage.setItem(FONT_SIZE_KEY, value);
+  }, []);
+
   const value = useMemo<ThemeContextValue>(() => {
     const definition = THEMES[themeId];
     const scheme = definition.darkOnly ? 'dark' : appearance === 'system' ? (system === 'dark' ? 'dark' : 'light') : appearance;
@@ -67,13 +97,19 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
       setTheme,
       appearance,
       setAppearance,
+      density,
+      setDensity,
+      spaceScale: DENSITY_SCALE[density],
+      fontSize,
+      setFontSize,
+      fontScale: FONT_SCALE[fontSize],
       scheme,
       colors: definition[scheme],
       shape: definition.shape,
       heading: definition.heading,
       body: definition.body,
     };
-  }, [ready, themeId, appearance, system, setTheme, setAppearance]);
+  }, [ready, themeId, appearance, density, fontSize, system, setTheme, setAppearance, setDensity, setFontSize]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
