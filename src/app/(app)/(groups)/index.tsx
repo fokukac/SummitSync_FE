@@ -11,13 +11,16 @@ import { ThemedText } from '@/components/themed-text';
 import { CardGrid } from '@/components/card-grid';
 import { QueryState } from '@/components/query-state';
 import { Segmented } from '@/components/segmented';
+import { ActivityFilter } from '@/features/activity-filter';
 import { GroupCard, type GroupSummary } from '@/features/group-card';
 import { useI18n } from '@/i18n';
+import { matchesActivities } from '@/lib/activity-filter';
 
 export default function GroupsScreen() {
   const { t } = useI18n();
   const [mode, setMode] = useState<'mine' | 'discover'>('mine');
   const [search, setSearch] = useState('');
+  const [activities, setActivities] = useState<string[]>([]);
   const term = search.trim().length >= 2 ? search.trim() : undefined;
 
   const mine = useQuery({
@@ -26,15 +29,17 @@ export default function GroupsScreen() {
   });
 
   const discover = useInfiniteQuery({
-    queryKey: ['groups', term],
+    queryKey: ['groups', term, activities],
     enabled: mode === 'discover',
     initialPageParam: 1,
-    queryFn: ({ pageParam }) => unwrap(api.GET('/v1/groups', { params: { query: { q: term, page: pageParam } } })),
+    queryFn: ({ pageParam }) =>
+      unwrap(api.GET('/v1/groups', { params: { query: { q: term, page: pageParam, 'activities[]': activities.length > 0 ? activities : undefined } } })),
     getNextPageParam: (last) => (last.meta.current_page < last.meta.last_page ? last.meta.current_page + 1 : undefined),
   });
 
   const active = mode === 'mine' ? mine : discover;
-  const groups: GroupSummary[] = mode === 'mine' ? (mine.data ?? []) : (discover.data?.pages.flatMap((page) => page.data) ?? []);
+  const groups: GroupSummary[] =
+    mode === 'mine' ? (mine.data ?? []).filter((group) => matchesActivities(group, activities)) : (discover.data?.pages.flatMap((page) => page.data) ?? []);
 
   return (
     <Page refreshControl={<RefreshControl refreshing={active.isRefetching && !active.isPending} onRefresh={() => void active.refetch()} />}>
@@ -53,12 +58,13 @@ export default function GroupsScreen() {
         ]}
       />
       {mode === 'discover' ? <TextField label={t('nav.search')} value={search} onChangeText={setSearch} autoCapitalize="none" returnKeyType="search" /> : null}
+      <ActivityFilter selected={activities} onChange={setActivities} />
       <QueryState
         query={active}
         empty={groups.length === 0}
-        emptyText={t(mode === 'mine' ? 'groups.noneJoined' : 'groups.noneToDiscover')}
+        emptyText={t(activities.length > 0 ? 'activities.noGroups' : mode === 'mine' ? 'groups.noneJoined' : 'groups.noneToDiscover')}
         emptyIcon="groups"
-        emptyAction={mode === 'mine' ? { title: t('groups.create'), onPress: () => router.push('/groups/new') } : undefined}
+        emptyAction={mode === 'mine' && activities.length === 0 ? { title: t('groups.create'), onPress: () => router.push('/groups/new') } : undefined}
       >
         <View style={{ gap: 12 }}>
           <CardGrid>
