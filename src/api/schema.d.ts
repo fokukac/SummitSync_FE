@@ -424,7 +424,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Browse or search groups (12 per page). `q` searches by relevance, `activities[]` filters by activity key (max 4) */
+        /** Browse or search groups (12 per page). `q` searches by relevance, `activities[]` filters by activity key (max 30) */
         get: operations["v1.groups.index"];
         put?: never;
         /** Create a group; the creator becomes its admin */
