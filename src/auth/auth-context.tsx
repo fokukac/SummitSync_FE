@@ -33,10 +33,19 @@ type Auth = {
 
 const AuthContext = createContext<Auth | null>(null);
 
+/** A request that never got an answer (offline, wrong network, timeout) rejects: turn that into an error result instead of a spinner that never stops. */
+async function attempt(call: () => Promise<AuthResult>, networkMessage: string): Promise<AuthResult> {
+  try {
+    return await call();
+  } catch {
+    return { status: 'error', message: networkMessage, errors: {} };
+  }
+}
+
 const deviceName = () => `${Device.deviceName ?? Device.modelName ?? Platform.OS} (${Platform.OS})`;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { locale, setLocale } = useI18n();
+  const { locale, setLocale, t } = useI18n();
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
@@ -121,38 +130,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
 
       async signIn(email, password) {
-        const { data, error } = await api.POST('/v1/auth/login', {
-          body: { email, password, device_name: deviceName() },
-        });
+        return attempt(async () => {
+          const { data, error } = await api.POST('/v1/auth/login', {
+            body: { email, password, device_name: deviceName() },
+          });
 
-        if (data && 'two_factor' in data) {
-          return { status: 'two_factor', challengeToken: data.challenge_token };
-        }
+          if (data && 'two_factor' in data) {
+            return { status: 'two_factor', challengeToken: data.challenge_token };
+          }
 
-        return data ? accept(data.data.token) : { status: 'error', message: errorMessage(error), errors: validationErrors(error) };
+          return data ? accept(data.data.token) : { status: 'error', message: errorMessage(error), errors: validationErrors(error) };
+        }, t('common.networkError'));
       },
 
       async signUp(input) {
-        const { data, error } = await api.POST('/v1/auth/register', {
-          body: {
-            name: input.name,
-            username: input.username,
-            email: input.email,
-            password: input.password,
-            password_confirmation: input.passwordConfirmation,
-            device_name: deviceName(),
-          },
-        });
+        return attempt(async () => {
+          const { data, error } = await api.POST('/v1/auth/register', {
+            body: {
+              name: input.name,
+              username: input.username,
+              email: input.email,
+              password: input.password,
+              password_confirmation: input.passwordConfirmation,
+              device_name: deviceName(),
+            },
+          });
 
-        return data ? accept(data.data.token) : { status: 'error', message: errorMessage(error), errors: validationErrors(error) };
+          return data ? accept(data.data.token) : { status: 'error', message: errorMessage(error), errors: validationErrors(error) };
+        }, t('common.networkError'));
       },
 
       async completeTwoFactor(challengeToken, input) {
-        const { data, error } = await api.POST('/v1/auth/two-factor-challenge', {
-          body: { challenge_token: challengeToken, code: input.code, recovery_code: input.recoveryCode },
-        });
+        return attempt(async () => {
+          const { data, error } = await api.POST('/v1/auth/two-factor-challenge', {
+            body: { challenge_token: challengeToken, code: input.code, recovery_code: input.recoveryCode },
+          });
 
-        return data ? accept(data.data.token) : { status: 'error', message: errorMessage(error), errors: validationErrors(error) };
+          return data ? accept(data.data.token) : { status: 'error', message: errorMessage(error), errors: validationErrors(error) };
+        }, t('common.networkError'));
       },
 
       async signOut() {
@@ -163,7 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       refresh: () => loadUser(),
       setUser,
     }),
-    [ready, user, accept, clear, loadUser, setUser],
+    [ready, user, accept, clear, loadUser, setUser, t],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

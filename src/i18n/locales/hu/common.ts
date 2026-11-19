@@ -13,6 +13,7 @@ export default {
     'common.close': 'Bezárás',
     'common.loading': 'Betöltés…',
     'common.somethingWrong': 'Valami hiba történt.',
+    'common.networkError': 'Nem érhető el a szerver. Ellenőrizze a kapcsolatot, és próbálja újra.',
     'common.notFound': 'Ezt nem találjuk. Lehet, hogy törölték.',
     'common.forbidden': 'Ehhez nincs hozzáférésed.',
     'common.showPassword': 'Jelszó megjelenítése',

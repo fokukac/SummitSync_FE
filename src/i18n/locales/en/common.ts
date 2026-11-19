@@ -15,6 +15,7 @@ export default {
     'common.close': 'Close',
     'common.loading': 'Loading…',
     'common.somethingWrong': 'Something went wrong.',
+    'common.networkError': "Can't reach the server. Check your connection and try again.",
     'common.notFound': "We couldn't find that. It may have been removed.",
     'common.forbidden': "You don't have access to this.",
     'common.showPassword': 'Show password',
