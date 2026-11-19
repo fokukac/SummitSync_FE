@@ -2439,7 +2439,7 @@
         "/v1/groups": {
             "get": {
                 "operationId": "v1.groups.index",
-                "summary": "Browse or search groups (12 per page). `q` searches by relevance, `activities[]` filters by activity key (max 4)",
+                "summary": "Browse or search groups (12 per page). `q` searches by relevance, `activities[]` filters by activity key (max 30)",
                 "tags": [
                     "IndexGroups"
                 ],
