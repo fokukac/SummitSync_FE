@@ -2,6 +2,7 @@ import { Platform, StyleSheet, Text, type TextProps, type TextStyle } from 'reac
 
 import { Fonts, ThemeColor } from '@/constants/theme';
 import { familyFor } from '@/constants/themes';
+import { scaleSize } from '@/lib/display';
 import { useAppTheme } from '@/theme/theme-provider';
 
 export type ThemedTextProps = TextProps & {
@@ -13,17 +14,26 @@ export type ThemedTextProps = TextProps & {
 const HEADINGS = new Set<ThemedTextProps['type']>(['title', 'subtitle']);
 
 export function ThemedText({ style, type = 'default', themeColor, ...rest }: ThemedTextProps) {
-  const { colors, heading, body, shape } = useAppTheme();
+  const { colors, heading, body, shape, fontScale } = useAppTheme();
   const base: TextStyle = styles[type];
   const isHeading = HEADINGS.has(type);
-  const weight = Number(StyleSheet.flatten([base, style])?.fontWeight ?? 500);
+  const flat = StyleSheet.flatten([base, style]);
+  const weight = Number(flat?.fontWeight ?? 500);
+  // The chosen font size scales the final size (a screen's own override included) and its line height together.
+  const scaled: TextStyle =
+    fontScale === 1
+      ? {}
+      : {
+          ...(typeof flat?.fontSize === 'number' ? { fontSize: scaleSize(flat.fontSize, fontScale) } : {}),
+          ...(typeof flat?.lineHeight === 'number' ? { lineHeight: scaleSize(flat.lineHeight, fontScale) } : {}),
+        };
   const fontFamily = type === 'code' ? undefined : familyFor(isHeading ? heading : body, weight);
 
   // A custom family is one file per weight: asking for `fontWeight` on top would synthesise a second bold.
   const typeface: TextStyle = fontFamily ? { fontFamily, fontWeight: 'normal' } : {};
   const casing: TextStyle = isHeading && shape.uppercaseHeadings ? { textTransform: 'uppercase', letterSpacing: 0.5 } : {};
 
-  return <Text style={[{ color: colors[themeColor ?? 'text'] }, base, style, typeface, casing]} {...rest} />;
+  return <Text style={[{ color: colors[themeColor ?? 'text'] }, base, style, scaled, typeface, casing]} {...rest} />;
 }
 
 const styles = StyleSheet.create({

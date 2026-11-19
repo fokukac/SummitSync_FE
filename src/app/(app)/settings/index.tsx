@@ -11,6 +11,7 @@ import { ThemedText } from '@/components/themed-text';
 import { Avatar } from '@/components/avatar';
 import { Card } from '@/components/card';
 import { Segmented } from '@/components/segmented';
+import { DisplayPicker } from '@/features/display-picker';
 import { ThemePicker } from '@/features/theme-picker';
 import { supportedLocales, useI18n } from '@/i18n';
 import { useFormState } from '@/lib/use-form';
@@ -69,6 +70,7 @@ export default function SettingsScreen() {
       </Card>
 
       <ThemePicker />
+      <DisplayPicker />
 
       <ThemedText type="smallBold">{t('nav.language')}</ThemedText>
       <Segmented

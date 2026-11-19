@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import { type ReactNode } from 'react';
 
-import { Spacing } from '@/constants/theme';
+import { useSpacing } from '@/hooks/use-spacing';
 import { useTheme } from '@/hooks/use-theme';
 
 /**
@@ -10,7 +10,8 @@ import { useTheme } from '@/hooks/use-theme';
  */
 export function Card({ children, onPress }: { children: ReactNode; onPress?: () => void }) {
   const theme = useTheme();
-  const body = <View style={[styles.card, { borderBottomColor: theme.border }]}>{children}</View>;
+  const space = useSpacing();
+  const body = <View style={[styles.card, { borderBottomColor: theme.border, paddingVertical: space.three, gap: space.one }]}>{children}</View>;
 
   return onPress ? (
     <Pressable accessibilityRole="button" onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}>
@@ -22,5 +23,5 @@ export function Card({ children, onPress }: { children: ReactNode; onPress?: () 
 }
 
 const styles = StyleSheet.create({
-  card: { paddingVertical: Spacing.three, borderBottomWidth: StyleSheet.hairlineWidth, gap: Spacing.one },
+  card: { borderBottomWidth: StyleSheet.hairlineWidth },
 });
