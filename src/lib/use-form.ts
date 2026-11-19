@@ -28,7 +28,9 @@ export function useFormState() {
       }
 
       return result;
-    } catch {
+    } catch (error) {
+      // A request that never produced a response (offline, timeout, a rejected upload): keep the cause findable.
+      console.warn('Request failed', error);
       setMessage('');
 
       return undefined;
