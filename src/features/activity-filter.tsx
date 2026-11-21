@@ -1,4 +1,4 @@
-import { Pressable, View } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
 
 import { ActivityIcon } from '@/components/activity-icon';
 import { ThemedText } from '@/components/themed-text';
@@ -7,7 +7,7 @@ import { useMeta } from '@/features/forms/use-meta';
 import { useI18n } from '@/i18n';
 import { MAX_ACTIVITY_FILTER, toggleActivityKey } from '@/lib/activity-filter';
 
-/** The curated activities as toggle chips; selected ones are highlighted, tapping again unselects. */
+/** The curated activities as toggle chips in one row that scrolls sideways (wrapped, thirty of them filled a third of the screen); selected ones are highlighted, tapping again unselects. */
 export function ActivityFilter({ selected, onChange }: { selected: string[]; onChange: (keys: string[]) => void }) {
   const { t } = useI18n();
   const theme = useTheme();
@@ -21,7 +21,15 @@ export function ActivityFilter({ selected, onChange }: { selected: string[]; onC
   }
 
   return (
-    <View accessibilityRole="toolbar" accessibilityLabel={t('activities.filter')} style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      accessibilityRole="toolbar"
+      accessibilityLabel={t('activities.filter')}
+      style={{ flexGrow: 0 }}
+      contentContainerStyle={{ gap: 8 }}
+    >
       {activities.map((activity) => {
         const active = selected.includes(activity.key);
         const blocked = !active && selected.length >= MAX_ACTIVITY_FILTER;
@@ -35,7 +43,8 @@ export function ActivityFilter({ selected, onChange }: { selected: string[]; onC
             onPress={() => onChange(toggleActivityKey(selected, activity.key))}
             style={{
               paddingHorizontal: 12,
-              paddingVertical: 6,
+              minHeight: 36,
+              justifyContent: 'center',
               borderRadius: shape.radiusSmall,
               backgroundColor: active ? theme.primary : theme.backgroundSelected,
               opacity: blocked ? 0.5 : 1,
@@ -51,6 +60,6 @@ export function ActivityFilter({ selected, onChange }: { selected: string[]; onC
           </Pressable>
         );
       })}
-    </View>
+    </ScrollView>
   );
 }
