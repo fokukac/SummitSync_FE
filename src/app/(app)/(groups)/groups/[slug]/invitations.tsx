@@ -47,7 +47,7 @@ export default function InvitationsScreen() {
   }
 
   return (
-    <Page>
+    <Page underHeader>
       <Stack.Screen options={{ title: t('invitations.section.title') }} />
       <CreateInvitation slug={slug} onCreated={() => void queryClient.invalidateQueries({ queryKey })} />
       <QueryState query={invitations} empty={invitations.data?.length === 0} emptyText={t('invitations.section.none')} emptyIcon="mail">

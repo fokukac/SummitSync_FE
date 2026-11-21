@@ -50,7 +50,16 @@ function useKeyboardHeight(): number {
 }
 
 /** Scrollable content page inside the tabs: centered column with room for the tab bar. */
-export function Page({ children, refreshControl }: { children: ReactNode; refreshControl?: ReactElement<RefreshControlProps> }) {
+export function Page({
+  children,
+  refreshControl,
+  underHeader = false,
+}: {
+  children: ReactNode;
+  refreshControl?: ReactElement<RefreshControlProps>;
+  /** The screen has a navigation header, which already clears the status bar: leave out the top inset (it showed as a tall empty band). */
+  underHeader?: boolean;
+}) {
   const breakpoint = useBreakpoint();
   const space = useSpacing();
   const scroller = useRef<ScrollViewInstance>(null);
@@ -84,7 +93,7 @@ export function Page({ children, refreshControl }: { children: ReactNode; refres
 
   return (
     <ThemedView style={styles.flex}>
-      <SafeAreaView style={styles.flex} edges={['top', 'left', 'right']}>
+      <SafeAreaView style={styles.flex} edges={underHeader ? ['left', 'right'] : ['top', 'left', 'right']}>
         <PageScrollContext.Provider value={scroll}>
           <ScrollView
             ref={scroller}

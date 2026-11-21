@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { RefreshControl, View } from 'react-native';
 
@@ -50,8 +50,7 @@ export default function EventScreen() {
   ];
 
   return (
-    <Page refreshControl={<RefreshControl refreshing={event.isRefetching} onRefresh={() => void event.refetch()} />}>
-      <Stack.Screen options={{ title: data?.title ?? '' }} />
+    <Page underHeader refreshControl={<RefreshControl refreshing={event.isRefetching} onRefresh={() => void event.refetch()} />}>
       <QueryState query={event}>
         {data ? (
           <>
