@@ -1,6 +1,7 @@
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, type ReactNode } from 'react';
 
 import { AuthProvider, useAuth } from '@/auth/auth-context';
@@ -38,6 +39,8 @@ function NavigationTheme({ children }: { children: ReactNode }) {
         colors: { ...base.colors, primary: colors.primary, background: colors.background, card: colors.background, text: colors.text, border: colors.border },
       }}
     >
+      {/* Light icons on a dark page and the other way round (the system default follows the phone, not the chosen theme). */}
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       {children}
     </ThemeProvider>
   );

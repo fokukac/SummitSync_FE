@@ -80,7 +80,7 @@ export default function SettingsScreen() {
       />
 
       <Button variant="plain" title={t('nav.logout')} onPress={() => void signOut()} />
-      <Button variant="plain" title={t('settings.delete.title')} onPress={() => setDeleting(true)} />
+      <Button variant="danger" title={t('settings.delete.title')} onPress={() => setDeleting(true)} />
 
       <ConfirmDialog
         visible={deleting}
