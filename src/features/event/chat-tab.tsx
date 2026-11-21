@@ -181,6 +181,7 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
         ref={scroller}
         style={{ height: panelHeight }}
         nestedScrollEnabled
+        keyboardShouldPersistTaps="handled"
         scrollEventThrottle={32}
         onScroll={onScroll}
         onLayout={(event) => (viewport.current.height = event.nativeEvent.layout.height)}
