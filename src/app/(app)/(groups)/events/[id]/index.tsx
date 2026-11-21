@@ -19,7 +19,7 @@ import { EventMembershipActions } from '@/features/membership-actions';
 import { ParticipantsTab } from '@/features/event/participants-tab';
 import { PollsTab } from '@/features/event/polls-tab';
 import { useI18n } from '@/i18n';
-import { formatEventDateTime } from '@/lib/format';
+import { formatEventRange } from '@/lib/format';
 
 type Tab = 'overview' | 'chat' | 'checklist' | 'polls' | 'members';
 
@@ -69,7 +69,7 @@ export default function EventScreen() {
                   {data.title}
                 </ThemedText>
                 <View style={{ gap: 12 }}>
-                  <Fact icon="clock">{formatEventDateTime(data.starts_at, data.timezone, intlLocale)}</Fact>
+                  <Fact icon="clock">{formatEventRange(data.starts_at, data.ends_at, data.timezone, intlLocale)}</Fact>
                   {data.location_name ? <Fact icon="pin">{data.location_name}</Fact> : null}
                   <Fact icon="groups">{t('events.going', { count: data.participants_count })}</Fact>
                 </View>

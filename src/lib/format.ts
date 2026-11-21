@@ -56,3 +56,37 @@ export function formatDateParts(iso: string, timezone: string, intlLocale: strin
 
   return { day: parts({ day: 'numeric' }), month: parts({ month: 'short' }), time: parts({ timeStyle: 'short' }) };
 }
+
+/**
+ * When an event runs: the full start, then the end. The same day gives only the end time ("Saturday, 22 November 2026
+ * at 9:00 AM – 5:00 PM"), another day gives the end in full. No end means just the start.
+ */
+export function formatEventRange(startsAt: string, endsAt: string | null, timezone: string, intlLocale: string): string {
+  const start = formatEventDateTime(startsAt, timezone, intlLocale);
+
+  if (!endsAt) {
+    return start;
+  }
+
+  const day = (iso: string) => {
+    try {
+      return new Intl.DateTimeFormat('en-CA', { timeZone: timezone }).format(new Date(iso));
+    } catch {
+      return new Intl.DateTimeFormat('en-CA').format(new Date(iso));
+    }
+  };
+
+  if (day(startsAt) !== day(endsAt)) {
+    return `${start} – ${formatEventDateTime(endsAt, timezone, intlLocale)}`;
+  }
+
+  let time: string;
+
+  try {
+    time = new Intl.DateTimeFormat(intlLocale, { timeStyle: 'short', timeZone: timezone }).format(new Date(endsAt));
+  } catch {
+    time = new Intl.DateTimeFormat(intlLocale, { timeStyle: 'short' }).format(new Date(endsAt));
+  }
+
+  return `${start} – ${time}`;
+}
