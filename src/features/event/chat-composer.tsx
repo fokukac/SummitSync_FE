@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
-import { Platform, Pressable, TextInput, type TextInputKeyPressEvent, type TextInputSelectionChangeEvent, View } from 'react-native';
+import { type HostInstance, Platform, Pressable, TextInput, type TextInputKeyPressEvent, type TextInputSelectionChangeEvent, View } from 'react-native';
 
 import { Icon } from '@/components/icon';
+import { useScrollIntoView } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
 import { familyFor } from '@/constants/themes';
 import { EmojiPicker } from '@/features/event/emoji-picker';
@@ -29,6 +30,8 @@ export function ChatComposer({ draft, onChange, onSend, maxLength }: Props) {
   const { body: bodyFont } = useAppTheme();
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [focused, setFocused] = useState(false);
+  const scrollIntoView = useScrollIntoView();
+  const root = useRef<HostInstance>(null);
   const [inputHeight, setInputHeight] = useState(BUTTON);
   // Where the caret is (kept in a ref: it changes on every key press) and, only right after an emoji was inserted, where to put it.
   const caret = useRef({ start: 0, end: 0 });
@@ -64,7 +67,7 @@ export function ChatComposer({ draft, onChange, onSend, maxLength }: Props) {
   }
 
   return (
-    <View style={{ marginTop: 12, gap: 8 }}>
+    <View ref={root} style={{ marginTop: 12, gap: 8 }}>
       {emojiOpen ? <EmojiPicker onPick={addEmoji} /> : null}
 
       <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
@@ -88,7 +91,10 @@ export function ChatComposer({ draft, onChange, onSend, maxLength }: Props) {
         <TextInput
           value={draft}
           onChangeText={onChange}
-          onFocus={() => setFocused(true)}
+          onFocus={() => {
+            setFocused(true);
+            scrollIntoView(root.current);
+          }}
           onBlur={() => setFocused(false)}
           onKeyPress={onKeyPress}
           onSelectionChange={onSelectionChange}

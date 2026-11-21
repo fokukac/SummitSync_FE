@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { type HostInstance, TextInput, View } from 'react-native';
 
 import { api, unwrap, unwrapVoid } from '@/api/client';
 import { Button, ErrorText } from '@/components/form';
 import { ConfirmDialog } from '@/components/confirm-dialog';
+import { useScrollIntoView } from '@/components/page';
 import { QueryState } from '@/components/query-state';
 import { ChecklistRow } from '@/features/event/checklist-row';
 import { ChecklistBreakdown } from '@/features/event/checklist-breakdown';
@@ -34,6 +35,8 @@ export function ChecklistTab({
   const theme = useTheme();
   const shape = useShape();
   const { body } = useAppTheme();
+  const scrollIntoView = useScrollIntoView();
+  const addRow = useRef<HostInstance>(null);
   const queryClient = useQueryClient();
   const queryKey = checklistKey(eventId);
   const [error, setError] = useState(false);
@@ -148,7 +151,7 @@ export function ChecklistTab({
         </View>
       </QueryState>
       {canManage ? (
-        <View style={{ gap: 8 }}>
+        <View ref={addRow} style={{ gap: 8 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <TextInput
               accessibilityLabel={t('events.tabs.checklist')}
@@ -157,6 +160,7 @@ export function ChecklistTab({
               placeholder={t('checklist.addPlaceholder')}
               placeholderTextColor={theme.textSecondary}
               maxLength={150}
+              onFocus={() => scrollIntoView(addRow.current)}
               onSubmitEditing={() => label.trim() && add.mutate()}
               style={{
                 flex: 1,

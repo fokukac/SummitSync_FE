@@ -24,6 +24,24 @@ export function realtimeConfig(apiUrl: string, env: { key?: string; host?: strin
   };
 }
 
+type PusherClass = typeof Pusher;
+
+/**
+ * The Pusher class from whatever the bundler handed over for `import ... from 'pusher-js'`. The browser build exports
+ * the class itself, but the React Native build ends in `module.exports.Pusher = Pusher`, so on a phone the default
+ * import is `{ Pusher }`, not a constructor (`new` on it crashed the app as soon as a chat opened).
+ */
+export function resolvePusher(imported: unknown): PusherClass {
+  const candidates = [imported, (imported as { default?: unknown })?.default, (imported as { Pusher?: unknown })?.Pusher];
+  const found = candidates.find((candidate) => typeof candidate === 'function');
+
+  if (!found) {
+    throw new Error('pusher-js did not export a constructor');
+  }
+
+  return found as PusherClass;
+}
+
 let pusher: Pusher | null = null;
 
 /** One shared connection for the whole app, created on first use. Null when realtime is not configured. */
@@ -42,7 +60,9 @@ export function getPusher(): Pusher | null {
     return null;
   }
 
-  pusher = new Pusher(config.key, {
+  const PusherConstructor = resolvePusher(Pusher);
+
+  pusher = new PusherConstructor(config.key, {
     cluster: 'mt1', // required by the client, unused by Reverb
     wsHost: config.host,
     wsPort: config.port,

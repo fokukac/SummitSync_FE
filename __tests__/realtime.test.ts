@@ -1,4 +1,24 @@
-import { realtimeConfig } from '@/lib/realtime';
+import { realtimeConfig, resolvePusher } from '@/lib/realtime';
+
+describe('resolvePusher', () => {
+  class Fake {}
+
+  it('takes the class when the module is the class (browser build)', () => {
+    expect(resolvePusher(Fake)).toBe(Fake);
+  });
+
+  it('takes `Pusher` when the module is `{ Pusher }` (React Native build)', () => {
+    expect(resolvePusher({ Pusher: Fake })).toBe(Fake);
+  });
+
+  it('takes `default` when the module is an ES module namespace', () => {
+    expect(resolvePusher({ __esModule: true, default: Fake })).toBe(Fake);
+  });
+
+  it('fails loudly instead of a vague "not a constructor" when nothing usable is exported', () => {
+    expect(() => resolvePusher({})).toThrow('pusher-js did not export a constructor');
+  });
+});
 
 describe('realtimeConfig', () => {
   it('is off without an app key', () => {
