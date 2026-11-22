@@ -91,3 +91,13 @@ export function jumpTarget(ids: number[], current: number | undefined, direction
 
   return at - 1;
 }
+
+/** Only the messages written by the chosen people; no one chosen means everyone's. */
+export function filterByPeople<T extends Pick<Message, 'user'>>(messages: T[], userIds: number[]): T[] {
+  return userIds.length === 0 ? messages : messages.filter((message) => userIds.includes(message.user.id));
+}
+
+/** Adds the person to the chosen ones, or takes them out when they already are. */
+export function togglePerson(userIds: number[], userId: number): number[] {
+  return userIds.includes(userId) ? userIds.filter((id) => id !== userId) : [...userIds, userId];
+}

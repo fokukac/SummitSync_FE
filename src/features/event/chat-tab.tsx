@@ -14,7 +14,16 @@ import { ChatComposer } from '@/features/event/chat-composer';
 import { ChatPeople } from '@/features/event/chat-people';
 import { MessageActions } from '@/features/event/message-actions';
 import { isEmojiOnly } from '@/lib/emojis';
-import { jumpTarget, type Message, type MessagesPage, pendingOutgoing, peopleOf, startsBlock } from '@/features/event/messages-cache';
+import {
+  filterByPeople,
+  jumpTarget,
+  type Message,
+  type MessagesPage,
+  pendingOutgoing,
+  peopleOf,
+  startsBlock,
+  togglePerson,
+} from '@/features/event/messages-cache';
 import { CHAT_SEND, messagesKey, type ChatSendVars } from '@/features/event/offline-mutations';
 import { useLiveChat } from '@/features/event/use-live-chat';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
@@ -42,6 +51,7 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
 
   const [draft, setDraft] = useState('');
   const [peopleOpen, setPeopleOpen] = useState(false);
+  const [selected, setSelected] = useState<number[]>([]);
   const [cursors, setCursors] = useState<Record<number, number>>({});
   const [highlightId, setHighlightId] = useState<number>();
   const highlightTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -93,6 +103,10 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
 
   // A message can come back over the live channel before its send request returns: show it once.
   const pending = pendingOutgoing(outgoing, history);
+
+  // Choosing people in the People panel narrows the chat to what they wrote.
+  const shown = filterByPeople(history, selected);
+  const pendingShown = selected.length === 0 || (user && selected.includes(user.id)) ? pending : [];
 
   function retry(item: (typeof outgoing)[number]) {
     queryClient.getMutationCache().remove(item.mutation);
@@ -190,14 +204,19 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
         {messages.hasNextPage ? (
           <Button variant="plain" title={t('chat.loadOlder')} loading={messages.isFetchingNextPage} onPress={() => void loadOlder()} />
         ) : null}
-        {history.map((message, index) => (
+        {shown.length === 0 && history.length > 0 ? (
+          <ThemedText type="small" themeColor="textSecondary" style={{ padding: 12 }}>
+            {t('chat.filter.none')}
+          </ThemedText>
+        ) : null}
+        {shown.map((message, index) => (
           <View key={message.id} onLayout={(event) => (rows.current[message.id] = { y: event.nativeEvent.layout.y, height: event.nativeEvent.layout.height })}>
             <ChatMessage
               name={message.user.name}
               avatar={message.user.avatar}
               time={formatShortDateTime(message.created_at, timezone, intlLocale)}
               body={message.body}
-              header={startsBlock(message, history[index - 1])}
+              header={startsBlock(message, shown[index - 1])}
               own={message.user.id === user?.id}
               highlighted={highlightId === message.id}
               big={isEmojiOnly(message.body)}
@@ -205,13 +224,13 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
             />
           </View>
         ))}
-        {pending.map((item, index) => (
+        {pendingShown.map((item, index) => (
           <ChatMessage
             key={item.clientId}
             name={user?.name ?? ''}
             avatar={user?.avatar}
             body={item.body}
-            header={index === 0 && (history.length === 0 || history[history.length - 1].user.id !== user?.id)}
+            header={index === 0 && (shown.length === 0 || shown[shown.length - 1].user.id !== user?.id)}
             own
             sending={!item.failed}
             status={
@@ -247,6 +266,9 @@ export function ChatTab({ eventId, canPost, canModerate }: { eventId: number; ca
       currentUserId={user?.id}
       cursors={cursors}
       onJump={(userId, direction) => void jump(userId, direction)}
+      selected={selected}
+      onToggle={(userId) => setSelected((existing) => togglePerson(existing, userId))}
+      onClear={() => setSelected([])}
       height={wide ? panelHeight : 240}
     />
   );
