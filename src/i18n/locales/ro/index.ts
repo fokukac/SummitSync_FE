@@ -8,6 +8,7 @@ import landing from './landing';
 import privacy from './privacy';
 import search from './search';
 import settings from './settings';
+import terms from './terms';
 
 const ro: Catalog = {
     ...common,
@@ -18,6 +19,7 @@ const ro: Catalog = {
     ...groups,
     ...events,
     ...settings,
+    ...terms,
     ...search,
 };
 
