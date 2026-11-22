@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { api, ApiError, errorMessage, unwrap } from '@/api/client';
 import { useAuth } from '@/auth/auth-context';
+import { useRegistrationOpen } from '@/features/forms/use-meta';
 import { AuthScreen } from '@/components/auth-screen';
 import { Button, ErrorText } from '@/components/form';
 import { ThemedText } from '@/components/themed-text';
@@ -21,6 +22,7 @@ export default function InvitationScreen() {
   const { t } = useI18n();
   const { token } = useLocalSearchParams<{ token: string }>();
   const { user } = useAuth();
+  const registrationOpen = useRegistrationOpen();
   const queryClient = useQueryClient();
   const verified = user !== null && user.email_verified;
 
@@ -60,7 +62,7 @@ export default function InvitationScreen() {
         <Card>
           <ThemedText>{t('invitations.loginPrompt')}</ThemedText>
           <Button title={t('nav.login')} onPress={() => router.push('/')} />
-          <Button variant="plain" title={t('nav.signup')} onPress={() => router.push('/register')} />
+          {registrationOpen ? <Button variant="plain" title={t('nav.signup')} onPress={() => router.push('/register')} /> : null}
         </Card>
       ) : null}
 

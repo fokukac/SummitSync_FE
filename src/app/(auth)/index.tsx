@@ -6,11 +6,13 @@ import { Button, ErrorText, TextField } from '@/components/form';
 import { GoogleSignInButton } from '@/components/google-sign-in-button';
 import { ThemedText } from '@/components/themed-text';
 import { useAuth } from '@/auth/auth-context';
+import { useRegistrationOpen } from '@/features/forms/use-meta';
 import { useI18n } from '@/i18n';
 
 export default function LoginScreen() {
   const { t } = useI18n();
   const { signIn } = useAuth();
+  const registrationOpen = useRegistrationOpen();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -56,14 +58,16 @@ export default function LoginScreen() {
       {message ? <ErrorText>{message}</ErrorText> : null}
       <Button title={t('nav.login')} onPress={submit} loading={busy} />
       <GoogleSignInButton />
-      <ThemedText type="small" themeColor="textSecondary">
-        {t('auth.noAccount')}{' '}
-        <Link href="/register">
-          <ThemedText type="smallBold" themeColor="primary">
-            {t('nav.signup')}
-          </ThemedText>
-        </Link>
-      </ThemedText>
+      {registrationOpen ? (
+        <ThemedText type="small" themeColor="textSecondary">
+          {t('auth.noAccount')}{' '}
+          <Link href="/register">
+            <ThemedText type="smallBold" themeColor="primary">
+              {t('nav.signup')}
+            </ThemedText>
+          </Link>
+        </ThemedText>
+      ) : null}
     </AuthScreen>
   );
 }
