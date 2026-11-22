@@ -5,6 +5,7 @@ import common from './common';
 import events from './events';
 import groups from './groups';
 import landing from './landing';
+import privacy from './privacy';
 import search from './search';
 import settings from './settings';
 
@@ -13,6 +14,7 @@ const ro: Catalog = {
     ...activities,
     ...auth,
     ...landing,
+    ...privacy,
     ...groups,
     ...events,
     ...settings,
