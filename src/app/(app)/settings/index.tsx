@@ -10,6 +10,8 @@ import { Page } from '@/components/page';
 import { ThemedText } from '@/components/themed-text';
 import { Avatar } from '@/components/avatar';
 import { Card } from '@/components/card';
+import { Icon } from '@/components/icon';
+import { useTheme } from '@/hooks/use-theme';
 import { Segmented } from '@/components/segmented';
 import { DisplayPicker } from '@/features/display-picker';
 import { ThemePicker } from '@/features/theme-picker';
@@ -58,16 +60,10 @@ export default function SettingsScreen() {
         </View>
       </Card>
 
-      <Card onPress={() => router.push('/settings/profile')}>
-        <ThemedText type="smallBold">{t('nav.profile')}</ThemedText>
-      </Card>
-      <Card onPress={() => router.push('/settings/security')}>
-        <ThemedText type="smallBold">{t('nav.security')}</ThemedText>
-      </Card>
+      <LinkRow title={t('nav.profile')} onPress={() => router.push('/settings/profile')} />
+      <LinkRow title={t('nav.security')} onPress={() => router.push('/settings/security')} />
 
-      <Card onPress={() => router.push('/settings/blocked')}>
-        <ThemedText type="smallBold">{t('settings.blocked.title')}</ThemedText>
-      </Card>
+      <LinkRow title={t('settings.blocked.title')} onPress={() => router.push('/settings/blocked')} />
 
       <ThemePicker />
       <DisplayPicker />
@@ -80,7 +76,7 @@ export default function SettingsScreen() {
       />
 
       <Button variant="plain" title={t('nav.logout')} onPress={() => void signOut()} />
-      <Button variant="plain" title={t('settings.delete.title')} onPress={() => setDeleting(true)} />
+      <Button variant="danger" title={t('settings.delete.title')} onPress={() => setDeleting(true)} />
 
       <ConfirmDialog
         visible={deleting}
@@ -108,5 +104,19 @@ export default function SettingsScreen() {
         {form.message !== undefined ? <ErrorText>{form.message || t('common.somethingWrong')}</ErrorText> : null}
       </ConfirmDialog>
     </Page>
+  );
+}
+
+/** A row that opens another screen: the chevron says so. */
+function LinkRow({ title, onPress }: { title: string; onPress: () => void }) {
+  const theme = useTheme();
+
+  return (
+    <Card onPress={onPress}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <ThemedText type="smallBold">{title}</ThemedText>
+        <Icon name="next" size={20} color={theme.textSecondary} />
+      </View>
+    </Card>
   );
 }

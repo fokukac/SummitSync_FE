@@ -43,12 +43,8 @@ export function PollsTab({ eventId, canManage }: { eventId: number; canManage: b
 
   return (
     <View style={{ gap: 12 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-        <ThemedText type="subtitle" style={{ fontSize: 22, lineHeight: 28 }}>
-          {t('polls.title')}
-        </ThemedText>
-        {canManage && !creating ? <Button compact title={t('polls.new')} onPress={() => setCreating(true)} /> : null}
-      </View>
+      {/* No heading: the tab already says "Polls". */}
+      {canManage && !creating ? <Button compact title={t('polls.new')} onPress={() => setCreating(true)} /> : null}
       {creating ? (
         <PollForm
           eventId={eventId}

@@ -134,7 +134,7 @@ type ButtonProps = {
   title: string;
   onPress: () => void;
   loading?: boolean;
-  variant?: 'primary' | 'plain' | 'outline';
+  variant?: 'primary' | 'plain' | 'outline' | 'danger';
   /** Sized to its label instead of the full width, for rows of actions. */
   compact?: boolean;
   /** An icon before the label. */
@@ -145,6 +145,7 @@ export function Button({ title, onPress, loading = false, variant = 'primary', c
   const theme = useTheme();
   const shape = useShape();
   const primary = variant === 'primary';
+  const labelColor = primary ? theme.onPrimary : variant === 'outline' ? theme.text : variant === 'danger' ? theme.danger : theme.primary;
 
   return (
     <Pressable
@@ -162,8 +163,8 @@ export function Button({ title, onPress, loading = false, variant = 'primary', c
         <ActivityIndicator color={primary ? theme.onPrimary : theme.text} />
       ) : (
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          {icon ? <Icon name={icon} size={16} color={primary ? theme.onPrimary : variant === 'outline' ? theme.text : theme.primary} /> : null}
-          <ThemedText type="smallBold" style={{ color: primary ? theme.onPrimary : variant === 'outline' ? theme.text : theme.primary }}>
+          {icon ? <Icon name={icon} size={16} color={labelColor} /> : null}
+          <ThemedText type="smallBold" style={{ color: labelColor }}>
             {title}
           </ThemedText>
         </View>

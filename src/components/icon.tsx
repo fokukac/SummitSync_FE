@@ -9,6 +9,7 @@ export type IconName =
   | 'settings'
   | 'plus'
   | 'back'
+  | 'next'
   | 'clock'
   | 'pin'
   | 'check'
@@ -92,6 +93,7 @@ export function Icon({ name, size = 24, color }: { name: IconName; size?: number
         </>
       ) : null}
       {name === 'trash' ? <Path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m5 5v6m4-6v6" /> : null}
+      {name === 'next' ? <Path d="m9 18 6-6-6-6" /> : null}
       {name === 'back' ? <Path d="m15 18-6-6 6-6" /> : null}
       {name === 'chat' ? <Path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> : null}
       {name === 'calendar' ? <Path d="M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM16 2v4M8 2v4M3 10h18" /> : null}

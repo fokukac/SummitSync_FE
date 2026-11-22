@@ -57,7 +57,16 @@ export default function GroupsScreen() {
           { value: 'discover', label: t('groups.discover') },
         ]}
       />
-      {mode === 'discover' ? <TextField label={t('nav.search')} value={search} onChangeText={setSearch} autoCapitalize="none" returnKeyType="search" /> : null}
+      {mode === 'discover' ? (
+        <TextField
+          label={t('nav.search')}
+          placeholder={t('search.groupsPlaceholder')}
+          value={search}
+          onChangeText={setSearch}
+          autoCapitalize="none"
+          returnKeyType="search"
+        />
+      ) : null}
       <ActivityFilter selected={activities} onChange={setActivities} />
       <QueryState
         query={active}

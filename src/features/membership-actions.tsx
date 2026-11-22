@@ -31,7 +31,7 @@ export function GroupMembershipActions({ slug, can }: Props & { slug: string }) 
   return (
     <>
       {can.join ? <Button compact title={t('groups.join')} loading={join.isPending} onPress={() => join.mutate()} /> : null}
-      {can.leave ? <Button compact variant="plain" title={t('groups.leave')} onPress={() => setConfirming(true)} /> : null}
+      {can.leave ? <Button compact variant="danger" title={t('groups.leave')} onPress={() => setConfirming(true)} /> : null}
       {error ? <ErrorText>{errorMessage((error as { body?: unknown }).body) ?? t('common.somethingWrong')}</ErrorText> : null}
       <ConfirmDialog
         visible={confirming}
@@ -68,7 +68,7 @@ export function EventMembershipActions({ eventId, can }: Props & { eventId: numb
   return (
     <>
       {can.join ? <Button title={t('events.join')} loading={join.isPending} onPress={() => join.mutate()} /> : null}
-      {can.leave ? <Button variant="plain" title={t('events.leave')} onPress={() => setConfirming(true)} /> : null}
+      {can.leave ? <Button variant="danger" title={t('events.leave')} onPress={() => setConfirming(true)} /> : null}
       {error ? <ErrorText>{errorMessage((error as { body?: unknown }).body) ?? t('common.somethingWrong')}</ErrorText> : null}
       <ConfirmDialog
         visible={confirming}

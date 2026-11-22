@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { router, Stack, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { RefreshControl, View } from 'react-native';
 
@@ -46,8 +46,7 @@ export default function GroupScreen() {
   const data = group.data;
 
   return (
-    <Page refreshControl={<RefreshControl refreshing={refreshing && !group.isPending} onRefresh={refresh} />}>
-      <Stack.Screen options={{ title: data?.name ?? t('nav.groups') }} />
+    <Page underHeader refreshControl={<RefreshControl refreshing={refreshing && !group.isPending} onRefresh={refresh} />}>
       <QueryState query={group}>
         {data ? (
           <>
