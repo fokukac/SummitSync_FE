@@ -60,7 +60,7 @@ export default function InvitationScreen() {
     <AuthScreen title={t('invitations.head')}>
       {view === 'signedOut' ? (
         <Card>
-          <ThemedText>{t('invitations.loginPrompt')}</ThemedText>
+          <ThemedText>{t(registrationOpen ? 'invitations.loginPrompt' : 'invitations.loginOnlyPrompt')}</ThemedText>
           <Button title={t('nav.login')} onPress={() => router.push('/')} />
           {registrationOpen ? <Button variant="plain" title={t('nav.signup')} onPress={() => router.push('/register')} /> : null}
         </Card>

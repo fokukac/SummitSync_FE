@@ -36,6 +36,7 @@ export default {
     'invitations.invitedYou': '{name} invited you to join',
     'invitations.loginPrompt':
         'Log in or create an account to accept this invitation.',
+    'invitations.loginOnlyPrompt': 'Log in to accept this invitation.',
     'invitations.alreadyMember': 'You are already a member of this group.',
     'invitations.openGroup': 'Open group',
     'invitations.section.title': 'Invite links',

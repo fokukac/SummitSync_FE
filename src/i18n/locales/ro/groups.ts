@@ -39,6 +39,8 @@ export default {
     'invitations.invitedYou': '{name} v-a invitat să vă alăturați',
     'invitations.loginPrompt':
         'Autentificați-vă sau creați un cont pentru a accepta invitația.',
+    'invitations.loginOnlyPrompt':
+        'Autentificați-vă pentru a accepta invitația.',
     'invitations.alreadyMember': 'Sunteți deja membru al acestui grup.',
     'invitations.openGroup': 'Deschide grupul',
     'invitations.section.title': 'Linkuri de invitație',

@@ -35,6 +35,7 @@ export default {
     'invitations.invitedYou': '{name} meghívta Önt, hogy csatlakozzon:',
     'invitations.loginPrompt':
         'Jelentkezzen be, vagy hozzon létre fiókot a meghívó elfogadásához.',
+    'invitations.loginOnlyPrompt': 'Jelentkezzen be a meghívó elfogadásához.',
     'invitations.alreadyMember': 'Ön már tagja ennek a csoportnak.',
     'invitations.openGroup': 'Csoport megnyitása',
     'invitations.section.title': 'Meghívó hivatkozások',
