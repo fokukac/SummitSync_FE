@@ -4,17 +4,19 @@ import { View } from 'react-native';
 import { useAuth } from '@/auth/auth-context';
 import { googleSignInAvailable } from '@/auth/google-sign-in';
 import { Button, ErrorText } from '@/components/form';
+import { useGoogleLoginOpen } from '@/features/forms/use-meta';
 import { ThemedText } from '@/components/themed-text';
 import { useI18n } from '@/i18n';
 
-/** "Or continue with Google" under the sign-in and register forms. Renders nothing where native Google sign-in is unavailable. */
+/** "Or continue with Google" under the sign-in and register forms. Renders nothing where native Google sign-in is unavailable or an admin switched it off. */
 export function GoogleSignInButton() {
   const { t } = useI18n();
   const { signInWithGoogle } = useAuth();
+  const googleLoginOpen = useGoogleLoginOpen();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string>();
 
-  if (!googleSignInAvailable) {
+  if (!googleSignInAvailable || !googleLoginOpen) {
     return null;
   }
 

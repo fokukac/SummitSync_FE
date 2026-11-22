@@ -13,3 +13,10 @@ export function useRegistrationOpen(): boolean {
 
   return data?.features['open-registration'] !== false;
 }
+
+/** False only when an admin switched Google sign-in off; while the flags are still loading the button stays available. */
+export function useGoogleLoginOpen(): boolean {
+  const { data } = useMeta();
+
+  return data?.features['google-login'] !== false;
+}
